@@ -11,7 +11,7 @@ React app (PWA / Capacitor)
 Apps Script Web App URL   ← pasted once
    │  runs as the sheet owner · LockService mutex · sheet stays private
    ▼
-Your Google Sheet (one file, 8 tabs)
+Your Google Sheet (one file, 8 data tabs + 2 generated)
 ```
 
 The local database is a **disposable cache**. It rehydrates from the sheet on launch, so only
@@ -41,6 +41,20 @@ and a month of transactions. Connect with:
 That exercises the real transport, sync engine, dashboard and history with no
 Google account. The mock is dev-only (`apply: 'serve'`) and never ships.
 
+## Real sheet
+
+Everything needed to stand up the private backend is in `sheet/`:
+
+| File | What it is |
+|---|---|
+| `ExpenseManager-template.xlsx` | Upload to Drive → Save as Google Sheets. |
+| `AppsScript.gs` | The whole backend as one paste-ready file. |
+| `SETUP.md` | Step-by-step install, deploy and verification. |
+
+`AppsScript.gs` is generated (`node sheet/bundle.mjs`) from `apps/script/*.gs`.
+The `.xlsx` is generated (`python sheet/build_template.py`, needs `openpyxl`)
+from `packages/core/src/schema.ts` + `apps/script/Setup.gs`.
+
 ## Repo layout
 
 | Path | What it is |
@@ -49,6 +63,7 @@ Google account. The mock is dev-only (`apply: 'serve'`) and never ships.
 | `apps/script` | The Apps Script backend (`ping` / `readAll` / `batch`). See its README. |
 | `packages/core` | Platform-free domain: schema, money, dates, sheet client, sync engine, tests. |
 | `expense-manager-plan.md` | The authoritative plan. Read this before changing scope. |
+| `sheet` | Uploadable `.xlsx` template, paste-ready script, and setup guide. |
 
 ## How sync works
 
