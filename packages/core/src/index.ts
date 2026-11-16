@@ -5,3 +5,4 @@ export * from './date.js';
 export * from './id.js';
 export * from './client.js';
 export * from './sync.js';
+export * from './quick.js';

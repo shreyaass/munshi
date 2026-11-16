@@ -3,6 +3,7 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { SyncProvider } from './lib/SyncProvider';
 import { Add } from './pages/Add';
+import { Accounts } from './pages/Accounts';
 import { Connect } from './pages/Connect';
 import { History } from './pages/History';
 import { Settings } from './pages/Settings';
@@ -40,6 +41,7 @@ export function App() {
                 </Suspense>
               }
             />
+            <Route path="accounts" element={<Accounts />} />
             <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

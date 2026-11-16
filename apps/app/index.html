@@ -9,6 +9,19 @@
     <link rel="apple-touch-icon" href="/icon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Expense Manager</title>
+    <!-- Applied before first paint so there is never a light flash in dark mode. -->
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem('em.theme') || 'system';
+          var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', dark ? '#020617' : '#ffffff');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

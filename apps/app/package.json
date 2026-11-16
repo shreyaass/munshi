@@ -13,6 +13,7 @@
     "@em/core": "0.1.0",
     "dexie": "^4.4.7",
     "dexie-react-hooks": "^4.4.0",
+    "framer-motion": "^14.14.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.5",

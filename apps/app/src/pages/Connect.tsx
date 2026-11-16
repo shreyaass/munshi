@@ -6,6 +6,8 @@ import { loadConnection, useConnectionState } from '../lib/connection';
 import { Icon } from '../components/Icon';
 
 const EXEC_RE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec/;
+// Dev-only: the local mock at /__mock, so the app can be exercised without Google.
+const DEV_MOCK_RE = /^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/__mock\/?$/;
 
 export function Connect() {
   const navigate = useNavigate();
@@ -27,7 +29,7 @@ export function Connect() {
       setError('Both the Web App URL and the access token are required.');
       return;
     }
-    if (!EXEC_RE.test(cleanUrl)) {
+    if (!EXEC_RE.test(cleanUrl) && !(import.meta.env.DEV && DEV_MOCK_RE.test(cleanUrl))) {
       setError(
         'That is not a Web App URL. It must look like https://script.google.com/macros/s/XXXX/exec — open the sheet, run Expense Tracker → Show connection info to copy it.',
       );

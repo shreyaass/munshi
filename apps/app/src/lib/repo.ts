@@ -120,6 +120,178 @@ export async function undoableLastChange(): Promise<void> {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Categories                                                                  */
+/* -------------------------------------------------------------------------- */
+
+function maxSortOrder(rows: Row[]): number {
+  return rows.reduce((max, r) => Math.max(max, Number(r.sort_order) || 0), 0);
+}
+
+export async function addCategory(input: {
+  name: string;
+  emoji: string;
+  type: 'expense' | 'income';
+  color?: string;
+}): Promise<string> {
+  const existing = await db.rows.where('tab').equals('Categories').toArray();
+  const rows = existing.filter((r) => !r.deleted).map((r) => r.data);
+
+  const id = newId();
+  const ts = nowISO();
+
+  const row: Row = {
+    id,
+    name: input.name.trim(),
+    type: input.type,
+    parent_id: '',
+    icon: input.emoji || '📦',
+    color: input.color ?? '#6366f1',
+    monthly_budget_paise: 0,
+    active: true,
+    pinned: true,
+    sort_order: maxSortOrder(rows) + 1,
+    updated_at: ts,
+    device_id: getDeviceId(),
+    deleted: false,
+  };
+
+  await db.rows.put(toLocalRow('Categories', row, true));
+  return id;
+}
+
+export async function updateCategory(id: string, patch: Partial<Pick<CategoryRow, 'name' | 'icon' | 'color' | 'active'>>): Promise<void> {
+  const existing = await db.rows.get(rowKey('Categories', id));
+  if (!existing) return;
+
+  const next: Row = {
+    ...existing.data,
+    ...(patch as Record<string, unknown>),
+    updated_at: nowISO(),
+    device_id: getDeviceId(),
+  };
+  await db.rows.put(toLocalRow('Categories', next, true));
+}
+
+export async function setCategoryPinned(id: string, pinned: boolean): Promise<void> {
+  const all = await db.rows.where('tab').equals('Categories').toArray();
+  const rows = all.filter((r) => !r.deleted).map((r) => r.data);
+  const existing = all.find((r) => r.id === id);
+  if (!existing) return;
+
+  const next: Row = {
+    ...existing.data,
+    pinned,
+    sort_order: pinned ? maxSortOrder(rows) + 1 : 0,
+    updated_at: nowISO(),
+    device_id: getDeviceId(),
+  };
+  await db.rows.put(toLocalRow('Categories', next, true));
+}
+
+/** Swap sort_order with the previous/next pinned category. */
+export async function moveCategory(id: string, direction: -1 | 1): Promise<void> {
+  const all = await db.rows.where('tab').equals('Categories').toArray();
+  const pinned = all
+    .filter((r) => !r.deleted && r.data.pinned === true)
+    .map((r) => r.data)
+    .sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+
+  const index = pinned.findIndex((r) => String(r.id) === id);
+  const target = index + direction;
+  if (index < 0 || target < 0 || target >= pinned.length) return;
+
+  const a = pinned[index];
+  const b = pinned[target];
+  const ts = nowISO();
+
+  await db.rows.put(toLocalRow('Categories', { ...a, sort_order: target + 1, updated_at: ts, device_id: getDeviceId() }, true));
+  await db.rows.put(toLocalRow('Categories', { ...b, sort_order: index + 1, updated_at: ts, device_id: getDeviceId() }, true));
+}
+
+type CategoryRow = {
+  name: string;
+  icon: string;
+  color: string;
+  active: boolean;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Accounts & transfers                                                        */
+/* -------------------------------------------------------------------------- */
+
+export async function addAccount(input: {
+  name: string;
+  type: AccountRow['type'];
+  openingBalancePaise: number;
+}): Promise<string> {
+  const id = newId();
+  const ts = nowISO();
+
+  const row: Row = {
+    id,
+    name: input.name.trim(),
+    type: input.type,
+    opening_balance_paise: input.openingBalancePaise,
+    active: true,
+    updated_at: ts,
+    device_id: getDeviceId(),
+    deleted: false,
+  };
+
+  await db.rows.put(toLocalRow('Accounts', row, true));
+  return id;
+}
+
+export async function updateAccount(
+  id: string,
+  patch: Partial<{ name: string; type: AccountRow['type']; opening_balance_paise: number; active: boolean }>,
+): Promise<void> {
+  const existing = await db.rows.get(rowKey('Accounts', id));
+  if (!existing) return;
+
+  const next: Row = {
+    ...existing.data,
+    ...(patch as Record<string, unknown>),
+    updated_at: nowISO(),
+    device_id: getDeviceId(),
+  };
+  await db.rows.put(toLocalRow('Accounts', next, true));
+}
+
+export async function archiveAccount(id: string): Promise<void> {
+  await softDelete('Accounts', id);
+}
+
+export async function addTransfer(input: {
+  fromAccountId: string;
+  toAccountId: string;
+  amountPaise: number;
+  date: string;
+  notes?: string;
+}): Promise<string> {
+  const id = newId();
+  const ts = nowISO();
+
+  const row: Row = {
+    id,
+    date: input.date,
+    amount_paise: input.amountPaise,
+    from_account_id: input.fromAccountId,
+    to_account_id: input.toAccountId,
+    notes: input.notes ?? '',
+    created_at: ts,
+    updated_at: ts,
+    device_id: getDeviceId(),
+    deleted: false,
+  };
+
+  await db.rows.put(toLocalRow('Transfers', row, true));
+  return id;
+}
+
+type AccountRow = { name: string; type: import('@em/core').AccountType };
+
+/* -------------------------------------------------------------------------- */
 /* Reads                                                                       */
 /* -------------------------------------------------------------------------- */
 

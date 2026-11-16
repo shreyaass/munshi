@@ -12,7 +12,7 @@ import type { Plugin } from 'vite';
  */
 
 const TOKEN = 'dev-token';
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 type Row = Record<string, unknown>;
 type Tab = string;
@@ -22,7 +22,7 @@ const HEADERS: Record<Tab, string[]> = {
   Income: ['id', 'date', 'amount_paise', 'category_id', 'account_id', 'payee', 'notes', 'tags', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Transfers: ['id', 'date', 'amount_paise', 'from_account_id', 'to_account_id', 'notes', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Accounts: ['id', 'name', 'type', 'opening_balance_paise', 'active', 'updated_at', 'device_id', 'deleted'],
-  Categories: ['id', 'name', 'type', 'parent_id', 'icon', 'color', 'monthly_budget_paise', 'active', 'updated_at', 'device_id', 'deleted'],
+  Categories: ['id', 'name', 'type', 'parent_id', 'icon', 'color', 'monthly_budget_paise', 'active', 'updated_at', 'device_id', 'deleted', 'pinned', 'sort_order'],
   Budgets: ['id', 'month', 'category_id', 'amount_paise', 'updated_at', 'device_id', 'deleted'],
   Recurring: ['id', 'amount_paise', 'type', 'category_id', 'account_id', 'payee', 'rule', 'next_date', 'active', 'updated_at', 'device_id', 'deleted'],
 };
@@ -36,14 +36,18 @@ function base(id: string, extra: Row): Row {
 
 const rows: Record<Tab, Row[]> = {
   Categories: [
-    base('cat-exp-1', { name: 'Food', type: 'expense', parent_id: '', icon: '🍜', color: '#f97316', monthly_budget_paise: 800000, active: true }),
-    base('cat-exp-2', { name: 'Groceries', type: 'expense', parent_id: '', icon: '🛒', color: '#22c55e', monthly_budget_paise: 600000, active: true }),
-    base('cat-exp-3', { name: 'Transport', type: 'expense', parent_id: '', icon: '🚌', color: '#3b82f6', monthly_budget_paise: 300000, active: true }),
-    base('cat-exp-4', { name: 'Bills', type: 'expense', parent_id: '', icon: '⚡', color: '#eab308', monthly_budget_paise: 400000, active: true }),
-    base('cat-exp-5', { name: 'Shopping', type: 'expense', parent_id: '', icon: '🛍️', color: '#ec4899', monthly_budget_paise: 0, active: true }),
-    base('cat-exp-6', { name: 'Health', type: 'expense', parent_id: '', icon: '💊', color: '#ef4444', monthly_budget_paise: 0, active: true }),
-    base('cat-inc-1', { name: 'Salary', type: 'income', parent_id: '', icon: '💰', color: '#16a34a', monthly_budget_paise: 0, active: true }),
-    base('cat-inc-2', { name: 'Refund', type: 'income', parent_id: '', icon: '↩️', color: '#0d9488', monthly_budget_paise: 0, active: true }),
+    base('cat-exp-1', { name: 'Food', type: 'expense', parent_id: '', icon: '🍜', color: '#f97316', monthly_budget_paise: 800000, active: true, pinned: true, sort_order: 1 }),
+    base('cat-exp-2', { name: 'Groceries', type: 'expense', parent_id: '', icon: '🛒', color: '#22c55e', monthly_budget_paise: 600000, active: true, pinned: true, sort_order: 2 }),
+    base('cat-exp-3', { name: 'Transport', type: 'expense', parent_id: '', icon: '🚌', color: '#3b82f6', monthly_budget_paise: 300000, active: true, pinned: true, sort_order: 3 }),
+    base('cat-exp-4', { name: 'Bills', type: 'expense', parent_id: '', icon: '⚡', color: '#eab308', monthly_budget_paise: 400000, active: true, pinned: true, sort_order: 4 }),
+    base('cat-exp-5', { name: 'Shopping', type: 'expense', parent_id: '', icon: '🛍️', color: '#ec4899', monthly_budget_paise: 0, active: true, pinned: false, sort_order: 0 }),
+    base('cat-exp-6', { name: 'Health', type: 'expense', parent_id: '', icon: '💊', color: '#ef4444', monthly_budget_paise: 0, active: true, pinned: false, sort_order: 0 }),
+    base('cat-exp-7', { name: 'Entertainment', type: 'expense', parent_id: '', icon: '🎬', color: '#06b6d4', monthly_budget_paise: 0, active: true, pinned: false, sort_order: 0 }),
+    base('cat-exp-8', { name: 'Travel', type: 'expense', parent_id: '', icon: '✈️', color: '#0ea5e9', monthly_budget_paise: 0, active: true, pinned: false, sort_order: 0 }),
+    base('cat-exp-9', { name: 'Other', type: 'expense', parent_id: '', icon: '📦', color: '#64748b', monthly_budget_paise: 0, active: true, pinned: false, sort_order: 0 }),
+    base('cat-inc-1', { name: 'Salary', type: 'income', parent_id: '', icon: '💰', color: '#16a34a', monthly_budget_paise: 0, active: true, pinned: true, sort_order: 1 }),
+    base('cat-inc-2', { name: 'Refund', type: 'income', parent_id: '', icon: '↩️', color: '#0d9488', monthly_budget_paise: 0, active: true, pinned: false, sort_order: 0 }),
+    base('cat-inc-3', { name: 'Interest', type: 'income', parent_id: '', icon: '📈', color: '#7c3aed', monthly_budget_paise: 0, active: true, pinned: false, sort_order: 0 }),
   ],
   Accounts: [
     base('acc-cash', { name: 'Cash', type: 'cash', opening_balance_paise: 500000, active: true }),

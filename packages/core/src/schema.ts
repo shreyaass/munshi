@@ -1,12 +1,14 @@
 /**
  * Canonical sheet schema. Row 1 of every tab is a frozen header.
- * Header order is part of the API contract: the Apps Script backend validates it
- * on every read, so the app and the script can never silently disagree.
+ *
+ * v2: header matching is BY NAME, not by position, and extra columns are
+ * allowed. A user can add their own column to a tab without breaking sync, and
+ * future schema bumps only ever *append* columns.
  *
  * Amounts are ALWAYS integer paise. Never floats, never rupees-with-decimals.
  */
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export type TabName =
   | 'Expenses'
@@ -31,7 +33,7 @@ export const DATA_TABS = [
 
 export type DataTab = (typeof DATA_TABS)[number];
 
-const BASE = ['id', 'updated_at', 'device_id', 'deleted'] as const;
+const BASE = ['updated_at', 'device_id', 'deleted'] as const;
 
 export const HEADERS: Record<TabName, readonly string[]> = {
   Expenses: [
@@ -79,6 +81,9 @@ export const HEADERS: Record<TabName, readonly string[]> = {
     'monthly_budget_paise',
     'active',
     ...BASE,
+    // v2 — appended so migration is additive
+    'pinned',
+    'sort_order',
   ],
   Budgets: ['id', 'month', 'category_id', 'amount_paise', ...BASE],
   Recurring: [
@@ -106,34 +111,64 @@ export const META_DEFAULTS: Record<string, string> = {
 export const ACCOUNT_TYPES = ['cash', 'bank', 'upi', 'credit', 'wallet'] as const;
 export type AccountType = (typeof ACCOUNT_TYPES)[number];
 
+/** How many quick chips the Add screen shows. */
+export const QUICK_PICKS = { expense: 6, income: 2 } as const;
+
+/** Special `category_id` values inside the Budgets tab. */
+export const BUDGET_TOTAL = '__total__';
+export const BUDGET_DAILY = '__daily__';
+
 /**
- * Returns a list of human-readable problems. Empty array means the tab is usable.
- * Called with the header row exactly as read from the sheet.
+ * Returns human-readable problems. Empty array means the tab is usable.
+ * Matches by name, so column order and extra user columns are irrelevant.
  */
 export function validateHeaders(tab: TabName, headerRow: readonly unknown[]): string[] {
   const expected = HEADERS[tab];
-  const actual = headerRow.map((h) => String(h ?? '').trim());
+  const actual = headerRow.map((h) => String(h ?? '').trim().toLowerCase());
   const problems: string[] = [];
 
-  if (actual.length === 0) {
+  if (actual.filter((h) => h !== '').length === 0) {
     problems.push(`Tab "${tab}" is empty — expected a header row.`);
     return problems;
   }
 
-  for (let i = 0; i < expected.length; i++) {
-    const want = expected[i];
-    const got = actual[i] ?? '';
-    if (got.toLowerCase() !== want.toLowerCase()) {
-      problems.push(`Tab "${tab}" column ${i + 1}: expected "${want}", found "${got || '(empty)'}".`);
-    }
-  }
-
-  if (actual.length > expected.length) {
-    const extra = actual.slice(expected.length).filter((h) => h !== '');
-    if (extra.length > 0) {
-      problems.push(`Tab "${tab}" has unexpected extra columns: ${extra.join(', ')}.`);
-    }
+  const missing = expected.filter((h) => !actual.includes(h.toLowerCase()));
+  if (missing.length > 0) {
+    problems.push(`Tab "${tab}" is missing columns: ${missing.join(', ')}.`);
   }
 
   return problems;
+}
+
+/** name (lowercase) -> column index, for reading and writing by name. */
+export function headerIndex(headers: readonly unknown[]): Map<string, number> {
+  const map = new Map<string, number>();
+  headers.forEach((h, i) => {
+    const name = String(h ?? '').trim().toLowerCase();
+    if (name) map.set(name, i);
+  });
+  return map;
+}
+
+/** Build a row object from a values array using the sheet's actual headers. */
+export function rowFromValues(headers: readonly unknown[], values: readonly unknown[]): Record<string, unknown> {
+  const row: Record<string, unknown> = {};
+  headers.forEach((header, i) => {
+    const name = String(header ?? '').trim();
+    if (name) row[name] = values[i] ?? '';
+  });
+  return row;
+}
+
+/**
+ * Build a values array for a row using the sheet's actual headers, so extra
+ * columns the user added are preserved instead of being shifted.
+ */
+export function valuesFromRow(headers: readonly unknown[], row: Record<string, unknown>): unknown[] {
+  return headers.map((header) => {
+    const name = String(header ?? '').trim();
+    if (!name) return '';
+    const value = row[name];
+    return value === undefined || value === null ? '' : value;
+  });
 }

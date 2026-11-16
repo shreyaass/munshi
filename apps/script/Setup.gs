@@ -22,23 +22,17 @@ function onOpen() {
 function setupSheet(showDialog) {
   var ss = ss_();
 
+  // Additive migration: creates missing tabs, appends missing columns, never
+  // moves or deletes anything the user put there.
   DATA_TABS.concat(['Meta']).forEach(function (tab) {
     var sh = ss.getSheetByName(tab) || ss.insertSheet(tab);
-    var headers = HEADERS[tab];
-    var existing = sh.getLastColumn() > 0 ? sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0] : [];
-
-    var needsHeader = sh.getLastRow() === 0;
-    for (var i = 0; i < headers.length && !needsHeader; i++) {
-      if (String(existing[i] || '').toLowerCase() !== headers[i].toLowerCase()) needsHeader = true;
-    }
-
-    if (needsHeader) {
-      sh.getRange(1, 1, 1, headers.length).setValues([headers]);
-    }
-    sh.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#f1f3f4');
-    sh.setFrozenRows(1);
-    if (sh.getLastRow() > 1) {
-      sh.getRange(1, 1, sh.getLastRow(), headers.length).createFilter();
+    ensureHeaders_(sh, tab);
+    try {
+      if (sh.getLastRow() > 1) {
+        sh.getRange(1, 1, sh.getLastRow(), sh.getLastColumn()).createFilter();
+      }
+    } catch (err) {
+      // A filter already exists — fine.
     }
   });
 
@@ -54,7 +48,7 @@ function setupSheet(showDialog) {
   SpreadsheetApp.flush();
 
   if (showDialog !== false) showConnectionInfo();
-  return { ok: true, url: serviceUrl_(), token: getToken_() };
+  return { ok: true, version: SCHEMA_VERSION, url: serviceUrl_(), token: getToken_() };
 }
 
 function removeDefaultSheet_(ss) {
@@ -73,19 +67,33 @@ function seedIfEmpty_(ss) {
   }
 
   if (ss.getSheetByName('Categories').getLastRow() < 2) {
+    // name, icon, colour, pinned, sort_order
+    // Only a few are pinned; the Add screen fills the remaining slots from
+    // whatever the user actually spends on.
     var expense = [
-      ['Food', '🍜', '#f97316'], ['Groceries', '🛒', '#22c55e'], ['Transport', '🚌', '#3b82f6'],
-      ['Bills', '⚡', '#eab308'], ['Rent', '🏠', '#a855f7'], ['Shopping', '🛍️', '#ec4899'],
-      ['Health', '💊', '#ef4444'], ['Entertainment', '🎬', '#06b6d4'], ['Travel', '✈️', '#0ea5e9'],
-      ['Other', '📦', '#64748b']
+      ['Food', '🍜', '#f97316', true, 1],
+      ['Groceries', '🛒', '#22c55e', true, 2],
+      ['Transport', '🚌', '#3b82f6', true, 3],
+      ['Bills', '⚡', '#eab308', true, 4],
+      ['Shopping', '🛍️', '#ec4899', false, 0],
+      ['Health', '💊', '#ef4444', false, 0],
+      ['Entertainment', '🎬', '#06b6d4', false, 0],
+      ['Travel', '✈️', '#0ea5e9', false, 0],
+      ['Other', '📦', '#64748b', false, 0]
     ];
     expense.forEach(function (c, i) {
-      appendSeed_('Categories', ['cat-exp-' + (i + 1), c[0], 'expense', '', c[1], c[2], 0, true]);
+      appendSeed_('Categories', ['cat-exp-' + (i + 1), c[0], 'expense', '', c[1], c[2], 0, true, c[3], c[4]]);
     });
 
-    var income = [['Salary', '💰', '#16a34a'], ['Refund', '↩️', '#0d9488'], ['Interest', '📈', '#7c3aed'], ['Gift', '🎁', '#db2777'], ['Other', '📦', '#64748b']];
+    var income = [
+      ['Salary', '💰', '#16a34a', true, 1],
+      ['Refund', '↩️', '#0d9488', false, 0],
+      ['Interest', '📈', '#7c3aed', false, 0],
+      ['Gift', '🎁', '#db2777', false, 0],
+      ['Other', '📦', '#64748b', false, 0]
+    ];
     income.forEach(function (c, i) {
-      appendSeed_('Categories', ['cat-inc-' + (i + 1), c[0], 'income', '', c[1], c[2], 0, true]);
+      appendSeed_('Categories', ['cat-inc-' + (i + 1), c[0], 'income', '', c[1], c[2], 0, true, c[3], c[4]]);
     });
   }
 
@@ -96,22 +104,25 @@ function seedIfEmpty_(ss) {
   if (!meta.week_start) writeMeta_('week_start', '1');
 }
 
-/** Seeds use a fixed column order (the header order for that tab). */
+/** Seeds use the header order for that tab. */
 function appendSeed_(tab, values) {
   var sh = sheetFor_(tab);
-  var headers = HEADERS[tab];
   var row = {};
 
   if (tab === 'Accounts') {
     row = { id: values[0], name: values[1], type: values[2], opening_balance_paise: values[3], active: values[4] };
   } else if (tab === 'Categories') {
-    row = { id: values[0], name: values[1], type: values[2], parent_id: values[3], icon: values[4], color: values[5], monthly_budget_paise: values[6], active: values[7] };
+    row = {
+      id: values[0], name: values[1], type: values[2], parent_id: values[3],
+      icon: values[4], color: values[5], monthly_budget_paise: values[6],
+      active: values[7], pinned: values[8], sort_order: values[9]
+    };
   }
 
   row.updated_at = new Date().toISOString();
   row.device_id = 'seed';
   row.deleted = false;
-  sh.appendRow(rowToArray_(tab, row));
+  sh.appendRow(valuesForRow_(ensureHeaders_(sh, tab), row, null));
 }
 
 function sortTabs_(ss) {
@@ -155,7 +166,7 @@ function validateSheet() {
     var sh = ss.getSheetByName(tab);
     if (!sh) { problems.push('Missing tab: ' + tab); return; }
     try {
-      assertHeaders_(tab, headerOf_(sh));
+      assertHeaders_(tab, ensureHeaders_(sh, tab));
     } catch (err) {
       problems.push(String(err.message || err));
     }

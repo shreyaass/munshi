@@ -47,6 +47,9 @@ export interface Category extends BaseRecord {
   color: string;
   monthly_budget_paise: number;
   active: boolean;
+  /** v2 — shown on the Add screen's quick row. */
+  pinned: boolean;
+  sort_order: number;
 }
 
 export interface Budget extends BaseRecord {

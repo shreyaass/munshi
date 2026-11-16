@@ -26,15 +26,19 @@ function applyKey(current: string, key: string): string {
   return current + key;
 }
 
+/**
+ * Fills whatever height it is given, so the Add screen never needs to scroll.
+ * Rows share the space evenly instead of using a fixed button height.
+ */
 export function AmountPad({ value, onChange }: AmountPadProps) {
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid h-full min-h-0 grid-cols-3 grid-rows-4 gap-1.5">
       {KEYS.map((key) => (
         <button
           key={key}
           type="button"
           onClick={() => onChange(applyKey(value, key))}
-          className="h-14 rounded-2xl bg-slate-100 text-xl font-semibold text-slate-800 transition active:scale-95 active:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:active:bg-slate-700"
+          className="flex h-full min-h-0 items-center justify-center rounded-xl bg-slate-100 text-xl font-semibold text-slate-800 transition active:scale-95 active:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:active:bg-slate-700"
           aria-label={key === '⌫' ? 'Backspace' : key}
         >
           {key}

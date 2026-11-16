@@ -2,6 +2,14 @@
 
 function ping_() {
   var ss = ss_();
+  var meta = readMeta_();
+
+  // An untouched template sets itself up, so "connect" is one tap.
+  if (!meta.schema_version) {
+    setupSheet(false);
+    meta = readMeta_();
+  }
+
   var problems = [];
   var missing = [];
 
@@ -10,28 +18,20 @@ function ping_() {
     var sh = ss.getSheetByName(tab);
     if (!sh) { missing.push(tab); continue; }
     try {
-      assertHeaders_(tab, headerOf_(sh));
+      assertHeaders_(tab, ensureHeaders_(sh, tab));
     } catch (err) {
       problems.push(String(err.message || err));
     }
   }
   if (ss.getSheetByName('Meta') === null) missing.push('Meta');
 
-  // An untouched template is set up automatically so "connect" is one tap.
-  if (missing.length === DATA_TABS.length + 1 || (missing.length > 0 && !readMeta_().schema_version)) {
-    setupSheet_(false);
-    problems = [];
-    missing = [];
-  }
-
-  var meta = readMeta_();
-  var version = Number(meta.schema_version || SCHEMA_VERSION);
-
-  if (version !== SCHEMA_VERSION) {
-    problems.push('Sheet schema is v' + version + ', this app expects v' + SCHEMA_VERSION + '.');
-  }
-  if (missing.length) {
+  if (missing.length > 0) {
     problems.push('Missing tabs: ' + missing.join(', ') + '. Run Setup from the sheet menu.');
+  }
+
+  var version = Number(meta.schema_version || 0);
+  if (version > SCHEMA_VERSION) {
+    problems.push('This sheet is schema v' + version + ' but the app only understands v' + SCHEMA_VERSION + '. Update the app.');
   }
 
   return {
