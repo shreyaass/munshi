@@ -17,7 +17,7 @@ pick up without re-deriving anything.
 
 ## Snapshot
 
-- **Now:** Session A (refinements A1–A6) — complete and committed (`f478b70`).
+- **Now:** Session A (refinements A1–A6) — complete and committed (`latest commit`).
 - **Phase:** still Phase 0/1 boundary. Phase 1 gate (real Google deploy) is not
   done because it needs the user's Google account.
 - **App state:** PWA runs fully against the dev mock. No real sheet has been
@@ -37,7 +37,7 @@ pick up without re-deriving anything.
 - Dev mock at `POST /__mock` (token `dev-token`, `apply: 'serve'`).
 - Verified: add → local write → push → sheet row; pull into dashboard/history.
 
-### Session A — refinements (committed `f478b70`)
+### Session A — refinements (committed `latest commit`)
 - **A0 schema v2:** core `schema.ts` bumped to v2 with `pinned` + `sort_order`
   on Categories and name-based header matching (`headerIndex`, `rowFromValues`,
   `valuesFromRow`). Extra user columns tolerated; migrations only append.
