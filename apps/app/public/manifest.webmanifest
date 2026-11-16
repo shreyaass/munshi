@@ -1,0 +1,33 @@
+{
+  "name": "Expense Manager",
+  "short_name": "Expenses",
+  "description": "A private expense tracker that stores everything in your own Google Sheet.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add expense",
+      "short_name": "Expense",
+      "url": "/#/?type=expense",
+      "description": "Log a debit"
+    },
+    {
+      "name": "Add income",
+      "short_name": "Income",
+      "url": "/#/?type=income",
+      "description": "Log a credit"
+    }
+  ]
+}

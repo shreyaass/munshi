@@ -1,0 +1,17 @@
+{
+  "name": "expense-manager",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/app",
+    "packages/core"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @em/app",
+    "build": "npm run build --workspace @em/app",
+    "preview": "npm run preview --workspace @em/app",
+    "typecheck": "npm run typecheck --workspace @em/core && npm run typecheck --workspace @em/app",
+    "test": "npm run test --workspace @em/core"
+  }
+}
