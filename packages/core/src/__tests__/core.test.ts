@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { digitsToPaise, formatPaise, parseToPaise, sumPaise } from '../money.js';
 import { daysLeftInMonth, daysInMonth, monthKey } from '../date.js';
-import { HEADERS, validateHeaders, rowFromValues, valuesFromRow, SCHEMA_VERSION } from '../schema.js';
+import { HEADERS, validateHeaders, rowFromValues, valuesFromRow, SCHEMA_VERSION, BUDGET_KINDS, BUDGET_DEFAULT_MONTH } from '../schema.js';
 import { pickQuickCategories, categoryUsage } from '../quick.js';
 
 describe('money', () => {
@@ -45,6 +45,9 @@ describe('schema v2', () => {
     expect(SCHEMA_VERSION).toBe(2);
     expect(HEADERS.Categories).toContain('pinned');
     expect(HEADERS.Categories).toContain('sort_order');
+    expect(HEADERS.Budgets).toContain('kind');
+    expect(BUDGET_KINDS).toEqual(['total', 'daily', 'category']);
+    expect(BUDGET_DEFAULT_MONTH).toBe('*');
   });
 
   it('accepts a correct header row', () => {

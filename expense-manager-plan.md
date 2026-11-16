@@ -32,7 +32,7 @@ React app (PWA + Capacitor APK)
 Apps Script Web App URL   <- pasted once by the user
    |  runs as the sheet owner, LockService mutex, sheet stays PRIVATE
    v
-Their Google Sheet (one file, 8 tabs)
+Their Google Sheet (one file, 8 data tabs + 2 generated)
 ```
 
 The local DB is **disposable** — it rehydrates from the sheet on launch. Only unsynced writes are ever at risk, a window of seconds.
@@ -82,7 +82,7 @@ Every row carries `id`, `updated_at`, `device_id`, `deleted`.
 
 ## 5. Sheet template
 
-One spreadsheet, **8 tabs**. Row 1 is a frozen header. Tab names and header order are fixed; the script validates them. Amounts are **integer paise** (never floats).
+One spreadsheet: **8 data tabs** plus 2 generated tabs. Row 1 of every data tab is a frozen header. Tab names are fixed and validated; **columns are matched by name**, so order is cosmetic, extra user columns are preserved, and migrations only append. Amounts are **integer paise** (never floats).
 
 | Tab | Columns |
 |---|---|
@@ -90,15 +90,22 @@ One spreadsheet, **8 tabs**. Row 1 is a frozen header. Tab names and header orde
 | `Income` | same shape (category_id → income categories) |
 | `Transfers` | id, date, amount_paise, from_account_id, to_account_id, notes, created_at, updated_at, device_id, deleted |
 | `Accounts` | id, name, type, opening_balance_paise, active, updated_at, device_id, deleted |
-| `Categories` | id, name, type, parent_id, icon, color, monthly_budget_paise, active, updated_at, device_id, deleted |
-| `Budgets` | id, month, category_id, amount_paise, updated_at, device_id, deleted |
+| `Categories` | id, name, type, parent_id, icon, color, monthly_budget_paise, active, updated_at, device_id, deleted, pinned, sort_order |
+| `Budgets` | id, month, kind, category_id, amount_paise, updated_at, device_id, deleted |
 | `Recurring` | id, amount_paise, type, category_id, account_id, payee, rule, next_date, active, updated_at, device_id, deleted |
 | `Meta` | key, value |
+| `View` *(generated)* | Date, Amount (₹), Category, Account, Payee, Notes — formula-only, rebuilt by Setup |
+| `Read me` *(generated)* | Plain-language explanation of the tabs, paise, tombstones and budget rows |
 
 `Accounts.type` ∈ `cash | bank | upi | credit | wallet`.
-`Meta` seeds: `schema_version=1`, `currency=INR`, `locale=en-IN`, `week_start=1`.
+`Meta` seeds: `schema_version=2`, `currency=INR`, `locale=en-IN`, `week_start=1`.
+`Categories.monthly_budget_paise` is **deprecated** — Budgets is the source of truth.
 
-**Rule:** the app writes only to these 8 tabs. Any summary/dashboard tab uses formulas only and is never touched by the app — that is what stops sync from destroying user formatting and stops the app choking on merged cells.
+**Budgets:** `month` is `*` for a standing every-month target or `YYYY-MM` for one month. `kind` is `total` (monthly expense target), `daily` (daily limit) or `category` (per-category limit, using `category_id`). Setup seeds `bud-total` and `bud-daily` at 0 so the shape is obvious.
+
+**Rule:** the app writes only to the 8 data tabs. `View` and `Read me` use formulas/text only and are rebuilt by Setup; they are never synced. That is what stops sync from destroying user formatting and stops the app choking on merged cells.
+
+**Safety rule:** never delete rows by hand and never edit `id`, `created_at`, `updated_at`, `device_id` or `deleted`. The Read me tab repeats this in the sheet itself.
 
 ## 6. Apps Script API (contract v1)
 

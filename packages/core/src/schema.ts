@@ -85,7 +85,7 @@ export const HEADERS: Record<TabName, readonly string[]> = {
     'pinned',
     'sort_order',
   ],
-  Budgets: ['id', 'month', 'category_id', 'amount_paise', ...BASE],
+  Budgets: ['id', 'month', 'kind', 'category_id', 'amount_paise', ...BASE],
   Recurring: [
     'id',
     'amount_paise',
@@ -114,9 +114,12 @@ export type AccountType = (typeof ACCOUNT_TYPES)[number];
 /** How many quick chips the Add screen shows. */
 export const QUICK_PICKS = { expense: 6, income: 2 } as const;
 
-/** Special `category_id` values inside the Budgets tab. */
-export const BUDGET_TOTAL = '__total__';
-export const BUDGET_DAILY = '__daily__';
+/** What a Budgets row targets. `category` uses `category_id`; the others ignore it. */
+export const BUDGET_KINDS = ['total', 'daily', 'category'] as const;
+export type BudgetKind = (typeof BUDGET_KINDS)[number];
+
+/** `month` value for the standing target that applies to every month. */
+export const BUDGET_DEFAULT_MONTH = '*';
 
 /**
  * Returns human-readable problems. Empty array means the tab is usable.

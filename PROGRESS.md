@@ -62,6 +62,11 @@ pick up without re-deriving anything.
   "+ New" chip (name + emoji box + suggestions), Edit sheet to pin/reorder
   categories, details sheet for payee/date/note.
 - **Mock:** now reports schema v2 and seeds `pinned`/`sort_order`.
+- **Sheet format finalized:** Budgets gained an explicit `kind` column
+  (`total | daily | category`; `month = *` for a standing target), and Setup
+  now generates two non-synced tabs: `View` (formula-only expense view in
+  rupees with category/account names resolved) and `Read me` (conventions,
+  paise, tombstones, budget cheat sheet).
 - **Verified:** `npm run typecheck`, `npm test` (14 passing), `npm run build`.
 
 ---
@@ -78,6 +83,9 @@ pick up without re-deriving anything.
   tombstones (`deleted: true` + new `updated_at`).
 - Sheet schema is matched **by name**, extra columns preserved, migrations
   append only. Never reorder user columns.
+- Budgets use an explicit `kind` (`total` / `daily` / `category`) plus
+  `month = *` for standing targets. No sentinel ids.
+- `View` and `Read me` are generated tabs, rebuilt by Setup, never synced.
 - HashRouter for PWA/APK safety. Manifest shortcuts use `/#/?type=...`.
 - Hosting: Cloudflare Pages (static). A Worker proxy only if browser CORS
   fails at the Phase 1 gate; CapacitorHttp bypasses CORS for the APK.
@@ -94,8 +102,8 @@ pick up without re-deriving anything.
    Setup, verify `ping` from the browser (CORS) and write/read/delete a row.
    If CORS blocks, add a ~30-line Cloudflare Worker proxy.
 2. Session B:
-   - Budgets as rows: `__total__` and `__daily__` in the Budgets tab, replacing
-     the current "sum of category budgets" safe-to-spend.
+   - Budgets as rows: `kind = total | daily | category` with `month = *`,
+     replacing the current "sum of category budgets" safe-to-spend.
    - History filters: date range, amount `>`/`=`/`<`, repeated entries.
    - Dashboard budget card on the new Budgets model.
 3. Session C: PWA polish (offline banner, install prompt), then Phase 5

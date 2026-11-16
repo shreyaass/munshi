@@ -38,6 +38,7 @@ function setupSheet(showDialog) {
 
   removeDefaultSheet_(ss);
   seedIfEmpty_(ss);
+  buildGeneratedTabs_(ss);
   writeMeta_('schema_version', String(SCHEMA_VERSION));
 
   if (!getToken_()) {
@@ -102,6 +103,15 @@ function seedIfEmpty_(ss) {
   if (!meta.currency) writeMeta_('currency', 'INR');
   if (!meta.locale) writeMeta_('locale', 'en-IN');
   if (!meta.week_start) writeMeta_('week_start', '1');
+
+  if (ss.getSheetByName('Budgets').getLastRow() < 2) {
+    // Standing targets. `month` = * means every month; amount 0 = "not set".
+    var budgets = [
+      ['bud-total', '*', 'total', '', 0],
+      ['bud-daily', '*', 'daily', '', 0]
+    ];
+    budgets.forEach(function (b) { appendSeed_('Budgets', b); });
+  }
 }
 
 /** Seeds use the header order for that tab. */
@@ -117,6 +127,11 @@ function appendSeed_(tab, values) {
       icon: values[4], color: values[5], monthly_budget_paise: values[6],
       active: values[7], pinned: values[8], sort_order: values[9]
     };
+  } else if (tab === 'Budgets') {
+    row = {
+      id: values[0], month: values[1], kind: values[2],
+      category_id: values[3], amount_paise: values[4]
+    };
   }
 
   row.updated_at = new Date().toISOString();
@@ -126,13 +141,188 @@ function appendSeed_(tab, values) {
 }
 
 function sortTabs_(ss) {
-  var order = ['Expenses', 'Income', 'Transfers', 'Accounts', 'Categories', 'Budgets', 'Recurring', 'Meta'];
+  var order = ['Expenses', 'Income', 'Transfers', 'Accounts', 'Categories', 'Budgets', 'Recurring', 'Meta', 'View', 'Read me'];
   order.forEach(function (name, i) {
     var sh = ss.getSheetByName(name);
     if (!sh) return;
     ss.setActiveSheet(sh);
     ss.moveActiveSheet(i + 1);
   });
+}
+
+/* -------------------------------------------------------------------------- */
+/* Generated tabs: View + Read me                                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Both tabs are script-owned, never synced:
+ *   View    — formula-only summary of Expenses in rupees with names resolved.
+ *   Read me — what the tabs mean and which cells are safe to touch.
+ * Setup rebuilds them, so they can never drift from the schema.
+ */
+
+var READ_ME_MARKER = 'Expense Manager — Read me (schema v' + SCHEMA_VERSION + ')';
+
+function getOrCreateSheet_(ss, name) {
+  return ss.getSheetByName(name) || ss.insertSheet(name);
+}
+
+/** 0-based column index -> A1 column letters (0 -> A, 26 -> AA). */
+function columnLetter_(index) {
+  var n = index + 1;
+  var letters = '';
+  while (n > 0) {
+    var rem = (n - 1) % 26;
+    letters = String.fromCharCode(65 + rem) + letters;
+    n = Math.floor((n - 1) / 26);
+  }
+  return letters;
+}
+
+function buildGeneratedTabs_(ss) {
+  buildView_(ss);
+  buildReadMe_(ss);
+}
+
+function buildView_(ss) {
+  var sh = getOrCreateSheet_(ss, 'View');
+  sh.clear();
+
+  var expHeaders = ensureHeaders_(sheetFor_('Expenses'), 'Expenses');
+  var catHeaders = ensureHeaders_(sheetFor_('Categories'), 'Categories');
+  var accHeaders = ensureHeaders_(sheetFor_('Accounts'), 'Accounts');
+  var exp = headerIndex_(expHeaders);
+  var cat = headerIndex_(catHeaders);
+  var acc = headerIndex_(accHeaders);
+
+  // The view covers the first 5,000 data rows; more than enough for <100 people.
+  var LAST = 5001;
+
+  function col(map, name) {
+    if (!(name in map)) throw new Error('View: missing column "' + name + '"');
+    return columnLetter_(map[name]);
+  }
+  function range(tab, map, name) {
+    var c = col(map, name);
+    return tab + '!$' + c + '$2:$' + c + '$' + LAST;
+  }
+
+  var idRange = range('Expenses', exp, 'id');
+  var deletedRange = range('Expenses', exp, 'deleted');
+  var guard = '((' + idRange + '="")+(' + deletedRange + '=TRUE))';
+
+  var catId = col(cat, 'id');
+  var catName = col(cat, 'name');
+  var accId = col(acc, 'id');
+  var accName = col(acc, 'name');
+
+  var catLookup =
+    'XLOOKUP(' + range('Expenses', exp, 'category_id') +
+    ',Categories!$' + catId + '$2:$' + catId + '$' + LAST +
+    ',Categories!$' + catName + '$2:$' + catName + '$' + LAST +
+    ',"?")';
+
+  var accLookup =
+    'XLOOKUP(' + range('Expenses', exp, 'account_id') +
+    ',Accounts!$' + accId + '$2:$' + accId + '$' + LAST +
+    ',Accounts!$' + accName + '$2:$' + accName + '$' + LAST +
+    ',"?")';
+
+  var formulas = [
+    '=ARRAYFORMULA(IF(' + guard + ',"",' + range('Expenses', exp, 'date') + '))',
+    '=ARRAYFORMULA(IF(' + guard + ',"",' + range('Expenses', exp, 'amount_paise') + '/100))',
+    '=ARRAYFORMULA(IF(' + guard + ',"",' + catLookup + '))',
+    '=ARRAYFORMULA(IF(' + guard + ',"",' + accLookup + '))',
+    '=ARRAYFORMULA(IF(' + guard + ',"",' + range('Expenses', exp, 'payee') + '))',
+    '=ARRAYFORMULA(IF(' + guard + ',"",' + range('Expenses', exp, 'notes') + '))'
+  ];
+
+  var header = ['DATE', 'AMOUNT (₹)', 'CATEGORY', 'ACCOUNT', 'PAYEE', 'NOTES'];
+
+  sh.getRange(1, 1, 1, header.length).merge();
+  sh.getRange(1, 1).setValue('Live expense view — generated from the Expenses tab. Do not edit; Setup rebuilds it.');
+  sh.getRange(1, 1).setFontWeight('bold').setFontSize(12);
+
+  sh.getRange(3, 1, 1, header.length).setValues([header])
+    .setFontWeight('bold')
+    .setBackground('#f1f3f4');
+  sh.getRange(4, 1, 1, formulas.length).setFormulas([formulas]);
+
+  sh.getRange(4, 1, LAST - 3, 1).setNumberFormat('yyyy-mm-dd');
+  sh.getRange(4, 2, LAST - 3, 1).setNumberFormat('"₹"#,##0.00');
+
+  sh.setFrozenRows(3);
+  sh.setColumnWidths(1, 1, 108);
+  sh.setColumnWidths(2, 1, 120);
+  sh.setColumnWidths(3, 1, 160);
+  sh.setColumnWidths(4, 1, 130);
+  sh.setColumnWidths(5, 1, 160);
+  sh.setColumnWidths(6, 1, 280);
+  sh.setTabColor('#94a3b8');
+}
+
+function buildReadMe_(ss) {
+  var sh = getOrCreateSheet_(ss, 'Read me');
+  var current = sh.getLastRow() >= 1 ? String(sh.getRange(1, 1).getValue()) : '';
+  if (current === READ_ME_MARKER) return;
+
+  sh.clear();
+
+  var lines = [
+    '# ' + READ_ME_MARKER,
+    '',
+    'This spreadsheet is the database. The app talks to it through a small Apps Script Web App; the sheet stays private in your Google Drive.',
+    '',
+    '## Tabs',
+    'Expenses / Income — one row per transaction.',
+    'Transfers — money moved between your own accounts. Never counted as income or expense.',
+    'Accounts — cash, bank, UPI, credit or wallet. active=FALSE hides an account without deleting its history.',
+    'Categories — icon, colour, quick-chip pinning (pinned, sort_order).',
+    'Budgets — targets. month is * for every month, or YYYY-MM for one month. kind is total, daily or category (category uses category_id).',
+    'Recurring — rules for future automatic entries. Not wired into the app yet.',
+    'Meta — app settings (schema_version, currency, locale, week_start). Do not edit by hand.',
+    'View — generated expense view in rupees with names resolved. Read-only by convention.',
+    'Read me — this tab. Setup rewrites it when the schema changes.',
+    '',
+    '## Columns',
+    'Amounts are integer paise: 12500 means ₹125.00. Never type ₹125 or 125.00 into a paise column.',
+    'Dates are YYYY-MM-DD. Timestamps are ISO UTC.',
+    'id, created_at, updated_at, device_id and deleted are sync bookkeeping. Do not edit them.',
+    'deleted=TRUE is a tombstone: the row stays so other devices learn about the delete. Never remove a row by hand.',
+    'You may add your own columns anywhere; the app ignores them and preserves them on update.',
+    'Do not rename or remove the required columns. Sync matches by name, so a renamed column looks missing.',
+    '',
+    '## Budgets cheat sheet',
+    'id | month | kind | category_id | amount_paise',
+    'bud-total | * | total | (empty) | 3000000    → ₹30,000 every month',
+    'bud-daily | * | daily | (empty) | 100000     → ₹1,000 a day',
+    'bud-2026-12 | 2026-12 | total | (empty) | 4000000    → December only',
+    'bud-food | * | category | cat-exp-1 | 800000    → ₹8,000/month on Food',
+    '',
+    '## Setup and safety',
+    'Run Expense Tracker > Setup / repair sheet after updating the script. It only appends missing tabs/columns; it never moves or deletes your data.',
+    'Run Expense Tracker > Rotate access token if the token leaks. Every device must then paste the new token.',
+    'The app needs the Web App URL and the access token. Treat both as passwords.'
+  ];
+
+  sh.getRange(1, 1, lines.length, 1).setValues(
+    lines.map(function (line) { return [line.replace(/^#+\s*/, '')]; })
+  );
+
+  lines.forEach(function (line, i) {
+    var row = sh.getRange(i + 1, 1);
+    if (line.indexOf('# ') === 0) {
+      row.setFontWeight('bold').setFontSize(14);
+    } else if (line.indexOf('## ') === 0) {
+      row.setFontWeight('bold').setBackground('#f1f3f4');
+    }
+  });
+
+  sh.setColumnWidth(1, 760);
+  sh.getRange(1, 1, lines.length, 1)
+    .setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP)
+    .setVerticalAlignment('top');
+  sh.setTabColor('#94a3b8');
 }
 
 /* -------------------------------------------------------------------------- */
