@@ -164,8 +164,9 @@ export function BudgetSheet({ open, onClose, month }: BudgetSheetProps) {
     >
       <div className="space-y-4 pt-1">
         <p className="text-[11px] leading-relaxed text-muted">
-          A total caps the month. A daily figure is a pace target of its own. Category limits are
-          just for reference — they never add up to the total.
+          A total caps the month. A daily figure is a pace target of its own. Goals are per
+          category — each one fills with the money still unspent, and they never add up to the
+          total.
         </p>
 
         <div className="flex rounded-lg bg-surface-muted p-0.5 text-[12px] font-medium">
@@ -249,7 +250,7 @@ export function BudgetSheet({ open, onClose, month }: BudgetSheetProps) {
 
         <div>
           <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted">
-            Category limits
+            Goals
           </p>
           <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line">
             {expenseCategories.map((category) => {

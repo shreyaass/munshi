@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolveBudgets } from '../budget.js';
+import { goalProgress, resolveBudgets } from '../budget.js';
 import type { Row } from '../types.js';
 
 function row(id: string, extra: Row): Row {
@@ -79,5 +79,54 @@ describe('resolveBudgets', () => {
     expect(resolved.total).toBe(0);
     expect(resolved.daily).toBe(0);
     expect(resolved.byCategory.size).toBe(0);
+  });
+});
+
+describe('goalProgress', () => {
+  it('fills with the money remaining, not the money spent', () => {
+    // ₹10 target, ₹2 spent -> ₹8 left -> 80% full.
+    const goal = goalProgress(1000, 200);
+    expect(goal.remaining).toBe(800);
+    expect(goal.fill).toBe(0.8);
+    expect(goal.used).toBe(0.2);
+    expect(goal.status).toBe('ok');
+  });
+
+  it('calls out the low and warning bands', () => {
+    expect(goalProgress(1000, 800).status).toBe('low'); // 20% left
+    expect(goalProgress(1000, 600).status).toBe('warn'); // 40% left
+    expect(goalProgress(1000, 500).status).toBe('ok'); // 50% left
+    expect(goalProgress(1000, 800).fill).toBe(0.2);
+  });
+
+  it('reports over-target spending and clamps the water to empty', () => {
+    const goal = goalProgress(1000, 1250);
+    expect(goal.status).toBe('over');
+    expect(goal.overBy).toBe(250);
+    expect(goal.remaining).toBe(0);
+    expect(goal.fill).toBe(0);
+    expect(goal.used).toBe(1);
+  });
+
+  it('marks an exactly-spent goal as met rather than over', () => {
+    const goal = goalProgress(1000, 1000);
+    expect(goal.status).toBe('met');
+    expect(goal.overBy).toBe(0);
+    expect(goal.fill).toBe(0);
+  });
+
+  it('returns nothing for an unset target', () => {
+    const goal = goalProgress(0, 500);
+    expect(goal.status).toBe('none');
+    expect(goal.fill).toBe(0);
+    expect(goal.remaining).toBe(0);
+    expect(goal.overBy).toBe(0);
+  });
+
+  it('tolerates negative and non-finite input', () => {
+    expect(goalProgress(-100, 50).status).toBe('none');
+    expect(goalProgress(1000, -50).spent).toBe(0);
+    expect(goalProgress(Number.NaN, 50).status).toBe('none');
+    expect(goalProgress(1000, Number.POSITIVE_INFINITY).spent).toBe(0);
   });
 });

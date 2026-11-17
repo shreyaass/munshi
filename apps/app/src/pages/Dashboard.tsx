@@ -4,6 +4,7 @@ import {
   currentMonthKey,
   daysLeftInMonth,
   formatPaise,
+  goalProgress,
   monthLabel,
   resolveBudgets,
   todayISO,
@@ -17,16 +18,20 @@ import {
   categoryTotals,
   chartColor,
   monthTotals,
+  rowMonth,
   safeToSpend,
   spentOn,
   topPayees,
 } from '../lib/analytics';
 import { BudgetSheet } from '../components/BudgetSheet';
+import { GoalSheet } from '../components/GoalSheet';
+import { GoalsCarousel } from '../components/GoalsCarousel';
 import { Icon } from '../components/Icon';
 
 export function Dashboard() {
   const [month, setMonth] = useState(currentMonthKey());
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [goalId, setGoalId] = useState('');
   const transactions = useTransactions();
   const categories = useTabRows('Categories');
   const accounts = useTabRows('Accounts');
@@ -47,6 +52,27 @@ export function Dashboard() {
   );
 
   const budget = useMemo(() => resolveBudgets(budgetRows ?? [], month), [budgetRows, month]);
+  const goals = useMemo(() => {
+    const spentByCategory = new Map<string, number>();
+    for (const { row, kind } of transactions ?? []) {
+      if (kind !== 'expense' || rowMonth(row) !== month) continue;
+      const id = asString(row.category_id);
+      spentByCategory.set(id, (spentByCategory.get(id) ?? 0) + (Number(row.amount_paise) || 0));
+    }
+
+    return [...budget.byCategory.entries()]
+      .map(([categoryId, target]) => {
+        const category = (categories ?? []).find((c) => asString(c.id) === categoryId);
+        return {
+          categoryId,
+          name: asString(category?.name) || 'Goal',
+          emoji: asString(category?.icon) || '🎯',
+          target,
+          spent: spentByCategory.get(categoryId) ?? 0,
+        };
+      })
+      .sort((a, b) => goalProgress(a.target, a.spent).fill - goalProgress(b.target, b.spent).fill);
+  }, [budget, transactions, categories, month]);
   const ceiling = budget.ceiling;
   const todaySpent = useMemo(() => spentOn(transactions ?? [], todayISO()), [transactions]);
 
@@ -202,6 +228,47 @@ export function Dashboard() {
       </button>
 
       <section>
+        <div className="mb-2 flex items-baseline justify-between gap-2">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Goals</h2>
+          {goals.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setBudgetOpen(true)}
+              className="flex items-center gap-1 text-[11px] font-medium text-muted"
+            >
+              <Icon name="edit" className="h-3 w-3" />
+              Edit goals
+            </button>
+          )}
+        </div>
+        {goals.length > 0 ? (
+          <GoalsCarousel
+            goals={goals}
+            currency={currency}
+            locale={locale}
+            onOpen={setGoalId}
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setBudgetOpen(true)}
+            className="flex w-full items-center justify-between gap-3 rounded-xl border border-dashed border-line bg-surface p-3.5 text-left"
+          >
+            <span className="block">
+              <span className="block text-[13px] font-medium">Set a goal per category</span>
+              <span className="block text-[11px] text-muted">
+                Watch the water drop as you spend.
+              </span>
+            </span>
+            <span className="flex shrink-0 items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-[11px] font-semibold text-brand-ink">
+              <Icon name="add" className="h-3 w-3" />
+              Set up
+            </span>
+          </button>
+        )}
+      </section>
+
+      <section>
         <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Where it went</h2>
         {chartData.length === 0 ? (
           <div className="rounded-xl border border-dashed border-line py-10 text-center text-xs text-muted ">
@@ -298,6 +365,12 @@ export function Dashboard() {
       </p>
 
       <BudgetSheet open={budgetOpen} onClose={() => setBudgetOpen(false)} month={month} />
+      <GoalSheet
+        open={Boolean(goalId)}
+        onClose={() => setGoalId('')}
+        categoryId={goalId}
+        month={month}
+      />
     </div>
   );
 }

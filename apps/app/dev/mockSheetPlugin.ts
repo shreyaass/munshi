@@ -63,6 +63,10 @@ const rows: Record<Tab, Row[]> = {
     base('bud-cat-food', { month: '*', kind: 'category', category_id: 'cat-exp-1', amount_paise: 400000 }),
     base('bud-cat-groc', { month: '*', kind: 'category', category_id: 'cat-exp-2', amount_paise: 600000 }),
     base('bud-cat-bills', { month: '*', kind: 'category', category_id: 'cat-exp-4', amount_paise: 1200000 }),
+    // Varied goal states for the water cards: low, over and untouched/full.
+    base('bud-cat-shopping', { month: '*', kind: 'category', category_id: 'cat-exp-5', amount_paise: 100000 }),
+    base('bud-cat-health', { month: '*', kind: 'category', category_id: 'cat-exp-6', amount_paise: 30000 }),
+    base('bud-cat-travel', { month: '*', kind: 'category', category_id: 'cat-exp-8', amount_paise: 500000 }),
   ],
   Recurring: [],
 };

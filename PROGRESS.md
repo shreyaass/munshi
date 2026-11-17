@@ -17,8 +17,9 @@ pick up without re-deriving anything.
 
 ## Snapshot
 
-- **Now:** Session C complete — budgets are real rows with an editor on the
-  dashboard and Settings. Next: History filters, then PWA polish / APK.
+- **Now:** Session D complete — goals are water-container cards in a swipeable
+  carousel on the dashboard, and Dashboard now leads the footer nav. Next:
+  palette work (deferred by the user), History filters, then PWA polish / APK.
   Still pending on the user's side: re-upload the refreshed template and
   redeploy `AppsScript.gs` so the sheet has zero accounts and the `kind`
   column that budgets rely on.
@@ -124,6 +125,35 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
   leaves the daily target standing, `Remove` restores the every-month values,
   no console errors. `typecheck`, tests and build pass.
 
+### Session D — goals: water cards in a carousel
+
+- `packages/core/src/budget.ts` — `goalProgress(target, spent)`: water is the
+  money **remaining** (₹10 target, ₹2 spent → 80% full), `status` is
+  `none | ok | warn | low | over | met` (>50% ok, 25–50% warn, <25% low, 0 with
+  spend left = met, spend past target = over). 6 new tests (27 total).
+- `components/GoalCard.tsx` — water-container card: fill height = `fill`, two
+  SVG wave strips 200% wide looping `translateX(0 → -50%)` at 13s and 9s
+  (reverse) with different opacities, emoji tile, percent / Low / Met / Over
+  pill, Fraunces amount and "left of ₹X". Waves are decorative and freeze under
+  `prefers-reduced-motion`; an over/none goal draws no waves at all.
+- `components/GoalsCarousel.tsx` — peek carousel on native scroll-snap
+  (`snap-x snap-mandatory`, 11% side spacers, cards `w-[78%] snap-center`),
+  neighbours scaled to 0.94 at 55% opacity, dots, desktop-only arrows, active
+  index measured by nearest card on scroll. Swipe is native, no drag library.
+- `components/GoalSheet.tsx` — single-goal editor: amount, every-month vs
+  this-month scope, live water preview, Remove. Writes the same
+  `Budgets(kind=category)` row as before.
+- Dashboard: Goals section under the budget card, sorted lowest fill first;
+  empty state CTA; tapping a card opens its editor. Budget sheet's
+  "Category limits" is renamed **Goals**.
+- Nav: Dashboard (was Insights) is now first, History second; titles follow.
+  Add (`/`) is still the landing route.
+- Mock seeds six goals so all states show: Food 80%, Groceries warn, Shopping
+  low, Health + Bills over, Travel untouched/full.
+- Verified light + dark at two widths: swipe/dots/arrows work, waves animate
+  (computed transform advances), saving an amount re-fills the card, no console
+  errors. `typecheck`, 27 tests and build pass.
+
 ### Open notes / deviations
 
 - `Meta` is **not** a synced tab (`DATA_TABS` excludes it; the script only reads
@@ -200,6 +230,17 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
   category limits never roll into the ceiling. A month-specific row shadows the
   standing one for that month only. Legacy `Categories.monthly_budget_paise` is
   ignored (column kept).
+- **Goals are category limits** — no new table. Water level = money remaining ÷
+  target (target ₹10, spent ₹2 → 80% full). Waves always move at the waterline.
+  Status: over if spent > target, met at exactly spent, low < 25% left,
+  warn < 50% left.
+- Goal carousel is native CSS scroll-snap (peek both sides, dots, desktop
+  arrows) — no carousel library and no drag handlers, so it cannot fight
+  vertical scrolling on Android.
+- Colour is deferred: goal water uses `--goal-*` tokens so the coming palette
+  swap is one file. Fraunces stays for money regardless of palette.
+- Navigation is Dashboard | History | FAB | Accounts | Settings; Dashboard is
+  the old Insights page. Add stays the landing route `/`.
 - `View` and `Read me` are generated tabs, rebuilt by Setup, never synced.
 - HashRouter for PWA/APK safety. Manifest shortcuts use `/#/?type=...`.
 - Hosting: Cloudflare Pages (static). A Worker proxy only if browser CORS
@@ -216,8 +257,10 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
 1. Clear the **Phase 1 gate**: deploy `apps/script` from a real sheet, run
    Setup, verify `ping` from the browser (CORS) and write/read/delete a row.
    If CORS blocks, add a ~30-line Cloudflare Worker proxy.
-2. History filters: date range, amount `>`/`=`/`<`, repeated entries.
-3. Session D: PWA polish (offline banner, install prompt), then Phase 5
+2. Palette pass (deferred until functionality is done): Cubee-style tokens,
+   goal water recolour, app icon. See the decisions log.
+3. History filters: date range, amount `>`/`=`/`<`, repeated entries.
+4. Session E: PWA polish (offline banner, install prompt), then Phase 5
    Android shell.
 
 ---

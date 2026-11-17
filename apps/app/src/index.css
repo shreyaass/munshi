@@ -43,6 +43,15 @@
   --success-bright: #8fd3ac;
   --danger-bright: #f0a6a1;
 
+  /* Goal water. The level carries the meaning; colour only reinforces it. */
+  --goal-card: #ffffff;
+  --goal-ok: #2f7a58;
+  --goal-ok-soft: #dcefe4;
+  --goal-warn: #b07a1e;
+  --goal-warn-soft: #f8e9cc;
+  --goal-low: #b5573a;
+  --goal-low-soft: #f8e0d6;
+
   color-scheme: light;
 }
 
@@ -76,6 +85,15 @@
   --gold-on-hero: #f0ce86;
   --success-bright: #8fd3ac;
   --danger-bright: #f0a6a1;
+
+  /* Goal water stays readable on the dark card without turning neon. */
+  --goal-card: #0c3325;
+  --goal-ok: #4f9e77;
+  --goal-ok-soft: #164736;
+  --goal-warn: #c9993f;
+  --goal-warn-soft: #3d3119;
+  --goal-low: #b9705a;
+  --goal-low-soft: #3d241d;
 
   color-scheme: dark;
 }
@@ -112,6 +130,14 @@
   --color-gold-on-hero: var(--gold-on-hero);
   --color-success-bright: var(--success-bright);
   --color-danger-bright: var(--danger-bright);
+
+  --color-goal-card: var(--goal-card);
+  --color-goal-ok: var(--goal-ok);
+  --color-goal-ok-soft: var(--goal-ok-soft);
+  --color-goal-warn: var(--goal-warn);
+  --color-goal-warn-soft: var(--goal-warn-soft);
+  --color-goal-low: var(--goal-low);
+  --color-goal-low-soft: var(--goal-low-soft);
 }
 
 html,
@@ -178,4 +204,34 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Goal water                                                                 */
+/* -------------------------------------------------------------------------- */
+/* The wave strip is drawn twice as wide as the card and slides exactly half   */
+/* its own width, so the loop is seamless. Two layers at different speeds and  */
+/* opacities read as moving water without any JS ticker.                       */
+@keyframes goal-wave {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.goal-wave-slow {
+  animation: goal-wave 13s linear infinite;
+}
+
+.goal-wave-fast {
+  animation: goal-wave 9s linear infinite reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .goal-wave-slow,
+  .goal-wave-fast {
+    animation: none;
+  }
 }

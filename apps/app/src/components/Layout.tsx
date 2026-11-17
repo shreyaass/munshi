@@ -9,8 +9,8 @@ import { setLocalMeta, useDirtyCount, useMetaValue, useSyncMeta, useTabRows } fr
 type NavItem = { to: string; label: string; icon: 'history' | 'chart' | 'wallet' | 'settings' };
 
 const LEFT: NavItem[] = [
+  { to: '/dashboard', label: 'Dashboard', icon: 'chart' },
   { to: '/history', label: 'History', icon: 'history' },
-  { to: '/dashboard', label: 'Insights', icon: 'chart' },
 ];
 
 const RIGHT: NavItem[] = [
@@ -21,7 +21,7 @@ const RIGHT: NavItem[] = [
 const TITLES: Record<string, string> = {
   '/': 'Add entry',
   '/history': 'History',
-  '/dashboard': 'Insights',
+  '/dashboard': 'Dashboard',
   '/accounts': 'Accounts',
   '/settings': 'Settings',
 };
