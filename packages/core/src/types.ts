@@ -54,6 +54,7 @@ export interface Category extends BaseRecord {
 
 export interface Budget extends BaseRecord {
   month: string;
+  kind: import('./schema.js').BudgetKind;
   category_id: string;
   amount_paise: number;
 }

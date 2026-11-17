@@ -17,9 +17,11 @@ pick up without re-deriving anything.
 
 ## Snapshot
 
-- **Now:** Session B complete — Munshi rebrand, onboarding, dashboard/nav
-  polish, no-seed template. Next action for the user: re-upload the refreshed
-  template + redeploy `AppsScript.gs` so their sheet starts with zero accounts.
+- **Now:** Session C complete — budgets are real rows with an editor on the
+  dashboard and Settings. Next: History filters, then PWA polish / APK.
+  Still pending on the user's side: re-upload the refreshed template and
+  redeploy `AppsScript.gs` so the sheet has zero accounts and the `kind`
+  column that budgets rely on.
 - **Phase:** Phase 1 gate cleared by the user (real sheet uploaded, two scopes
   granted, connected). Browser CORS against the real Web App is still
   unconfirmed; the mock is the tested path.
@@ -100,6 +102,28 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
 - Onboarding flow exercised end-to-end in the mock: creates the account, marks
   `onboarded`, syncs, lands on Add with the account selected.
 
+### Session C — budgets as rows
+
+- `packages/core/src/budget.ts` — `resolveBudgets(rows, month)`: month-specific
+  rows beat the standing `*` row, total and daily stay independent, the ceiling
+  is the total (or daily × days in month when no total), category limits never
+  roll into the ceiling. 7 new tests (21 total).
+- `repo.saveBudget()` upserts on the natural key `(month, kind, category_id)` so
+  editing never duplicates rows; 0 keeps the row as "unset" and can shadow the
+  standing target for one month.
+- `components/BudgetSheet.tsx` — monthly total, daily pace, per-category limits,
+  `Every month` / `<Month>` scope chips, and a "has its own budget → Remove"
+  banner for month overrides. Opens from the dashboard card and Settings.
+- Dashboard: the budget card is now a button; it shows safe-to-spend, total +
+  percent used, and daily pace + today's spend as separate lines. Category limits
+  appear as thin bars in "Where it went" (red when over). No budget → "Add a
+  monthly target" CTA.
+- Settings gained a `Planning → Monthly budgets` row with a live summary.
+- Dev mock seeds a ₹30,000 total, ₹1,500/day and three category limits.
+- Verified in the browser: save updates the card, a month override wins and
+  leaves the daily target standing, `Remove` restores the every-month values,
+  no console errors. `typecheck`, tests and build pass.
+
 ### Open notes / deviations
 
 - `Meta` is **not** a synced tab (`DATA_TABS` excludes it; the script only reads
@@ -171,6 +195,11 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
   append only. Never reorder user columns.
 - Budgets use an explicit `kind` (`total` / `daily` / `category`) plus
   `month = *` for standing targets. No sentinel ids.
+- Budget resolution: total and daily are both shown and independent; the total
+  is the monthly ceiling, daily × days is the fallback when no total is set,
+  category limits never roll into the ceiling. A month-specific row shadows the
+  standing one for that month only. Legacy `Categories.monthly_budget_paise` is
+  ignored (column kept).
 - `View` and `Read me` are generated tabs, rebuilt by Setup, never synced.
 - HashRouter for PWA/APK safety. Manifest shortcuts use `/#/?type=...`.
 - Hosting: Cloudflare Pages (static). A Worker proxy only if browser CORS
@@ -187,12 +216,8 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
 1. Clear the **Phase 1 gate**: deploy `apps/script` from a real sheet, run
    Setup, verify `ping` from the browser (CORS) and write/read/delete a row.
    If CORS blocks, add a ~30-line Cloudflare Worker proxy.
-2. Session B follow-ups (unbuilt from the plan):
-   - Budgets as rows: `kind = total | daily | category` with `month = *`,
-     replacing the current "sum of category budgets" safe-to-spend.
-   - History filters: date range, amount `>`/`=`/`<`, repeated entries.
-   - Dashboard budget card on the new Budgets model.
-3. Session C: PWA polish (offline banner, install prompt), then Phase 5
+2. History filters: date range, amount `>`/`=`/`<`, repeated entries.
+3. Session D: PWA polish (offline banner, install prompt), then Phase 5
    Android shell.
 
 ---

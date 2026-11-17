@@ -1,10 +1,16 @@
 import { useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
-import { currentMonthKey, daysLeftInMonth, formatPaise, monthLabel } from '@em/core';
+import {
+  currentMonthKey,
+  daysLeftInMonth,
+  formatPaise,
+  monthLabel,
+  resolveBudgets,
+  todayISO,
+} from '@em/core';
 import { useMetaValue, useTabRows, useTransactions } from '../lib/repo';
 import {
   accountBalances,
-  asNumber,
   asString,
   averageDays,
   averagePerDay,
@@ -12,15 +18,20 @@ import {
   chartColor,
   monthTotals,
   safeToSpend,
+  spentOn,
   topPayees,
 } from '../lib/analytics';
+import { BudgetSheet } from '../components/BudgetSheet';
+import { Icon } from '../components/Icon';
 
 export function Dashboard() {
   const [month, setMonth] = useState(currentMonthKey());
+  const [budgetOpen, setBudgetOpen] = useState(false);
   const transactions = useTransactions();
   const categories = useTabRows('Categories');
   const accounts = useTabRows('Accounts');
   const transfers = useTabRows('Transfers');
+  const budgetRows = useTabRows('Budgets');
   const currency = useMetaValue('currency', 'INR');
   const locale = useMetaValue('locale', 'en-IN');
 
@@ -35,19 +46,15 @@ export function Dashboard() {
     [accounts, transactions, transfers],
   );
 
-  const budget = useMemo(
-    () =>
-      (categories ?? [])
-        .filter((c) => asString(c.type) === 'expense' && !c.deleted)
-        .reduce((sum, c) => sum + asNumber(c.monthly_budget_paise), 0),
-    [categories],
-  );
+  const budget = useMemo(() => resolveBudgets(budgetRows ?? [], month), [budgetRows, month]);
+  const ceiling = budget.ceiling;
+  const todaySpent = useMemo(() => spentOn(transactions ?? [], todayISO()), [transactions]);
 
-  const perDay = safeToSpend(totals.spent, budget, daysLeftInMonth(month));
+  const perDay = safeToSpend(totals.spent, ceiling, daysLeftInMonth(month));
   const avgPerDay = averagePerDay(totals.spent, month);
   const avgDays = averageDays(month);
   const chartData = breakdown.slice(0, 6).map((c, i) => ({ name: c.name, value: c.amount, color: chartColor(i) }));
-  const overBudget = budget > 0 && totals.spent > budget;
+  const overBudget = ceiling > 0 && totals.spent > ceiling;
   const spentTone = overBudget || totals.net < 0 ? 'text-danger-bright' : 'text-accent';
 
   const prevMonth = useMemo(() => {
@@ -105,35 +112,94 @@ export function Dashboard() {
         </div>
       </div>
 
-      {budget > 0 && (
-        <div
-          className={`rounded-xl border p-3.5 ${
-            overBudget
+      <button
+        type="button"
+        onClick={() => setBudgetOpen(true)}
+        className={`block w-full rounded-xl border p-3.5 text-left transition active:scale-[0.995] ${
+          budget.source === 'none'
+            ? 'border-dashed border-line bg-surface'
+            : overBudget
               ? 'border-danger/25 bg-danger-soft'
               : 'border-brand/20 bg-brand/[0.06]'
-          }`}
-        >
-          <div className="flex items-baseline justify-between">
-            <p className={`text-[11px] font-medium uppercase tracking-wide ${overBudget ? 'text-danger' : 'text-brand'}`}>
-              Safe to spend today
-            </p>
-            <p className={`money text-[11px] ${overBudget ? 'text-danger' : 'text-muted'}`}>
-              {overBudget
-                ? `${formatPaise(totals.spent - budget, locale, currency, { decimals: false })} over`
-                : `${formatPaise(Math.max(0, budget - totals.spent), locale, currency, { decimals: false })} left`}
-            </p>
-          </div>
-          <p className={`money mt-1 text-2xl font-semibold ${overBudget ? 'text-danger' : 'text-brand'}`}>
-            {formatPaise(perDay, locale, currency, { decimals: false })}
-          </p>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-muted">
-            <div
-              className={`h-full rounded-full ${overBudget ? 'bg-danger' : 'bg-brand'}`}
-              style={{ width: `${Math.min(100, (totals.spent / budget) * 100)}%` }}
-            />
-          </div>
-        </div>
-      )}
+        }`}
+      >
+        {budget.source === 'none' ? (
+          <span className="flex items-center justify-between gap-3">
+            <span className="block">
+              <span className="block text-[11px] font-medium uppercase tracking-wide text-muted">
+                Budget
+              </span>
+              <span className="mt-1 block text-[13px] font-medium">Add a monthly target</span>
+              <span className="block text-[11px] text-muted">See what is safe to spend each day.</span>
+            </span>
+            <span className="flex shrink-0 items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-[11px] font-semibold text-brand-ink">
+              <Icon name="add" className="h-3 w-3" />
+              Set up
+            </span>
+          </span>
+        ) : (
+          <>
+            <span className="flex items-baseline justify-between gap-2">
+              <span
+                className={`text-[11px] font-medium uppercase tracking-wide ${
+                  overBudget ? 'text-danger' : 'text-brand'
+                }`}
+              >
+                Safe to spend today
+              </span>
+              <span className="flex shrink-0 items-center gap-1 text-[11px] text-muted">
+                <Icon name="edit" className="h-3 w-3" />
+                Edit
+              </span>
+            </span>
+            <span className="flex items-baseline justify-between gap-2">
+              <span
+                className={`money mt-1 text-2xl font-semibold ${overBudget ? 'text-danger' : 'text-brand'}`}
+              >
+                {formatPaise(perDay, locale, currency, { decimals: false })}
+              </span>
+              <span className={`money text-[11px] ${overBudget ? 'text-danger' : 'text-muted'}`}>
+                {overBudget
+                  ? `${formatPaise(totals.spent - ceiling, locale, currency, { decimals: false })} over`
+                  : `${formatPaise(Math.max(0, ceiling - totals.spent), locale, currency, { decimals: false })} left`}
+              </span>
+            </span>
+            <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-surface-muted">
+              <span
+                className={`block h-full rounded-full ${overBudget ? 'bg-danger' : 'bg-brand'}`}
+                style={{ width: `${Math.min(100, (totals.spent / ceiling) * 100)}%` }}
+              />
+            </span>
+            <span className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted">
+              {budget.total > 0 && (
+                <span>
+                  <span className="money">
+                    {formatPaise(budget.total, locale, currency, { decimals: false })}
+                  </span>{' '}
+                  total ·{' '}
+                  <span className="money">
+                    {Math.min(999, Math.round((totals.spent / budget.total) * 100))}%
+                  </span>{' '}
+                  used
+                </span>
+              )}
+              {budget.daily > 0 && (
+                <span>
+                  <span className="money">
+                    {formatPaise(budget.daily, locale, currency, { decimals: false })}
+                  </span>
+                  /day ·{' '}
+                  <span className="money">
+                    {formatPaise(todaySpent, locale, currency, { decimals: false })}
+                  </span>{' '}
+                  today
+                </span>
+              )}
+              {budget.total === 0 && budget.daily > 0 && <span>Daily pace × this month&apos;s days</span>}
+            </span>
+          </>
+        )}
+      </button>
 
       <section>
         <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Where it went</h2>
@@ -163,15 +229,29 @@ export function Dashboard() {
               </ResponsiveContainer>
             </div>
             <ul className="min-w-0 flex-1 space-y-1.5">
-              {breakdown.slice(0, 6).map((c, i) => (
-                <li key={c.categoryId} className="flex items-center gap-2 text-[11px]">
-                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: chartColor(i) }} />
-                  <span className="truncate text-muted ">{c.name}</span>
-                  <span className="ml-auto shrink-0 font-medium text-muted">
-                    {Math.round(c.share * 100)}%
-                  </span>
-                </li>
-              ))}
+              {breakdown.slice(0, 6).map((c, i) => {
+                const limit = budget.byCategory.get(c.categoryId) ?? 0;
+                const over = limit > 0 && c.amount > limit;
+                return (
+                  <li key={c.categoryId} className="text-[11px]">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: chartColor(i) }} />
+                      <span className="truncate text-muted ">{c.name}</span>
+                      <span className={`ml-auto shrink-0 font-medium ${over ? 'text-danger' : 'text-muted'}`}>
+                        {Math.round(c.share * 100)}%
+                      </span>
+                    </div>
+                    {limit > 0 && (
+                      <div className="ml-4 mt-0.5 h-1 overflow-hidden rounded-full bg-surface-muted">
+                        <div
+                          className={`h-full rounded-full ${over ? 'bg-danger' : 'bg-brand'}`}
+                          style={{ width: `${Math.min(100, (c.amount / limit) * 100)}%` }}
+                        />
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
@@ -216,6 +296,8 @@ export function Dashboard() {
       <p className="pt-1 text-center text-[10px] text-muted">
         {transactions?.length ?? 0} entries synced from your sheet
       </p>
+
+      <BudgetSheet open={budgetOpen} onClose={() => setBudgetOpen(false)} month={month} />
     </div>
   );
 }

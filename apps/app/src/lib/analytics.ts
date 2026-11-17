@@ -147,6 +147,16 @@ export function safeToSpend(spentPaise: number, budgetPaise: number, daysLeft: n
   return Math.round(remaining / Math.max(1, daysLeft));
 }
 
+/** Expense total for a single calendar day. */
+export function spentOn(transactions: Tx[], date: string): number {
+  let spent = 0;
+  for (const { row, kind } of transactions) {
+    if (kind !== 'expense' || rowDate(row) !== date) continue;
+    spent += asNumber(row.amount_paise);
+  }
+  return spent;
+}
+
 /**
  * Days the average should divide by.
  *

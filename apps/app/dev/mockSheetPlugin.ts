@@ -58,8 +58,11 @@ const rows: Record<Tab, Row[]> = {
   Income: [],
   Transfers: [],
   Budgets: [
-    base('bud-total', { month: '*', kind: 'total', category_id: '', amount_paise: 0 }),
-    base('bud-daily', { month: '*', kind: 'daily', category_id: '', amount_paise: 0 }),
+    base('bud-total', { month: '*', kind: 'total', category_id: '', amount_paise: 3000000 }),
+    base('bud-daily', { month: '*', kind: 'daily', category_id: '', amount_paise: 150000 }),
+    base('bud-cat-food', { month: '*', kind: 'category', category_id: 'cat-exp-1', amount_paise: 400000 }),
+    base('bud-cat-groc', { month: '*', kind: 'category', category_id: 'cat-exp-2', amount_paise: 600000 }),
+    base('bud-cat-bills', { month: '*', kind: 'category', category_id: 'cat-exp-4', amount_paise: 1200000 }),
   ],
   Recurring: [],
 };

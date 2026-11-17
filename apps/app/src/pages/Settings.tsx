@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { currentMonthKey, formatPaise, resolveBudgets } from '@em/core';
 import { useConnectionState } from '../lib/connection';
-import { exportCsv, useSyncMeta } from '../lib/repo';
+import { exportCsv, useMetaValue, useSyncMeta, useTabRows } from '../lib/repo';
 import { useSync } from '../lib/SyncProvider';
 import { useTheme, type ThemeMode } from '../lib/theme';
 import { db } from '../lib/db';
+import { BudgetSheet } from '../components/BudgetSheet';
+import { Icon } from '../components/Icon';
 
 const THEMES: { value: ThemeMode; label: string; emoji: string }[] = [
   { value: 'system', label: 'System', emoji: '🖥️' },
@@ -55,6 +58,15 @@ export function Settings() {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [budgetOpen, setBudgetOpen] = useState(false);
+  const budgetRows = useTabRows('Budgets');
+  const currency = useMetaValue('currency', 'INR');
+  const locale = useMetaValue('locale', 'en-IN');
+  const budget = resolveBudgets(budgetRows ?? [], currentMonthKey());
+  const budgetSummary =
+    budget.ceiling > 0
+      ? `${formatPaise(budget.ceiling, locale, currency, { decimals: false })} this month`
+      : 'Not set';
 
   const shortUrl = conn ? conn.url.replace(/^https:\/\/script\.google\.com\/macros\/s\//, '…/') : '—';
 
@@ -111,6 +123,23 @@ export function Settings() {
         <div className="px-3.5 py-3">
           <ThemeControl />
         </div>
+      </section>
+
+      <section className="overflow-hidden rounded-xl border border-line ">
+        <h2 className="border-b border-line bg-bg px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted ">
+          Planning
+        </h2>
+        <button
+          type="button"
+          onClick={() => setBudgetOpen(true)}
+          className="flex w-full items-center justify-between gap-3 px-3.5 py-2.5 text-left text-sm transition active:bg-surface-muted/60"
+        >
+          <span>Monthly budgets</span>
+          <span className="flex items-center gap-1.5 text-[11px] text-muted">
+            {budgetSummary}
+            <Icon name="back" className="h-3.5 w-3.5 rotate-180" />
+          </span>
+        </button>
       </section>
 
       <section className="overflow-hidden rounded-xl border border-line ">
@@ -181,6 +210,12 @@ export function Settings() {
         <br />
         Your entries live in your Google Sheet. This app holds only a local cache.
       </p>
+
+      <BudgetSheet
+        open={budgetOpen}
+        onClose={() => setBudgetOpen(false)}
+        month={currentMonthKey()}
+      />
     </div>
   );
 }

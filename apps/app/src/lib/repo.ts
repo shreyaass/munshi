@@ -305,6 +305,54 @@ export async function addTransfer(input: {
 type AccountRow = { name: string; type: import('@em/core').AccountType };
 
 /* -------------------------------------------------------------------------- */
+/* Budgets                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Upserts one budget target. The natural key is `(month, kind, category_id)`,
+ * so saving twice edits the same row instead of piling up duplicates. A zero
+ * amount means "unset", but the row is kept so it can shadow a standing target
+ * for that one month.
+ */
+export async function saveBudget(input: {
+  kind: import('@em/core').BudgetKind;
+  month: string;
+  categoryId?: string;
+  amountPaise: number;
+}): Promise<void> {
+  const categoryId = input.kind === 'category' ? (input.categoryId ?? '') : '';
+  const existing = (await db.rows.where('tab').equals('Budgets').toArray()).find(
+    (r) =>
+      !r.deleted &&
+      String(r.data.kind) === input.kind &&
+      String(r.data.month) === input.month &&
+      String(r.data.category_id ?? '') === categoryId,
+  );
+
+  const ts = nowISO();
+  const row: Row = existing
+    ? {
+        ...existing.data,
+        amount_paise: input.amountPaise,
+        updated_at: ts,
+        device_id: getDeviceId(),
+        deleted: false,
+      }
+    : {
+        id: newId(),
+        month: input.month,
+        kind: input.kind,
+        category_id: categoryId,
+        amount_paise: input.amountPaise,
+        updated_at: ts,
+        device_id: getDeviceId(),
+        deleted: false,
+      };
+
+  await db.rows.put(toLocalRow('Budgets', row, true));
+}
+
+/* -------------------------------------------------------------------------- */
 /* Reads                                                                       */
 /* -------------------------------------------------------------------------- */
 
