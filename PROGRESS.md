@@ -17,12 +17,11 @@ pick up without re-deriving anything.
 
 ## Snapshot
 
-- **Now:** Session D complete — goals are water-container cards in a swipeable
-  carousel on the dashboard, and Dashboard now leads the footer nav. Next:
-  palette work (deferred by the user), History filters, then PWA polish / APK.
-  Still pending on the user's side: re-upload the refreshed template and
-  redeploy `AppsScript.gs` so the sheet has zero accounts and the `kind`
-  column that budgets rely on.
+- **Now:** Session E complete — goals have a proper manager for creating,
+  editing and removing targets, and budgets are trimmed to total + daily. Next:
+  History filters + edit/repeat. Still pending on the user's side: re-upload the
+  refreshed template and redeploy `AppsScript.gs` so the sheet has zero accounts
+  and the `kind` column that budgets rely on.
 - **Phase:** Phase 1 gate cleared by the user (real sheet uploaded, two scopes
   granted, connected). Browser CORS against the real Web App is still
   unconfirmed; the mock is the tested path.
@@ -154,6 +153,25 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
   (computed transform advances), saving an amount re-fills the card, no console
   errors. `typecheck`, 27 tests and build pass.
 
+### Session E — goals manager
+
+- `components/GoalsSheet.tsx` — the one place goals are created, edited and
+  removed. Shows every goal with its live remaining amount and percent; tap a
+  row to edit. `New goal` switches to a category picker that only lists
+  categories without a goal, so duplicates are impossible. Empty states for
+  "no goals yet" and "every category has a goal".
+- Dashboard: **Edit goals** is always visible (it used to disappear at zero
+  goals) and the empty-state CTA opens the manager directly. Tapping a water
+  card still opens that single goal's editor.
+- Settings → Planning now has separate **Goals** and **Monthly budgets** rows,
+  with live summaries (`6 goals`, `₹30,000 this month`).
+- `BudgetSheet` trimmed to monthly total + daily pace and no longer edits
+  category targets; a line points at Goals.
+- Verified light + dark: create a goal (Transport ₹500 appeared as 91% water),
+  edit one (Shopping ₹1,000 → ₹1,200 updated dashboard + list), remove one
+  (gone from both, category returned to the picker), Settings entry point, no
+  console errors. `typecheck`, 27 tests and build pass.
+
 ### Open notes / deviations
 
 - `Meta` is **not** a synced tab (`DATA_TABS` excludes it; the script only reads
@@ -234,6 +252,9 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
   target (target ₹10, spent ₹2 → 80% full). Waves always move at the waterline.
   Status: over if spent > target, met at exactly spent, low < 25% left,
   warn < 50% left.
+- Goals are managed only in `GoalsSheet` (list, add-picker, edit, remove); the
+  budget sheet is total + daily only. Creating a goal is always explicit, never
+  inferred from a blank field.
 - Goal carousel is native CSS scroll-snap (peek both sides, dots, desktop
   arrows) — no carousel library and no drag handlers, so it cannot fight
   vertical scrolling on Android.
@@ -257,10 +278,13 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
 1. Clear the **Phase 1 gate**: deploy `apps/script` from a real sheet, run
    Setup, verify `ping` from the browser (CORS) and write/read/delete a row.
    If CORS blocks, add a ~30-line Cloudflare Worker proxy.
-2. Palette pass (deferred until functionality is done): Cubee-style tokens,
+2. Session F — History: filter sheet (range presets + custom, type, amount
+   `>`/`=`/`<`, category, sort), active-filter chips, relabelled totals,
+   repeat via Add prefill, and edit via `updateTransaction`. Add
+   `packages/core/src/history.ts` helpers + tests.
+3. Palette pass (deferred until functionality is done): Cubee-style tokens,
    goal water recolour, app icon. See the decisions log.
-3. History filters: date range, amount `>`/`=`/`<`, repeated entries.
-4. Session E: PWA polish (offline banner, install prompt), then Phase 5
+4. Session G: PWA polish (offline banner, install prompt), then Phase 5
    Android shell.
 
 ---

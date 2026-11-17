@@ -26,11 +26,13 @@ import {
 import { BudgetSheet } from '../components/BudgetSheet';
 import { GoalSheet } from '../components/GoalSheet';
 import { GoalsCarousel } from '../components/GoalsCarousel';
+import { GoalsSheet } from '../components/GoalsSheet';
 import { Icon } from '../components/Icon';
 
 export function Dashboard() {
   const [month, setMonth] = useState(currentMonthKey());
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [goalsOpen, setGoalsOpen] = useState(false);
   const [goalId, setGoalId] = useState('');
   const transactions = useTransactions();
   const categories = useTabRows('Categories');
@@ -230,16 +232,14 @@ export function Dashboard() {
       <section>
         <div className="mb-2 flex items-baseline justify-between gap-2">
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Goals</h2>
-          {goals.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setBudgetOpen(true)}
-              className="flex items-center gap-1 text-[11px] font-medium text-muted"
-            >
-              <Icon name="edit" className="h-3 w-3" />
-              Edit goals
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setGoalsOpen(true)}
+            className="flex items-center gap-1 text-[11px] font-medium text-muted"
+          >
+            <Icon name="edit" className="h-3 w-3" />
+            Edit goals
+          </button>
         </div>
         {goals.length > 0 ? (
           <GoalsCarousel
@@ -251,7 +251,7 @@ export function Dashboard() {
         ) : (
           <button
             type="button"
-            onClick={() => setBudgetOpen(true)}
+            onClick={() => setGoalsOpen(true)}
             className="flex w-full items-center justify-between gap-3 rounded-xl border border-dashed border-line bg-surface p-3.5 text-left"
           >
             <span className="block">
@@ -365,6 +365,7 @@ export function Dashboard() {
       </p>
 
       <BudgetSheet open={budgetOpen} onClose={() => setBudgetOpen(false)} month={month} />
+      <GoalsSheet open={goalsOpen} onClose={() => setGoalsOpen(false)} month={month} />
       <GoalSheet
         open={Boolean(goalId)}
         onClose={() => setGoalId('')}

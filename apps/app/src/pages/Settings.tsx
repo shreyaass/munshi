@@ -7,6 +7,7 @@ import { useSync } from '../lib/SyncProvider';
 import { useTheme, type ThemeMode } from '../lib/theme';
 import { db } from '../lib/db';
 import { BudgetSheet } from '../components/BudgetSheet';
+import { GoalsSheet } from '../components/GoalsSheet';
 import { Icon } from '../components/Icon';
 
 const THEMES: { value: ThemeMode; label: string; emoji: string }[] = [
@@ -59,6 +60,7 @@ export function Settings() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [goalsOpen, setGoalsOpen] = useState(false);
   const budgetRows = useTabRows('Budgets');
   const currency = useMetaValue('currency', 'INR');
   const locale = useMetaValue('locale', 'en-IN');
@@ -66,6 +68,10 @@ export function Settings() {
   const budgetSummary =
     budget.ceiling > 0
       ? `${formatPaise(budget.ceiling, locale, currency, { decimals: false })} this month`
+      : 'Not set';
+  const goalsSummary =
+    budget.byCategory.size > 0
+      ? `${budget.byCategory.size} ${budget.byCategory.size === 1 ? 'goal' : 'goals'}`
       : 'Not set';
 
   const shortUrl = conn ? conn.url.replace(/^https:\/\/script\.google\.com\/macros\/s\//, '…/') : '—';
@@ -129,6 +135,17 @@ export function Settings() {
         <h2 className="border-b border-line bg-bg px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted ">
           Planning
         </h2>
+        <button
+          type="button"
+          onClick={() => setGoalsOpen(true)}
+          className="flex w-full items-center justify-between gap-3 border-b border-line px-3.5 py-2.5 text-left text-sm transition active:bg-surface-muted/60"
+        >
+          <span>Goals</span>
+          <span className="flex items-center gap-1.5 text-[11px] text-muted">
+            {goalsSummary}
+            <Icon name="back" className="h-3.5 w-3.5 rotate-180" />
+          </span>
+        </button>
         <button
           type="button"
           onClick={() => setBudgetOpen(true)}
@@ -214,6 +231,11 @@ export function Settings() {
       <BudgetSheet
         open={budgetOpen}
         onClose={() => setBudgetOpen(false)}
+        month={currentMonthKey()}
+      />
+      <GoalsSheet
+        open={goalsOpen}
+        onClose={() => setGoalsOpen(false)}
         month={currentMonthKey()}
       />
     </div>
