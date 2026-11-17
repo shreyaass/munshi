@@ -84,7 +84,9 @@ export async function addTransaction(input: NewTransactionInput): Promise<string
 export async function updateTransaction(
   tab: DataTab,
   id: string,
-  patch: Partial<Pick<Transaction, 'amount_paise' | 'category_id' | 'account_id' | 'date' | 'payee' | 'notes'>>,
+  patch: Partial<
+    Pick<Transaction, 'amount_paise' | 'category_id' | 'account_id' | 'date' | 'payee' | 'notes'>
+  >,
 ): Promise<void> {
   const existing = await db.rows.get(rowKey(tab, id));
   if (!existing) return;
@@ -159,7 +161,10 @@ export async function addCategory(input: {
   return id;
 }
 
-export async function updateCategory(id: string, patch: Partial<Pick<CategoryRow, 'name' | 'icon' | 'color' | 'active'>>): Promise<void> {
+export async function updateCategory(
+  id: string,
+  patch: Partial<Pick<CategoryRow, 'name' | 'icon' | 'color' | 'active'>>,
+): Promise<void> {
   const existing = await db.rows.get(rowKey('Categories', id));
   if (!existing) return;
 
@@ -204,8 +209,16 @@ export async function moveCategory(id: string, direction: -1 | 1): Promise<void>
   const b = pinned[target];
   const ts = nowISO();
 
-  await db.rows.put(toLocalRow('Categories', { ...a, sort_order: target + 1, updated_at: ts, device_id: getDeviceId() }, true));
-  await db.rows.put(toLocalRow('Categories', { ...b, sort_order: index + 1, updated_at: ts, device_id: getDeviceId() }, true));
+  await db.rows.put(
+    toLocalRow(
+      'Categories',
+      { ...a, sort_order: target + 1, updated_at: ts, device_id: getDeviceId() },
+      true,
+    ),
+  );
+  await db.rows.put(
+    toLocalRow('Categories', { ...b, sort_order: index + 1, updated_at: ts, device_id: getDeviceId() }, true),
+  );
 }
 
 type CategoryRow = {
@@ -328,6 +341,11 @@ export function useMetaValue(key: string, fallback: string): string {
   return value ?? fallback;
 }
 
+/** Local-only settings (device, onboarding). Never travels to the sheet. */
+export async function setLocalMeta(key: string, value: string): Promise<void> {
+  await db.meta.put({ key, value });
+}
+
 export function useDirtyCount(): number {
   const count = useLiveQuery(() => db.rows.where('dirty').equals(1).count(), []);
   return count ?? 0;
@@ -354,9 +372,6 @@ export async function exportCsv(): Promise<string> {
   if (visible.length === 0) return '';
 
   const headers = [...new Set(visible.flatMap((r) => Object.keys(r)))];
-  const lines = [
-    headers.join(','),
-    ...visible.map((r) => headers.map((h) => csvCell(r[h])).join(',')),
-  ];
+  const lines = [headers.join(','), ...visible.map((r) => headers.map((h) => csvCell(r[h])).join(','))];
   return lines.join('\n');
 }

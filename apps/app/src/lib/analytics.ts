@@ -33,11 +33,7 @@ export function categoriesFor(categories: Row[], type: 'expense' | 'income'): Ro
 }
 
 /** Opening balance + income - expenses + transfers in - transfers out. */
-export function accountBalances(
-  accounts: Row[],
-  transactions: Tx[],
-  transfers: Row[],
-): Map<string, number> {
+export function accountBalances(accounts: Row[], transactions: Tx[], transfers: Row[]): Map<string, number> {
   const balances = new Map<string, number>();
   for (const a of accounts) {
     if (asBool(a.deleted)) continue;
@@ -149,4 +145,35 @@ export function safeToSpend(spentPaise: number, budgetPaise: number, daysLeft: n
   if (budgetPaise <= 0) return 0;
   const remaining = Math.max(0, budgetPaise - spentPaise);
   return Math.round(remaining / Math.max(1, daysLeft));
+}
+
+/**
+ * Days the average should divide by.
+ *
+ * The current month is still in progress, so dividing by 30 would understate
+ * today's pace; use the days elapsed so far (today counts). A past month is
+ * complete, so use its real length. Future months fall back to their length.
+ */
+export function averageDays(month: string, today = new Date()): number {
+  const [year, monthNumber] = month.split('-').map(Number);
+  const daysInMonth = new Date(year, monthNumber, 0).getDate();
+  const nowMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+  if (month > nowMonth) return daysInMonth;
+  if (month === nowMonth) return Math.min(daysInMonth, today.getDate());
+  return daysInMonth;
+}
+
+export function averagePerDay(spentPaise: number, month: string, today = new Date()): number {
+  return Math.round(spentPaise / Math.max(1, averageDays(month, today)));
+}
+
+/**
+ * Chart colours stay in the ledger family (forest, gold, terracotta, olive,
+ * teal, rosewood) instead of a rainbow, so the donut reads as one palette.
+ */
+export const CHART_PALETTE = ['#0B4B34', '#D6A747', '#B65C3A', '#7C8C4A', '#3E6F68', '#8E4B4B'] as const;
+
+export function chartColor(index: number): string {
+  return CHART_PALETTE[index % CHART_PALETTE.length];
 }

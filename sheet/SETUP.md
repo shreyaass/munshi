@@ -39,9 +39,12 @@ Edit the sources, not the generated copy.
 3. Approve the Google permission prompt (the script runs as you, on this sheet).
 4. Accept the dialog. Setup will:
    - append any missing columns (it never moves your data),
-   - seed budgets if the tab is empty,
+   - seed categories and budgets if those tabs are empty,
    - generate the **View** and **Read me** tabs,
    - create the access token.
+
+   `Accounts` is intentionally left empty — the app asks for your first account
+   (and its real current balance) the first time you connect.
 
 ## 4. Deploy the Web App
 

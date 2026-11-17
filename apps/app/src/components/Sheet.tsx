@@ -34,7 +34,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
           <motion.div
-            className="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -44,7 +44,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            className="relative w-full max-w-md overflow-hidden rounded-t-3xl border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] dark:border-slate-800 dark:bg-slate-900"
+            className="relative w-full max-w-md overflow-hidden rounded-t-3xl border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] "
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -56,13 +56,13 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-muted transition active:scale-95"
               >
-                <Icon name="close" className="h-4 w-4" />
+                <Icon name="close" className="h-[18px] w-[18px]" strokeWidth={2} />
               </button>
             </div>
             <div className="max-h-[70vh] overflow-y-auto px-4 pb-4">{children}</div>
-            {footer && <div className="border-t border-slate-100 px-4 py-3 dark:border-slate-800">{footer}</div>}
+            {footer && <div className="border-t border-line px-4 py-3 ">{footer}</div>}
           </motion.div>
         </div>
       )}

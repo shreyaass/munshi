@@ -74,20 +74,21 @@ export function Connect() {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-white px-5 py-8 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
-      <div className="mb-8 flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-sky-500 text-lg font-bold text-white">
-          ₹
-        </div>
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-bg px-5 py-8 text-ink">
+      <div className="mb-7 flex items-center gap-3">
+        <img src="/icons/icon-192.png" alt="" className="h-12 w-12 rounded-2xl" />
         <div>
-          <h1 className="text-lg font-semibold tracking-tight">Connect your sheet</h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Your data stays in your own Google Drive.</p>
+          <p className="text-[15px] font-semibold tracking-tight">Munshi</p>
+          <h1 className="text-[22px] font-semibold leading-tight tracking-tight">Connect your sheet</h1>
         </div>
       </div>
+      <p className="mb-6 text-[12px] leading-relaxed text-muted">
+        Your data stays in your own Google Drive. No account, no server, no tracking.
+      </p>
 
       <div className="space-y-4">
         <label className="block">
-          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted">
             Web App URL
           </span>
           <input
@@ -98,12 +99,12 @@ export function Connect() {
             autoCorrect="off"
             spellCheck={false}
             inputMode="url"
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 font-mono text-[13px] outline-none ring-indigo-500 focus:ring-2 dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-xl border border-line bg-bg px-3.5 py-3 font-mono text-[13px] outline-none ring-brand focus:ring-2 "
           />
         </label>
 
         <label className="block">
-          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted">
             Access token
           </span>
           <input
@@ -113,19 +114,19 @@ export function Connect() {
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck={false}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 font-mono text-[13px] outline-none ring-indigo-500 focus:ring-2 dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-xl border border-line bg-bg px-3.5 py-3 font-mono text-[13px] outline-none ring-brand focus:ring-2 "
           />
         </label>
 
         {error && (
-          <div className="flex gap-2 rounded-xl bg-rose-50 px-3.5 py-3 text-sm text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">
+          <div className="flex gap-2 rounded-xl bg-danger-soft px-3.5 py-3 text-sm text-danger ">
             <Icon name="alert" className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {problems.length > 0 && (
-          <div className="rounded-xl bg-amber-50 px-3.5 py-3 text-sm text-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
+          <div className="rounded-xl bg-warning-soft px-3.5 py-3 text-sm text-warning ">
             <p className="mb-1 font-medium">The sheet needs attention:</p>
             <ul className="list-disc space-y-1 pl-4">
               {problems.map((p) => (
@@ -139,7 +140,7 @@ export function Connect() {
           type="button"
           onClick={handleConnect}
           disabled={busy}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-sm font-semibold text-white transition active:scale-[0.99] disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-semibold text-brand-ink transition active:scale-[0.99] disabled:opacity-60"
         >
           {busy ? 'Checking…' : 'Connect'}
           {!busy && <Icon name="check" className="h-4 w-4" />}
@@ -148,14 +149,14 @@ export function Connect() {
         <button
           type="button"
           onClick={() => navigate('/tour')}
-          className="w-full rounded-xl border border-slate-200 py-3 text-sm font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300"
+          className="w-full rounded-xl border border-line py-3 text-sm font-medium text-muted "
         >
           I don't have these yet — show me how
         </button>
       </div>
 
-      <p className="mt-auto pt-10 text-center text-[11px] leading-relaxed text-slate-400">
-        No account, no server, no tracking. The app talks only to the Web App URL you paste here.
+      <p className="mt-auto pt-10 text-center text-[11px] leading-relaxed text-muted">
+        The app talks only to the Web App URL you paste here.
       </p>
     </div>
   );

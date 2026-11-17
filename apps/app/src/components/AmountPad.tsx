@@ -38,7 +38,7 @@ export function AmountPad({ value, onChange }: AmountPadProps) {
           key={key}
           type="button"
           onClick={() => onChange(applyKey(value, key))}
-          className="flex h-full min-h-0 items-center justify-center rounded-xl bg-slate-100 text-xl font-semibold text-slate-800 transition active:scale-95 active:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:active:bg-slate-700"
+          className="flex h-full min-h-0 items-center justify-center rounded-xl bg-surface-muted text-xl font-semibold text-ink transition active:scale-95 active:bg-line dark:active:bg-surface-muted"
           aria-label={key === '⌫' ? 'Backspace' : key}
         >
           {key}

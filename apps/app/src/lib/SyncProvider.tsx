@@ -47,7 +47,14 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     const conn = loadConnection();
     if (!conn) {
       setStatus('idle');
-      return { ok: false, pushed: 0, pulled: 0, conflicts: 0, at: new Date().toISOString(), error: 'Not connected' };
+      return {
+        ok: false,
+        pushed: 0,
+        pulled: 0,
+        conflicts: 0,
+        at: new Date().toISOString(),
+        error: 'Not connected',
+      };
     }
 
     running.current = true;

@@ -1,10 +1,117 @@
+/* Bundled locally so the PWA keeps its typography offline. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/fraunces';
 @import 'tailwindcss';
 
 /* Class-based dark mode so Settings can override the system preference. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --font-sans: 'Inter var', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+/* -------------------------------------------------------------------------- */
+/* Munshi brand palette                                                        */
+/* -------------------------------------------------------------------------- */
+/* Light: ivory paper + deep forest + antique gold.                            */
+/* Dark: warm forest, never black. Gold becomes the primary action colour.     */
+:root {
+  --brand: #073d2b;
+  --brand-hover: #14563d;
+  --brand-ink: #fff6e8;
+
+  --accent: #d6a747;
+  --accent-soft: #f3d58a;
+  --accent-ink: #24352d;
+
+  --bg: #fff6e8;
+  --surface: #ffffff;
+  --surface-muted: #e9dfc9;
+
+  --ink: #24352d;
+  --muted: #6b6457;
+  --line: #e9dfc9;
+
+  --success: #287a50;
+  --warning: #8a5a12;
+  --danger: #a03c3a;
+
+  --danger-soft: #f7e7e4;
+  --warning-soft: #fbf0d9;
+
+  /* Fixed high-contrast tones for use on the deep-green hero card. */
+  --hero: #073d2b;
+  --hero-ink: #fff6e8;
+  --hero-muted: #b7cfc3;
+  --gold-on-hero: #f0ce86;
+  --success-bright: #8fd3ac;
+  --danger-bright: #f0a6a1;
+
+  color-scheme: light;
+}
+
+.dark {
+  --brand: #e3b65c;
+  --brand-hover: #f3d58a;
+  --brand-ink: #07251b;
+
+  --accent: #d6a747;
+  --accent-soft: #4a3b1d;
+  --accent-ink: #07251b;
+
+  --bg: #07251b;
+  --surface: #0c3325;
+  --surface-muted: #123f2f;
+
+  --ink: #fff6e8;
+  --muted: #b9b19f;
+  --line: #1d4a38;
+
+  --success: #6fbf93;
+  --warning: #e0b25b;
+  --danger: #e08a87;
+
+  --danger-soft: #3a1f1e;
+  --warning-soft: #3a2e17;
+
+  --hero: #0c3325;
+  --hero-ink: #fff6e8;
+  --hero-muted: #b9b19f;
+  --gold-on-hero: #f0ce86;
+  --success-bright: #8fd3ac;
+  --danger-bright: #f0a6a1;
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-ink: var(--brand-ink);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning-soft: var(--warning-soft);
+
+  --color-hero: var(--hero);
+  --color-hero-ink: var(--hero-ink);
+  --color-hero-muted: var(--hero-muted);
+  --color-gold-on-hero: var(--gold-on-hero);
+  --color-success-bright: var(--success-bright);
+  --color-danger-bright: var(--danger-bright);
 }
 
 html,
@@ -18,6 +125,31 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
   font-feature-settings: 'cv11', 'ss01';
+  background-color: var(--bg);
+  color: var(--ink);
+}
+
+/* Display face, reserved for money. */
+.font-display {
+  font-optical-sizing: auto;
+  font-variation-settings:
+    'SOFT' 0,
+    'WONK' 0;
+  letter-spacing: -0.01em;
+}
+
+/* Money: lining, tabular figures so amounts line up and ₹ never breaks rhythm. */
+.money {
+  font-family: var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings:
+    'lnum' 1,
+    'tnum' 1;
+  letter-spacing: -0.015em;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Safe areas for Android / iOS standalone mode */

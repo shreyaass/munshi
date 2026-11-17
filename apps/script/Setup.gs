@@ -2,7 +2,7 @@
  * Setup, menu and token management.
  *
  * The user deploys the Web App manually (Google does not allow automating it).
- * Everything else — tabs, headers, seed accounts/categories, token — happens here.
+ * Everything else — tabs, headers, seed categories/budgets, token — happens here.
  */
 
 var MENU_NAME = 'Expense Tracker';
@@ -58,15 +58,8 @@ function removeDefaultSheet_(ss) {
 }
 
 function seedIfEmpty_(ss) {
-  if (ss.getSheetByName('Accounts').getLastRow() < 2) {
-    var accounts = [
-      ['acc-cash', 'Cash', 'cash', 0, true],
-      ['acc-bank', 'Bank', 'bank', 0, true],
-      ['acc-upi', 'UPI', 'upi', 0, true]
-    ];
-    accounts.forEach(function (a) { appendSeed_('Accounts', a); });
-  }
-
+  // Accounts are deliberately NOT seeded: the app asks for the first account
+  // (and its real current balance) during onboarding, so the sheet starts empty.
   if (ss.getSheetByName('Categories').getLastRow() < 2) {
     // name, icon, colour, pinned, sort_order
     // Only a few are pinned; the Add screen fills the remaining slots from

@@ -6,7 +6,7 @@ Run from the project root: python sheet/build_template.py
 
 Keep this in sync with:
   packages/core/src/schema.ts   (headers, schema version)
-  apps/script/Setup.gs          (seed accounts/categories/budgets)
+  apps/script/Setup.gs          (seed categories/budgets)
 The script's Setup / repair sheet only appends missing columns, so this file
 must already match the current schema exactly.
 """
@@ -67,12 +67,6 @@ BOOL_COLUMNS = {"active", "deleted", "pinned"}
 
 HEADER_FILL = PatternFill("solid", fgColor="F1F3F4")
 
-SEED_ACCOUNTS = [
-    ["acc-cash", "Cash", "cash", 0, True, NOW, DEVICE, False],
-    ["acc-bank", "Bank", "bank", 0, True, NOW, DEVICE, False],
-    ["acc-upi", "UPI", "upi", 0, True, NOW, DEVICE, False],
-]
-
 SEED_CATEGORIES = [
     # id, name, icon, colour, pinned, sort_order
     ["cat-exp-1", "Food", "🍜", "#f97316", True, 1],
@@ -101,7 +95,6 @@ def category_rows():
 
 
 SEEDS = {
-    "Accounts": SEED_ACCOUNTS,
     "Categories": category_rows(),
     "Budgets": [
         ["bud-total", "*", "total", "", 0, NOW, DEVICE, False],

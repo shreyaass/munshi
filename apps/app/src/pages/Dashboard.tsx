@@ -1,17 +1,15 @@
 import { useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
-import {
-  currentMonthKey,
-  daysLeftInMonth,
-  formatPaise,
-  monthLabel,
-} from '@em/core';
+import { currentMonthKey, daysLeftInMonth, formatPaise, monthLabel } from '@em/core';
 import { useMetaValue, useTabRows, useTransactions } from '../lib/repo';
 import {
   accountBalances,
   asNumber,
   asString,
+  averageDays,
+  averagePerDay,
   categoryTotals,
+  chartColor,
   monthTotals,
   safeToSpend,
   topPayees,
@@ -46,7 +44,11 @@ export function Dashboard() {
   );
 
   const perDay = safeToSpend(totals.spent, budget, daysLeftInMonth(month));
-  const chartData = breakdown.slice(0, 6).map((c) => ({ name: c.name, value: c.amount, color: c.color }));
+  const avgPerDay = averagePerDay(totals.spent, month);
+  const avgDays = averageDays(month);
+  const chartData = breakdown.slice(0, 6).map((c, i) => ({ name: c.name, value: c.amount, color: chartColor(i) }));
+  const overBudget = budget > 0 && totals.spent > budget;
+  const spentTone = overBudget || totals.net < 0 ? 'text-danger-bright' : 'text-accent';
 
   const prevMonth = useMemo(() => {
     const [y, m] = month.split('-').map(Number);
@@ -63,24 +65,26 @@ export function Dashboard() {
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value || currentMonthKey())}
-          className="rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-medium text-slate-700 outline-none dark:bg-slate-800 dark:text-slate-200"
+          className="rounded-lg bg-surface-muted px-2.5 py-1.5 text-xs font-medium text-ink outline-none "
         />
-        <span className="text-xs text-slate-400">{monthLabel(month, locale)}</span>
+        <span className="text-xs text-muted">{monthLabel(month, locale)}</span>
       </div>
 
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-4 text-white">
-        <p className="text-[11px] uppercase tracking-wider text-slate-400">Spent this month</p>
-        <p className="mt-1 text-3xl font-semibold tracking-tight">
+      <div className="rounded-2xl bg-hero p-4 text-hero-ink">
+        <p className="text-[11px] uppercase tracking-[0.12em] text-hero-muted">Spent this month</p>
+        <p className={`money mt-1 text-4xl font-semibold leading-none ${spentTone}`}>
           {formatPaise(totals.spent, locale, currency, { decimals: false })}
         </p>
-        <div className="mt-3 flex items-center gap-4 text-[11px]">
-          <span className="text-emerald-300">+{formatPaise(totals.earned, locale, currency, { decimals: false })} in</span>
-          <span className={totals.net >= 0 ? 'text-emerald-300' : 'text-rose-300'}>
-            {totals.net >= 0 ? 'Saved ' : 'Overspent '}
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px]">
+          <span className="font-medium text-gold-on-hero">
+            Received {formatPaise(totals.earned, locale, currency, { decimals: false })}
+          </span>
+          <span className={totals.net >= 0 ? 'font-medium text-hero-ink' : 'font-medium text-danger-bright'}>
+            {totals.net >= 0 ? 'Net ' : 'Short by '}
             {formatPaise(Math.abs(totals.net), locale, currency, { decimals: false })}
           </span>
           {prevTotals.spent > 0 && (
-            <span className={delta > 0 ? 'text-rose-300' : 'text-emerald-300'}>
+            <span className={delta > 0 ? 'text-danger-bright' : 'text-success-bright'}>
               {delta > 0 ? '↑' : '↓'} {Math.abs(Math.round(delta * 100))}% vs last month
             </span>
           )}
@@ -88,32 +92,43 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-slate-100 p-3 dark:border-slate-800">
-          <p className="text-[10px] uppercase tracking-wide text-slate-400">Entries</p>
-          <p className="text-lg font-semibold">{totals.count}</p>
+        <div className="rounded-xl border border-line bg-surface p-3">
+          <p className="text-[10px] uppercase tracking-wide text-muted">Entries</p>
+          <p className="money text-lg font-semibold">{totals.count}</p>
         </div>
-        <div className="rounded-xl border border-slate-100 p-3 dark:border-slate-800">
-          <p className="text-[10px] uppercase tracking-wide text-slate-400">Daily average</p>
-          <p className="text-lg font-semibold">
-            {formatPaise(Math.round(totals.spent / Math.max(1, new Date().getDate())), locale, currency, { decimals: false })}
+        <div className="rounded-xl border border-line bg-surface p-3">
+          <p className="text-[10px] uppercase tracking-wide text-muted">Avg / day</p>
+          <p className="money text-lg font-semibold">
+            {formatPaise(avgPerDay, locale, currency, { decimals: false })}
           </p>
+          <p className="text-[10px] text-muted">{avgDays} days</p>
         </div>
       </div>
 
       {budget > 0 && (
-        <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-3.5 dark:border-indigo-900/60 dark:bg-indigo-950/30">
+        <div
+          className={`rounded-xl border p-3.5 ${
+            overBudget
+              ? 'border-danger/25 bg-danger-soft'
+              : 'border-brand/20 bg-brand/[0.06]'
+          }`}
+        >
           <div className="flex items-baseline justify-between">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-indigo-500">Safe to spend today</p>
-            <p className="text-[11px] text-indigo-400">
-              {formatPaise(Math.max(0, budget - totals.spent), locale, currency, { decimals: false })} left
+            <p className={`text-[11px] font-medium uppercase tracking-wide ${overBudget ? 'text-danger' : 'text-brand'}`}>
+              Safe to spend today
+            </p>
+            <p className={`money text-[11px] ${overBudget ? 'text-danger' : 'text-muted'}`}>
+              {overBudget
+                ? `${formatPaise(totals.spent - budget, locale, currency, { decimals: false })} over`
+                : `${formatPaise(Math.max(0, budget - totals.spent), locale, currency, { decimals: false })} left`}
             </p>
           </div>
-          <p className="mt-1 text-2xl font-semibold text-indigo-700 dark:text-indigo-200">
+          <p className={`money mt-1 text-2xl font-semibold ${overBudget ? 'text-danger' : 'text-brand'}`}>
             {formatPaise(perDay, locale, currency, { decimals: false })}
           </p>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-indigo-100 dark:bg-indigo-900">
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-muted">
             <div
-              className="h-full rounded-full bg-indigo-500"
+              className={`h-full rounded-full ${overBudget ? 'bg-danger' : 'bg-brand'}`}
               style={{ width: `${Math.min(100, (totals.spent / budget) * 100)}%` }}
             />
           </div>
@@ -121,13 +136,13 @@ export function Dashboard() {
       )}
 
       <section>
-        <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Where it went</h2>
+        <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Where it went</h2>
         {chartData.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 py-10 text-center text-xs text-slate-400 dark:border-slate-800">
+          <div className="rounded-xl border border-dashed border-line py-10 text-center text-xs text-muted ">
             No expenses recorded for {monthLabel(month, locale)} yet.
           </div>
         ) : (
-          <div className="flex items-center gap-2 rounded-xl border border-slate-100 p-3 dark:border-slate-800">
+          <div className="flex items-center gap-2 rounded-xl border border-line p-3 ">
             <div className="h-32 w-32 shrink-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -148,11 +163,11 @@ export function Dashboard() {
               </ResponsiveContainer>
             </div>
             <ul className="min-w-0 flex-1 space-y-1.5">
-              {breakdown.slice(0, 6).map((c) => (
+              {breakdown.slice(0, 6).map((c, i) => (
                 <li key={c.categoryId} className="flex items-center gap-2 text-[11px]">
-                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: c.color }} />
-                  <span className="truncate text-slate-600 dark:text-slate-300">{c.name}</span>
-                  <span className="ml-auto shrink-0 font-medium text-slate-500">
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: chartColor(i) }} />
+                  <span className="truncate text-muted ">{c.name}</span>
+                  <span className="ml-auto shrink-0 font-medium text-muted">
                     {Math.round(c.share * 100)}%
                   </span>
                 </li>
@@ -164,12 +179,12 @@ export function Dashboard() {
 
       {payees.length > 0 && (
         <section>
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Top payees</h2>
-          <ul className="divide-y divide-slate-100 rounded-xl border border-slate-100 dark:divide-slate-800 dark:border-slate-800">
+          <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Top payees</h2>
+          <ul className="divide-y divide-line rounded-xl border border-line ">
             {payees.map((p) => (
               <li key={p.name} className="flex items-center justify-between px-3 py-2 text-sm">
                 <span className="truncate">{p.name}</span>
-                <span className="shrink-0 text-xs font-medium text-slate-500">
+                <span className="money shrink-0 text-xs font-medium text-muted">
                   {formatPaise(p.total, locale, currency, { decimals: false })} · {p.count}×
                 </span>
               </li>
@@ -180,15 +195,15 @@ export function Dashboard() {
 
       {balances.size > 0 && (
         <section>
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Balances</h2>
-          <ul className="divide-y divide-slate-100 rounded-xl border border-slate-100 dark:divide-slate-800 dark:border-slate-800">
+          <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Balances</h2>
+          <ul className="divide-y divide-line rounded-xl border border-line ">
             {[...balances.entries()].map(([id, value]) => {
               const account = (accounts ?? []).find((a) => asString(a.id) === id);
               if (!account || account.deleted) return null;
               return (
                 <li key={id} className="flex items-center justify-between px-3 py-2 text-sm">
                   <span>{asString(account.name)}</span>
-                  <span className={value < 0 ? 'font-medium text-rose-600' : 'font-medium'}>
+                  <span className={value < 0 ? 'money font-medium text-danger' : 'money font-medium'}>
                     {formatPaise(value, locale, currency, { decimals: false })}
                   </span>
                 </li>
@@ -198,7 +213,7 @@ export function Dashboard() {
         </section>
       )}
 
-      <p className="pt-1 text-center text-[10px] text-slate-400">
+      <p className="pt-1 text-center text-[10px] text-muted">
         {transactions?.length ?? 0} entries synced from your sheet
       </p>
     </div>

@@ -6,6 +6,7 @@ import { Add } from './pages/Add';
 import { Accounts } from './pages/Accounts';
 import { Connect } from './pages/Connect';
 import { History } from './pages/History';
+import { Onboarding } from './pages/Onboarding';
 import { Settings } from './pages/Settings';
 import { Tour } from './pages/Tour';
 
@@ -16,9 +17,9 @@ const Dashboard = lazy(() => import('./pages/Dashboard').then((m) => ({ default:
 function PageFallback() {
   return (
     <div className="space-y-3 pt-2">
-      <div className="h-28 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-900" />
-      <div className="h-24 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-900" />
-      <div className="h-40 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-900" />
+      <div className="h-28 animate-pulse rounded-2xl bg-surface-muted " />
+      <div className="h-24 animate-pulse rounded-xl bg-surface-muted " />
+      <div className="h-40 animate-pulse rounded-xl bg-surface-muted " />
     </div>
   );
 }
@@ -29,6 +30,7 @@ export function App() {
       <SyncProvider>
         <Routes>
           <Route path="/connect" element={<Connect />} />
+          <Route path="/welcome" element={<Onboarding />} />
           <Route path="/tour" element={<Tour />} />
           <Route element={<Layout />}>
             <Route index element={<Add />} />
