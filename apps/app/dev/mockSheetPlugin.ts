@@ -90,7 +90,21 @@ function seedTransactions() {
       created_at: now(),
     });
 
+  // A couple of rows in the previous calendar month, so the "Last month"
+  // preset and the "> ₹2,000" amount filter have something to find.
+  const lastMonth = (dayOfMonth: number) => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - 1);
+    d.setDate(dayOfMonth);
+    const iso = (value: Date) =>
+      `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')}`;
+    return iso(d);
+  };
+
   rows.Expenses.push(
+    tx('tx-11', lastMonth(24), 350000, 'cat-exp-8', 'acc-bank', 'Train tickets'),
+    tx('tx-12', lastMonth(12), 45000, 'cat-exp-1', 'acc-upi', 'Cafe Coffee Day'),
     tx('tx-1', day(0), 25000, 'cat-exp-1', 'acc-upi', 'Chai Point'),
     tx('tx-2', day(0), 120000, 'cat-exp-2', 'acc-bank', 'BigBasket'),
     tx('tx-3', day(1), 4500, 'cat-exp-3', 'acc-cash', 'Auto'),

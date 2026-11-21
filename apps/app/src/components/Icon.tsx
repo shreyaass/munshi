@@ -10,8 +10,10 @@ import {
   Info,
   Pencil,
   Plus,
+  RotateCcw,
   Search,
   Settings,
+  SlidersHorizontal,
   Trash2,
   TriangleAlert,
   Wallet,
@@ -40,6 +42,8 @@ const ICONS = {
   alert: TriangleAlert,
   'chevron-down': ChevronDown,
   search: Search,
+  filter: SlidersHorizontal,
+  repeat: RotateCcw,
   trash: Trash2,
 } satisfies Record<string, LucideIcon>;
 

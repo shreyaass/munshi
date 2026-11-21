@@ -17,18 +17,23 @@ pick up without re-deriving anything.
 
 ## Snapshot
 
-- **Now:** Session E complete — goals have a proper manager for creating,
-  editing and removing targets, and budgets are trimmed to total + daily. Next:
-  History filters + edit/repeat. Still pending on the user's side: re-upload the
-  refreshed template and redeploy `AppsScript.gs` so the sheet has zero accounts
-  and the `kind` column that budgets rely on.
+- **Now:** Session F complete — History has a filter sheet (range presets,
+  custom dates, type, amount comparisons, single category, four sorts),
+  removable active chips, and per-entry **Edit** / **Add again**. Next: palette
+  pass (deferred by the user), then PWA polish and the Android shell. Still
+  pending on the user's side: re-upload the refreshed template and redeploy
+  `AppsScript.gs` so the sheet has zero accounts and the `kind` column that
+  budgets rely on.
 - **Phase:** Phase 1 gate cleared by the user (real sheet uploaded, two scopes
   granted, connected). Browser CORS against the real Web App is still
   unconfirmed; the mock is the tested path.
-- **App state:** PWA runs fully against the dev mock. Rebranding to green/gold,
-  renaming to **Munshi**, adding first-run onboarding.
+- **App state:** PWA runs fully against the dev mock. Munshi rebrand, onboarding,
+  budgets (total + daily), goals (water cards + manager), History filters and
+  edit/repeat, and the Dashboard/History/Accounts/Settings footer nav are all
+  built. Add is still the landing route.
 - **Schema:** v2 (`Categories.pinned`, `Categories.sort_order`), additive
-  migration, header matching by name. No schema change in Session B.
+  migration, header matching by name. Unchanged since Session B.
+- **Session F (done):** see the Session F section for the live log.
 
 ---
 
@@ -172,6 +177,44 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
   (gone from both, category returned to the picker), Settings entry point, no
   console errors. `typecheck`, 27 tests and build pass.
 
+### Session F — History filters + edit/repeat
+
+- `packages/core/src/history.ts` — `resolveDateRange(preset, { month, from, to },
+  now)` for `month | last-month | last-30 | year | all | custom`,
+  `monthBounds`, `inDateRange` and `matchesAmount`. Custom bounds are one-sided
+  and swap when reversed; `year` is the full calendar year; a non-positive
+  amount threshold means no filter. 9 tests added (36 total).
+- `lib/historyFilters.ts` — the `HistoryFilters` shape, `defaultFilters`,
+  `activeFilterCount` (sort excluded), `rangeSummary`, `amountSummary` and
+  `SORT_LABEL`.
+- `components/HistoryFilters.tsx` — bottom sheet with draft state; nothing
+  applies until **Show results**, and **Clear all** resets the draft. Range
+  presets, month/custom date inputs, type, amount operator + field, single
+  category chips (narrowed to the chosen type; incompatible picks clear on type
+  change) and sort.
+- History page rewritten: Filters button with an active-count badge, removable
+  chips with a `Clear`, month input only for the month preset, a **Filtered ·
+  {range}** marker above the totals, and an empty state that offers **Clear
+  filters** when something is narrowing the list. Date sorts keep day groups;
+  highest/lowest render a flat list with the date in each row.
+- Detail sheet now has **Edit** and **Add again** next to Delete.
+- **Repeat** seeds amount, direction, category, account, payee and notes with
+  today's date and shows a dismissible `Repeating · payee` chip in the amount
+  hint line. Nothing is written until Save, and saving clears the chip.
+- **Edit** seeds every field including the original date; the expense/income
+  toggle is disabled, Save calls `updateTransaction()`, the button reads **Save
+  changes**, the header reads **Edit entry**, and the save lands on History.
+  Amounts are seeded keypad-friendly (no grouping commas).
+- The selected category is forced into the quick chips when a repeated/edited
+  entry uses one outside the six picks, so the choice is never invisible.
+- Mock seeds two previous-month rows (Train tickets ₹3,500, Cafe ₹450) so
+  **Last month**, **This year** and `> ₹2,000` have data.
+- Verified in the browser against the mock: last month (₹3,950 / 2 entries),
+  `> ₹2,000`, highest-first flat list, custom range, empty state + Clear
+  filters, income + Salary, incompatible category clearing, Clear all, repeat
+  save (new ₹12,000 entry today), edit save (₹12,000 → ₹13,000, back on
+  History), dark mode. No console errors. `typecheck`, 36 tests and build pass.
+
 ### Open notes / deviations
 
 - `Meta` is **not** a synced tab (`DATA_TABS` excludes it; the script only reads
@@ -269,6 +312,16 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
 - Audience is <100 people (user + family/friends): no Play Store, no Google
   verification.
 - Add screen must never scroll vertically; anything extra lives in sheets.
+- History filters live in page state, so they reset on leaving History; the
+  month picker is only the `month` preset and any other preset shows a
+  removable chip instead. Sort is ordering, not membership, so it never joins
+  the active-filter badge.
+- Amount sorts (`highest`/`lowest`) render a flat list with the date on each
+  row; date sorts keep day groups. A non-positive amount threshold is ignored
+  so an operator with an empty field never hides everything.
+- Repeat keeps the original amount/category/account but uses **today's** date;
+  edit keeps the original date, locks the expense/income toggle (moving tabs
+  would be a delete + recreate) and returns to History after saving.
 - Insight page = dashboard (one merged page).
 
 ---
@@ -278,10 +331,7 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
 1. Clear the **Phase 1 gate**: deploy `apps/script` from a real sheet, run
    Setup, verify `ping` from the browser (CORS) and write/read/delete a row.
    If CORS blocks, add a ~30-line Cloudflare Worker proxy.
-2. Session F — History: filter sheet (range presets + custom, type, amount
-   `>`/`=`/`<`, category, sort), active-filter chips, relabelled totals,
-   repeat via Add prefill, and edit via `updateTransaction`. Add
-   `packages/core/src/history.ts` helpers + tests.
+2. ~~Session F — History filters + edit/repeat~~ **done**; see the Session F log.
 3. Palette pass (deferred until functionality is done): Cubee-style tokens,
    goal water recolour, app icon. See the decisions log.
 4. Session G: PWA polish (offline banner, install prompt), then Phase 5
@@ -292,8 +342,8 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
 ## Env
 
 - Windows, PowerShell. npm workspaces (no pnpm).
-- Commands: `npm run dev` (5173), `npm run typecheck`, `npm test`,
-  `npm run build`.
+- Commands: `npm run dev` (5173, or the next free port), `npm run typecheck`,
+  `npm test`, `npm run build`.
 - Dev mock: URL `http://localhost:5173/__mock`, token `dev-token`. Mock data
   resets when the dev server restarts.
 - Obsidian vault root is `C:\Users\Shreyas\Desktop\Projects\My Projects`, so
@@ -314,10 +364,12 @@ packages/core/src/
   schema.ts                    v2 headers, name matching, budgets sentinels
   types.ts                     record types (Category has pinned/sort_order)
   quick.ts                     quick-chip selection + usage window
+  budget.ts                    resolveBudgets + goalProgress
+  history.ts                   date-range presets + amount matching
   money.ts  date.ts  id.ts
   client.ts                    Apps Script client (ping/readAll/batch)
   sync.ts                      two-way reconcile, LWW, tombstones
-  __tests__/core.test.ts
+  __tests__/core.test.ts  budget.test.ts  history.test.ts
 apps/script/
   Code.gs                      schema constants, router, response helpers
   Sheet.gs                     name-based read/write, additive migration
@@ -331,14 +383,16 @@ apps/app/src/
     Layout.tsx                 glass nav capsule + sliding pill + FAB
     Sheet.tsx                  animated bottom sheet
     AmountPad.tsx              fills available height (no scroll)
+    HistoryFilters.tsx         filter sheet with draft state
     Icon.tsx  Toast.tsx ...
   lib/
     theme.tsx                  ThemeProvider / useTheme (system|light|dark)
+    historyFilters.ts          filter shape, defaults, chip labels
     repo.ts                    Dexie reads/writes, live hooks, CSV export
     analytics.ts               totals, balances, safe-to-spend
     db.ts  connection.tsx  SyncProvider.tsx
   pages/
-    Add.tsx                    no-scroll entry screen + quick chips
+    Add.tsx                    no-scroll entry screen, edit/repeat prefill
     Accounts.tsx               balances, accounts, transfers
     History.tsx  Dashboard.tsx  Settings.tsx  Connect.tsx  Tour.tsx
 apps/app/dev/mockSheetPlugin.ts  dev-only fake Apps Script (v2)

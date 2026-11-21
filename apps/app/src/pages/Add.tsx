@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   QUICK_PICKS,
   categoryUsage,
@@ -19,14 +19,16 @@ import {
   addTransaction,
   moveCategory,
   setCategoryPinned,
+  updateTransaction,
   useMetaValue,
   useTabRows,
   useTransactions,
 } from '../lib/repo';
-import { asString, categoriesFor } from '../lib/analytics';
+import { asNumber, asString, categoriesFor, rowDate } from '../lib/analytics';
 import { useSync } from '../lib/SyncProvider';
 
 type Direction = 'expense' | 'income';
+type Tab = 'Expenses' | 'Income';
 
 const EMOJI_SUGGESTIONS = [
   '🍜',
@@ -49,11 +51,33 @@ const EMOJI_SUGGESTIONS = [
 
 const USAGE_WINDOW_DAYS = 60;
 
+/** Keypad-friendly amount: no grouping commas, trailing paise only when used. */
+function prefillAmount(paise: number): string {
+  const rupees = Math.floor(paise / 100);
+  const fraction = paise % 100;
+  return fraction === 0 ? String(rupees) : `${rupees}.${String(fraction).padStart(2, '0')}`;
+}
+
 export function Add() {
   const [params] = useSearchParams();
+  const navigate = useNavigate();
   const { syncNow } = useSync();
   const currency = useMetaValue('currency', 'INR');
   const locale = useMetaValue('locale', 'en-IN');
+
+  // `?edit=Expenses:tx-1` reopens an existing row; `?repeat=tx-1&tab=Expenses`
+  // copies one into a fresh entry. Both seed the form once, then behave normally.
+  const editParam = params.get('edit') ?? '';
+  const repeatId = params.get('repeat') ?? '';
+  const repeatTab: Tab = params.get('tab') === 'Income' ? 'Income' : 'Expenses';
+  const editTarget = useMemo(() => {
+    if (!editParam) return null;
+    const [tab, id] = editParam.split(':');
+    if (!id || (tab !== 'Expenses' && tab !== 'Income')) return null;
+    return { tab: tab as Tab, id };
+  }, [editParam]);
+  const [seedDone, setSeedDone] = useState(!editParam && !repeatId);
+  const [repeating, setRepeating] = useState(Boolean(repeatId) && !editParam);
 
   const [direction, setDirection] = useState<Direction>(
     params.get('type') === 'income' ? 'income' : 'expense',
@@ -102,6 +126,14 @@ export function Add() {
     return pickQuickCategories(candidates, usage, QUICK_PICKS[direction]).map((c) => c.row);
   }, [categories, usage, direction]);
 
+  // An edited or repeated row may use a category outside the six quick picks.
+  // Show it first so the selection is never invisible.
+  const displayQuick = useMemo(() => {
+    if (!categoryId || quick.some((c) => asString(c.id) === categoryId)) return quick;
+    const selected = categories.find((c) => asString(c.id) === categoryId);
+    return selected ? [selected, ...quick] : quick;
+  }, [quick, categoryId, categories]);
+
   // Pinned first in their real order, so moving one up/down is visible here.
   const manageList = useMemo(() => {
     const pinned = categories
@@ -111,19 +143,52 @@ export function Add() {
     return [...pinned, ...rest];
   }, [categories]);
 
+  // Seed edit/repeat once the cached rows arrive. Gate the defaults below until
+  // then, otherwise they would overwrite the row's category and account.
+  useEffect(() => {
+    if (seedDone) return;
+    if (transactions === undefined) return;
+
+    const tab: Tab = editTarget ? editTarget.tab : repeatTab;
+    const id = editTarget ? editTarget.id : repeatId;
+    const source = transactions.find(
+      (tx) =>
+        asString(tx.row.id) === id &&
+        (tab === 'Expenses' ? tx.kind === 'expense' : tx.kind === 'income'),
+    );
+
+    if (!source) {
+      setRepeating(false);
+      setSeedDone(true);
+      return;
+    }
+
+    const amount = asNumber(source.row.amount_paise);
+    setDirection(tab === 'Expenses' ? 'expense' : 'income');
+    setRaw(prefillAmount(amount));
+    setCategoryId(asString(source.row.category_id));
+    setAccountId(asString(source.row.account_id));
+    setDate(editTarget ? rowDate(source.row) : todayISO());
+    setPayee(asString(source.row.payee));
+    setNotes(asString(source.row.notes));
+    setSeedDone(true);
+  }, [seedDone, transactions, editTarget, repeatId, repeatTab]);
+
   // Sensible defaults so Save always works with two taps.
   useEffect(() => {
+    if (!seedDone) return;
     if (categories.length === 0) return;
     if (categories.some((c) => asString(c.id) === categoryId)) return;
     setCategoryId(asString((quick[0] ?? categories[0]).id));
-  }, [categories, quick, categoryId]);
+  }, [categories, quick, categoryId, seedDone]);
 
   useEffect(() => {
+    if (!seedDone) return;
     if (accounts.length === 0) return;
     if (!accounts.some((a) => asString(a.id) === accountId)) {
       setAccountId(asString(accounts[0].id));
     }
-  }, [accounts, accountId]);
+  }, [accounts, accountId, seedDone]);
 
   useEffect(() => {
     if (!toast) return;
@@ -139,6 +204,21 @@ export function Add() {
     if (!canSave) return;
     setSaving(true);
     try {
+      if (editTarget) {
+        await updateTransaction(editTarget.tab, editTarget.id, {
+          amount_paise: paise,
+          category_id: categoryId,
+          account_id: accountId,
+          date,
+          payee: payee.trim(),
+          notes: notes.trim(),
+        });
+        navigator.vibrate?.(12);
+        void syncNow();
+        navigate('/history');
+        return;
+      }
+
       await addTransaction({
         direction,
         amountPaise: paise,
@@ -154,6 +234,7 @@ export function Add() {
       setRaw('');
       setPayee('');
       setNotes('');
+      setRepeating(false);
       setDetailsOpen(false);
 
       void syncNow();
@@ -210,7 +291,9 @@ export function Add() {
               key={d}
               type="button"
               onClick={() => setDirection(d)}
-              className={`rounded-lg py-1.5 text-[13px] font-semibold capitalize transition ${
+              disabled={editTarget !== null}
+              title={editTarget ? 'Type is fixed while editing an entry' : undefined}
+              className={`rounded-lg py-1.5 text-[13px] font-semibold capitalize transition disabled:cursor-not-allowed disabled:opacity-60 ${
                 direction === d ? 'bg-surface text-ink shadow-sm ' : 'text-muted'
               }`}
             >
@@ -228,8 +311,23 @@ export function Add() {
           >
             ₹{raw || '0'}
           </div>
-          <div className="mt-1 h-4 text-[11px] text-muted">
-            {paise > 0 ? formatPaise(paise, locale, currency) : 'Type an amount'}
+          <div className="mt-1 flex h-5 items-center justify-center text-[11px] text-muted">
+            {repeating ? (
+              <button
+                type="button"
+                onClick={() => setRepeating(false)}
+                aria-label="Stop repeating"
+                className="flex items-center gap-1 rounded-full bg-brand/10 px-2 py-0.5 text-brand"
+              >
+                <Icon name="repeat" className="h-3 w-3" />
+                Repeating{payee ? ` · ${payee}` : ''}
+                <Icon name="close" className="h-3 w-3" />
+              </button>
+            ) : paise > 0 ? (
+              formatPaise(paise, locale, currency)
+            ) : (
+              'Type an amount'
+            )}
           </div>
         </div>
 
@@ -257,7 +355,7 @@ export function Add() {
               ))}
 
             {!categoriesLoading &&
-              quick.map((c) => {
+              displayQuick.map((c) => {
                 const id = asString(c.id);
                 const selected = id === categoryId;
                 return (
@@ -340,7 +438,13 @@ export function Add() {
           disabled={!canSave}
           className="mt-2 flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-brand py-3.5 text-sm font-semibold text-brand-ink transition active:scale-[0.99] disabled:bg-line disabled:text-muted dark:disabled:bg-surface-muted dark:disabled:text-muted"
         >
-          {saving ? 'Saving…' : direction === 'expense' ? 'Save expense' : 'Save income'}
+          {saving
+            ? 'Saving…'
+            : editTarget
+              ? 'Save changes'
+              : direction === 'expense'
+                ? 'Save expense'
+                : 'Save income'}
           {!saving && <Icon name="check" className="h-4 w-4" />}
         </button>
       </div>

@@ -106,12 +106,13 @@ export function Layout() {
   if (ready && onboarded !== '1' && noAccounts) return <Navigate to="/welcome" replace />;
 
   const onAdd = location.pathname === '/';
+  const editing = onAdd && new URLSearchParams(location.search).has('edit');
 
   return (
     <div className="mx-auto flex h-dvh max-w-md flex-col bg-bg text-ink">
       <header className="flex shrink-0 items-center justify-between px-4 pb-1 pt-3">
         <h1 className="text-[19px] font-semibold tracking-tight">
-          {TITLES[location.pathname] ?? 'Munshi'}
+          {editing ? 'Edit entry' : (TITLES[location.pathname] ?? 'Munshi')}
         </h1>
         <SyncBadge />
       </header>
