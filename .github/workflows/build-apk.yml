@@ -74,8 +74,8 @@ jobs:
             --notes "Automated build of Munshi Android App from main branch (${{ github.sha }})." \
             --latest
 
-  deploy-promo:
-    name: Deploy Promo to GitHub Pages
+  deploy-site:
+    name: Deploy Munshi Web App & Promo to GitHub Pages
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency:
@@ -91,11 +91,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Node.js 22 (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web application
+        run: npm run build
+
       - name: Prepare Pages directory
         run: |
           mkdir -p pages-site/promo
-          cp promo/index.html pages-site/index.html
+          cp -r apps/app/dist/* pages-site/
           cp promo/index.html pages-site/promo/index.html
+          cp apps/app/dist/index.html pages-site/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

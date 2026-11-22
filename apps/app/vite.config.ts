@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { mockSheetPlugin } from './dev/mockSheetPlugin';
 
 export default defineConfig({
+  base: './',
   plugins: [react(), tailwindcss(), mockSheetPlugin()],
   server: {
     port: 5173,

@@ -171,7 +171,7 @@ export function Layout() {
     if (ready && onboarded !== '1' && !noAccounts) void setLocalMeta('onboarded', '1');
   }, [ready, onboarded, noAccounts]);
 
-  if (!conn) return <Navigate to="/connect" replace />;
+  if (!conn) return <Navigate to="/landing" replace />;
   if (ready && onboarded !== '1' && noAccounts) return <Navigate to="/welcome" replace />;
 
   const onAdd = location.pathname === '/';

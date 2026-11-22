@@ -84,10 +84,10 @@ export function Connect() {
             sound.play('click');
             navigate('/tour');
           }}
-          className="inline-flex items-center gap-1.5 rounded-lg py-1 px-2.5 text-xs font-mono uppercase tracking-[0.12em] text-muted hover:text-text hover:bg-raised transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg py-1.5 px-3 text-xs font-mono uppercase tracking-[0.12em] text-accent border border-accent/30 bg-accent/10 hover:bg-accent/20 transition-colors"
         >
           <Icon name="arrow_back" size={15} />
-          <span>Setup Tour</span>
+          <span>Guide me (Tour)</span>
         </button>
         <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent/80 font-medium">Step 5/5</span>
       </div>
@@ -165,10 +165,14 @@ export function Connect() {
 
         <button
           type="button"
-          onClick={() => navigate('/tour')}
-          className="w-full rounded-xl border border-line py-3 text-sm font-medium text-muted "
+          onClick={() => {
+            sound.play('click');
+            navigate('/tour');
+          }}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface/70 py-3 text-sm font-medium text-text hover:bg-raised transition active:scale-[0.99]"
         >
-          I don't have these yet — show me how
+          <Icon name="explore" size={17} className="text-accent" />
+          <span>I don't have these yet — Guide me through setup</span>
         </button>
       </div>
 
