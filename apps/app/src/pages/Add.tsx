@@ -3,19 +3,25 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   QUICK_PICKS,
   categoryUsage,
+  currentMonthKey,
   daysAgoISO,
   formatPaise,
+  goalMonthlyNeed,
+  goalSavedAmount,
   parseToPaise,
   pickQuickCategories,
+  splitByPriority,
   todayISO,
 } from '@em/core';
 import { AmountPad } from '../components/AmountPad';
 import { AccountForm, EMPTY_ACCOUNT, type AccountDraft } from '../components/AccountForm';
 import { Icon } from '../components/Icon';
 import { Sheet } from '../components/Sheet';
+import { CustomDatePicker } from '../components/CustomDatePicker';
 import {
   addAccount,
   addCategory,
+  addContribution,
   addTransaction,
   moveCategory,
   setCategoryPinned,
@@ -24,7 +30,7 @@ import {
   useTabRows,
   useTransactions,
 } from '../lib/repo';
-import { asNumber, asString, categoriesFor, rowDate } from '../lib/analytics';
+import { asBool, asNumber, asString, categoriesFor, rowDate } from '../lib/analytics';
 import { useSync } from '../lib/SyncProvider';
 
 type Direction = 'expense' | 'income';
@@ -97,15 +103,56 @@ export function Add() {
 
   const categoryRows = useTabRows('Categories');
   const accountRows = useTabRows('Accounts');
+  const goalRows = useTabRows('Goals');
+  const contributionRows = useTabRows('Contributions');
   const transactions = useTransactions();
 
-  // `undefined` means Dexie is still reading — not "you have no categories".
-  const categoriesLoading = categoryRows === undefined;
-  const categories = useMemo(() => categoriesFor(categoryRows ?? [], direction), [categoryRows, direction]);
+  const [putTowardsGoal, setPutTowardsGoal] = useState(false);
+  const [goalAllocations, setGoalAllocations] = useState<Record<string, number>>({});
+
+  const currentMonth = currentMonthKey();
+
   const accounts = useMemo(
     () => (accountRows ?? []).filter((a) => !a.deleted && a.active !== false),
     [accountRows],
   );
+
+  const categoriesLoading = categoryRows === undefined;
+  const categories = useMemo(() => categoriesFor(categoryRows ?? [], direction), [categoryRows, direction]);
+
+  const savingsAccounts = useMemo(() => {
+    return (accountRows ?? []).filter((a) => !asBool(a.deleted) && asBool(a.is_savings));
+  }, [accountRows]);
+  const defaultSavingsAccount = savingsAccounts[0] ?? accounts[0];
+
+  const savingGoals = useMemo(() => {
+    return (goalRows ?? [])
+      .filter((g) => !asBool(g.deleted))
+      .map((g) => {
+        const id = asString(g.id);
+        const name = asString(g.name);
+        const targetPaise = asNumber(g.target_paise);
+        const recurrence = (asString(g.recurrence) || 'once') as 'once' | 'monthly' | 'yearly';
+        const deadline = asString(g.deadline);
+        const priority = asNumber(g.priority) || 1;
+        const linkedAccountId = asString(g.linked_account_id);
+        const savedPaise = goalSavedAmount(id, recurrence, contributionRows ?? [], currentMonth);
+        const needPaise = goalMonthlyNeed(targetPaise, savedPaise, recurrence, deadline, todayISO());
+
+        return {
+          id,
+          name,
+          targetPaise,
+          savedPaise,
+          recurrence,
+          deadline,
+          priority,
+          linkedAccountId,
+          needPaise,
+        };
+      })
+      .sort((a, b) => a.priority - b.priority);
+  }, [goalRows, contributionRows, currentMonth]);
 
   // Quick chips: pinned first, then whatever the last 60 days of usage says.
   const usage = useMemo(() => {
@@ -198,7 +245,28 @@ export function Add() {
 
   const paise = parseToPaise(raw) ?? 0;
   const canSave = paise > 0 && categoryId !== '' && !categoriesLoading && !saving;
-  const accent = direction === 'expense' ? 'text-danger ' : 'text-success ';
+
+  const totalAllocatedPaise = useMemo(() => {
+    if (!putTowardsGoal) return 0;
+    return Object.values(goalAllocations).reduce((sum, v) => sum + (v || 0), 0);
+  }, [putTowardsGoal, goalAllocations]);
+
+  const staysInAccountPaise = Math.max(0, paise - totalAllocatedPaise);
+
+  function handleSplitByPriority() {
+    if (paise <= 0 || savingGoals.length === 0) return;
+    const targets = savingGoals.map((g) => ({
+      goalId: g.id,
+      needPaise: g.needPaise > 0 ? g.needPaise : 1000000,
+      priority: g.priority,
+    }));
+    const results = splitByPriority(paise, targets);
+    const map: Record<string, number> = {};
+    for (const r of results) {
+      map[r.goalId] = r.allocatedPaise;
+    }
+    setGoalAllocations(map);
+  }
 
   async function handleSave() {
     if (!canSave) return;
@@ -229,6 +297,23 @@ export function Add() {
         notes: notes.trim(),
       });
 
+      // Write contributions if allocated to goals
+      if (direction === 'income' && putTowardsGoal && totalAllocatedPaise > 0) {
+        for (const g of savingGoals) {
+          const allocated = goalAllocations[g.id] || 0;
+          if (allocated > 0) {
+            await addContribution({
+              goalId: g.id,
+              fromAccountId: accountId,
+              toAccountId: g.linkedAccountId || (defaultSavingsAccount ? asString(defaultSavingsAccount.id) : accountId),
+              amountPaise: allocated,
+              date,
+              notes: `Allocated from income${payee ? ` (${payee})` : ''}`,
+            });
+          }
+        }
+      }
+
       navigator.vibrate?.(12);
       setToast(`${direction === 'expense' ? 'Spent' : 'Received'} ${formatPaise(paise, locale, currency)}`);
       setRaw('');
@@ -236,6 +321,8 @@ export function Add() {
       setNotes('');
       setRepeating(false);
       setDetailsOpen(false);
+      setGoalAllocations({});
+      setPutTowardsGoal(false);
 
       void syncNow();
     } finally {
@@ -281,11 +368,20 @@ export function Add() {
   const accountName = asString(accounts.find((a) => asString(a.id) === accountId)?.name) || 'Account';
   const isToday = date === todayISO();
 
+  // Subtitle: show payee/note when set, else "TAP TO EDIT NOTE"
+  const subtitleContent = repeating
+    ? null
+    : payee || notes
+      ? [payee, notes].filter(Boolean).join(' · ')
+      : paise > 0
+        ? formatPaise(paise, locale, currency)
+        : null;
+
   return (
     <>
       <div className="flex h-full flex-col overflow-hidden">
-        {/* Direction */}
-        <div className="grid shrink-0 grid-cols-2 gap-1 rounded-xl bg-surface-muted p-1 ">
+        {/* Direction toggle */}
+        <div className="grid shrink-0 grid-cols-2 gap-1 rounded-[12px] bg-raised p-1">
           {(['expense', 'income'] as const).map((d) => (
             <button
               key={d}
@@ -293,8 +389,8 @@ export function Add() {
               onClick={() => setDirection(d)}
               disabled={editTarget !== null}
               title={editTarget ? 'Type is fixed while editing an entry' : undefined}
-              className={`rounded-lg py-1.5 text-[13px] font-semibold capitalize transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                direction === d ? 'bg-surface text-ink shadow-sm ' : 'text-muted'
+              className={`rounded-[10px] py-1.5 text-[13px] font-semibold capitalize transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                direction === d ? 'bg-accent text-on-accent shadow-sm' : 'text-muted'
               }`}
             >
               {d === 'expense' ? 'Expense' : 'Income'}
@@ -302,43 +398,47 @@ export function Add() {
           ))}
         </div>
 
-        {/* Amount */}
+        {/* Amount display */}
         <div className="flex shrink-0 flex-col items-center justify-center pb-1 pt-2.5">
           <div
-            className={`money max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[2.5rem] font-semibold leading-none ${
-              raw ? accent : 'text-muted/60'
+            className={`money max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[3rem] font-medium leading-none ${
+              raw ? (direction === 'expense' ? 'text-accent' : 'text-income') : 'text-muted/50'
             }`}
           >
             ₹{raw || '0'}
           </div>
-          <div className="mt-1 flex h-5 items-center justify-center text-[11px] text-muted">
+
+          {/* Subtitle — clickable to open details */}
+          <button
+            type="button"
+            onClick={() => setDetailsOpen(true)}
+            className="mt-1 flex h-5 items-center justify-center text-[11px] text-muted"
+          >
             {repeating ? (
-              <button
-                type="button"
-                onClick={() => setRepeating(false)}
-                aria-label="Stop repeating"
-                className="flex items-center gap-1 rounded-full bg-brand/10 px-2 py-0.5 text-brand"
+              <span
+                onClick={(e) => { e.stopPropagation(); setRepeating(false); }}
+                className="flex items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 text-accent"
               >
-                <Icon name="repeat" className="h-3 w-3" />
+                <Icon name="replay" size={12} />
                 Repeating{payee ? ` · ${payee}` : ''}
-                <Icon name="close" className="h-3 w-3" />
-              </button>
-            ) : paise > 0 ? (
-              formatPaise(paise, locale, currency)
+                <Icon name="close" size={12} />
+              </span>
+            ) : subtitleContent ? (
+              <span className="uppercase tracking-[0.08em]">{subtitleContent}</span>
             ) : (
-              'Type an amount'
+              <span className="uppercase tracking-[0.08em]">Tap to edit note</span>
             )}
-          </div>
+          </button>
         </div>
 
         {/* Quick categories */}
         <div className="shrink-0 pt-1.5">
           <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-muted">Category</span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted">Category</span>
             <button
               type="button"
               onClick={() => setManageOpen(true)}
-              className="text-[11px] font-medium text-brand "
+              className="text-[11px] font-medium text-accent"
             >
               Edit
             </button>
@@ -349,7 +449,7 @@ export function Add() {
               [64, 80, 72, 88].map((w, i) => (
                 <span
                   key={i}
-                  className="h-[34px] shrink-0 animate-pulse rounded-full bg-surface-muted "
+                  className="h-[34px] shrink-0 animate-pulse rounded-full bg-raised"
                   style={{ width: w }}
                 />
               ))}
@@ -363,8 +463,10 @@ export function Add() {
                     key={id}
                     type="button"
                     onClick={() => setCategoryId(id)}
-                    className={`flex h-[34px] shrink-0 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition ${
-                      selected ? 'border-brand bg-brand/10 text-brand ' : 'border-line text-muted '
+                    className={`flex h-[34px] shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+                      selected
+                        ? 'border-accent bg-accent/10 text-accent'
+                        : 'border-transparent bg-raised text-text'
                     }`}
                   >
                     <span>{asString(c.icon) || '•'}</span>
@@ -377,9 +479,9 @@ export function Add() {
               <button
                 type="button"
                 onClick={() => setNewCat({ name: '', emoji: '' })}
-                className="flex h-[34px] shrink-0 items-center gap-1 rounded-full border border-dashed border-line px-3 text-xs font-medium text-muted "
+                className="flex h-[34px] shrink-0 items-center gap-1 rounded-full border border-dashed border-line px-3 text-xs font-medium text-muted"
               >
-                <Icon name="add" className="h-3.5 w-3.5" />
+                <Icon name="add" size={14} />
                 New
               </button>
             )}
@@ -390,7 +492,7 @@ export function Add() {
           </div>
         </div>
 
-        {/* Account + date/details, one compact line */}
+        {/* Account + date row */}
         <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto pt-2">
           {accounts.map((a) => {
             const id = asString(a.id);
@@ -400,8 +502,8 @@ export function Add() {
                 key={id}
                 type="button"
                 onClick={() => setAccountId(id)}
-                className={`h-7 shrink-0 rounded-lg px-2.5 text-[11px] font-medium transition ${
-                  selected ? 'bg-brand text-brand-ink ' : 'bg-surface-muted text-muted '
+                className={`h-7 shrink-0 rounded-[8px] px-2.5 py-1 text-[11px] font-medium text-text transition ${
+                  selected ? 'bg-accent/15 text-accent' : 'bg-raised'
                 }`}
               >
                 {asString(a.name)}
@@ -412,31 +514,119 @@ export function Add() {
             type="button"
             onClick={() => setAccountDraft({ ...EMPTY_ACCOUNT })}
             aria-label="Add account"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-dashed border-line text-muted transition active:bg-surface-muted"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] border border-dashed border-line text-muted transition active:bg-raised"
           >
-            <Icon name="add" className="h-3.5 w-3.5" />
+            <Icon name="add" size={14} />
           </button>
           <button
             type="button"
             onClick={() => setDetailsOpen(true)}
-            className="ml-auto flex h-7 shrink-0 items-center gap-1 rounded-lg border border-line px-2.5 text-[11px] font-medium text-muted"
+            className="ml-auto flex h-7 shrink-0 items-center gap-1 rounded-[8px] border border-line bg-raised px-2.5 text-[11px] font-medium text-text"
           >
-            <Icon name="edit" className="h-3 w-3" />
+            <Icon name="edit" size={12} />
             {isToday ? 'Today' : date.slice(5)}
-            {(payee || notes) && <span className="h-1.5 w-1.5 rounded-full bg-brand" />}
+            {(payee || notes) && <span className="h-1.5 w-1.5 rounded-full bg-accent" />}
           </button>
         </div>
+
+        {/* Income Mode: Put towards a goal card */}
+        {direction === 'income' && savingGoals.length > 0 && (
+          <div className="shrink-0 my-2 rounded-[16px] border border-line bg-raised/50 p-3 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-text">Put towards a goal</p>
+                <p className="text-[10px] text-muted">Moves it to the goal's savings account</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPutTowardsGoal(!putTowardsGoal)}
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
+                  putTowardsGoal ? 'bg-accent' : 'bg-line'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-surface shadow ring-0 transition duration-200 ease-in-out ${
+                    putTowardsGoal ? 'translate-x-4' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {putTowardsGoal && (
+              <div className="space-y-2 pt-2 border-t border-line/40">
+                <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                  {savingGoals.map((g) => {
+                    const currentVal = goalAllocations[g.id] ?? 0;
+                    return (
+                      <div key={g.id} className="flex items-center justify-between text-xs">
+                        <span className="font-medium text-text">
+                          <span className="font-mono text-muted mr-1">#{g.priority}</span>
+                          {g.name}
+                        </span>
+                        <div className="flex items-center gap-1 bg-surface border border-line rounded-lg px-2 py-0.5">
+                          <span className="font-mono text-muted text-[10px]">₹</span>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={currentVal > 0 ? String(Math.round(currentVal / 100)) : ''}
+                            onChange={(e) => {
+                              const num = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0;
+                              setGoalAllocations((prev) => ({
+                                ...prev,
+                                [g.id]: num * 100,
+                              }));
+                            }}
+                            placeholder="0"
+                            className="w-14 bg-transparent font-mono text-right text-xs text-text outline-none"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    onClick={handleSplitByPriority}
+                    className="rounded-full border border-accent/60 bg-accent/10 px-2.5 py-0.5 text-[10px] font-semibold text-accent hover:bg-accent/20 transition"
+                  >
+                    Split the rest by priority
+                  </button>
+                </div>
+
+                <div className="rounded-lg bg-surface p-2 text-[11px] space-y-1 border border-line/40 font-mono">
+                  <div className="flex items-center justify-between text-muted">
+                    <span>To {defaultSavingsAccount ? asString(defaultSavingsAccount.name) : 'Savings'}</span>
+                    <span className="text-text font-medium tabular">
+                      {formatPaise(totalAllocatedPaise, locale, currency, { decimals: false })}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-muted">
+                    <span>Stays in {asString(accounts.find((a) => asString(a.id) === accountId)?.name) || 'Account'}</span>
+                    <span className="text-text font-medium tabular">
+                      {formatPaise(staysInAccountPaise, locale, currency, { decimals: false })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Keypad takes every remaining pixel */}
         <div className="min-h-0 flex-1 pt-2">
           <AmountPad value={raw} onChange={setRaw} />
         </div>
 
+        {/* Save button */}
         <button
           type="button"
           onClick={handleSave}
           disabled={!canSave}
-          className="mt-2 flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-brand py-3.5 text-sm font-semibold text-brand-ink transition active:scale-[0.99] disabled:bg-line disabled:text-muted dark:disabled:bg-surface-muted dark:disabled:text-muted"
+          className={`mt-2 flex shrink-0 items-center justify-center gap-2 rounded-[var(--radius-btn)] py-3.5 text-sm font-semibold transition active:scale-[0.99] ${
+            canSave ? 'bg-accent text-on-accent' : 'bg-raised text-muted'
+          }`}
         >
           {saving
             ? 'Saving…'
@@ -445,12 +635,13 @@ export function Add() {
               : direction === 'expense'
                 ? 'Save expense'
                 : 'Save income'}
-          {!saving && <Icon name="check" className="h-4 w-4" />}
+          {!saving && <Icon name="check" size={16} />}
         </button>
       </div>
 
+      {/* Toast */}
       {toast && (
-        <div className="animate-pop fixed inset-x-0 bottom-24 z-30 mx-auto w-fit rounded-full bg-brand px-4 py-2 text-xs font-medium text-brand-ink shadow-lg">
+        <div className="animate-pop fixed inset-x-0 bottom-24 z-30 mx-auto w-fit rounded-full bg-accent px-4 py-2 text-xs font-medium text-on-accent shadow-lg">
           {toast}
         </div>
       )}
@@ -464,7 +655,7 @@ export function Add() {
           <button
             type="button"
             onClick={() => setDetailsOpen(false)}
-            className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-brand-ink"
+            className="w-full rounded-[var(--radius-btn)] bg-accent py-3 text-sm font-semibold text-on-accent"
           >
             Done
           </button>
@@ -475,19 +666,17 @@ export function Add() {
             value={payee}
             onChange={(e) => setPayee(e.target.value)}
             placeholder="Paid to / received from"
-            className="w-full rounded-xl bg-surface-muted px-3.5 py-3 text-sm outline-none ring-brand focus:ring-2 "
+            className="w-full rounded-xl bg-raised px-3.5 py-3 text-sm text-text outline-none ring-accent focus:ring-2"
           />
-          <input
-            type="date"
+          <CustomDatePicker
             value={date}
-            onChange={(e) => setDate(e.target.value || todayISO())}
-            className="w-full rounded-xl bg-surface-muted px-3.5 py-3 text-sm outline-none ring-brand focus:ring-2 "
+            onChange={(d) => setDate(d || todayISO())}
           />
           <input
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Note"
-            className="w-full rounded-xl bg-surface-muted px-3.5 py-3 text-sm outline-none ring-brand focus:ring-2 "
+            className="w-full rounded-xl bg-raised px-3.5 py-3 text-sm text-text outline-none ring-accent focus:ring-2"
           />
           <p className="px-1 text-[11px] text-muted">
             Saving to {accountName} · {date}
@@ -505,7 +694,9 @@ export function Add() {
             type="button"
             onClick={createCategory}
             disabled={!newCat?.name.trim()}
-            className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-brand-ink disabled:bg-line disabled:text-muted dark:disabled:bg-surface-muted dark:disabled:text-muted"
+            className={`w-full rounded-[var(--radius-btn)] py-3 text-sm font-semibold ${
+              newCat?.name.trim() ? 'bg-accent text-on-accent' : 'bg-raised text-muted'
+            }`}
           >
             Add category
           </button>
@@ -519,14 +710,14 @@ export function Add() {
                 onChange={(e) => setNewCat({ ...newCat, emoji: e.target.value })}
                 placeholder="🙂"
                 aria-label="Emoji"
-                className="w-16 shrink-0 rounded-xl bg-surface-muted px-2 py-3 text-center text-xl outline-none ring-brand focus:ring-2 "
+                className="w-16 shrink-0 rounded-xl bg-raised px-2 py-3 text-center text-xl outline-none ring-accent focus:ring-2"
               />
               <input
                 value={newCat.name}
                 onChange={(e) => setNewCat({ ...newCat, name: e.target.value })}
                 placeholder="Category name"
                 autoFocus
-                className="min-w-0 flex-1 rounded-xl bg-surface-muted px-3.5 py-3 text-sm outline-none ring-brand focus:ring-2 "
+                className="min-w-0 flex-1 rounded-xl bg-raised px-3.5 py-3 text-sm text-text outline-none ring-accent focus:ring-2"
               />
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -536,7 +727,7 @@ export function Add() {
                   type="button"
                   onClick={() => setNewCat({ ...newCat, emoji: e })}
                   className={`flex h-9 w-9 items-center justify-center rounded-lg text-lg transition ${
-                    newCat.emoji === e ? 'bg-brand/15 ring-2 ring-brand ' : 'bg-surface-muted '
+                    newCat.emoji === e ? 'bg-accent/15 ring-2 ring-accent' : 'bg-raised'
                   }`}
                 >
                   {e}
@@ -562,7 +753,7 @@ export function Add() {
               setManageOpen(false);
               setNewCat({ name: '', emoji: '' });
             }}
-            className="w-full rounded-xl border border-line py-3 text-sm font-semibold text-ink "
+            className="w-full rounded-[var(--radius-btn)] border border-line py-3 text-sm font-semibold text-text"
           >
             + New category
           </button>
@@ -587,30 +778,30 @@ export function Add() {
                   }}
                   className="flex min-w-0 flex-1 items-center gap-2 text-left"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-muted text-base ">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-raised text-base">
                     {asString(c.icon) || '•'}
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-sm">{asString(c.name)}</span>
-                  {id === categoryId && <Icon name="check" className="h-3.5 w-3.5 shrink-0 text-brand " />}
+                  <span className="min-w-0 flex-1 truncate text-sm text-text">{asString(c.name)}</span>
+                  {id === categoryId && <Icon name="check" size={16} className="shrink-0 text-accent" />}
                 </button>
 
                 {pinned && (
-                  <span className="flex shrink-0">
+                  <span className="flex items-center shrink-0">
                     <button
                       type="button"
                       onClick={() => reorder(id, -1)}
                       aria-label="Move up"
-                      className="flex h-7 w-6 items-center justify-center text-muted"
+                      className="flex h-7 w-7 items-center justify-center text-muted hover:text-text transition"
                     >
-                      <Icon name="chevron-down" className="h-3.5 w-3.5 rotate-180" />
+                      <Icon name="expand_less" size={18} />
                     </button>
                     <button
                       type="button"
                       onClick={() => reorder(id, 1)}
                       aria-label="Move down"
-                      className="flex h-7 w-6 items-center justify-center text-muted"
+                      className="flex h-7 w-7 items-center justify-center text-muted hover:text-text transition"
                     >
-                      <Icon name="chevron-down" className="h-3.5 w-3.5" />
+                      <Icon name="expand_more" size={18} />
                     </button>
                   </span>
                 )}
@@ -618,8 +809,8 @@ export function Add() {
                 <button
                   type="button"
                   onClick={() => togglePin(id, !pinned)}
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${
-                    pinned ? 'bg-brand text-brand-ink' : 'bg-surface-muted text-muted '
+                  className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                    pinned ? 'bg-accent text-on-accent' : 'bg-raised text-muted'
                   }`}
                 >
                   {pinned ? 'Pinned' : 'Pin'}
@@ -644,7 +835,9 @@ export function Add() {
             type="button"
             onClick={createAccount}
             disabled={!accountDraft?.name.trim()}
-            className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-brand-ink disabled:bg-surface-muted disabled:text-muted"
+            className={`w-full rounded-[var(--radius-btn)] py-3 text-sm font-semibold ${
+              accountDraft?.name.trim() ? 'bg-accent text-on-accent' : 'bg-raised text-muted'
+            }`}
           >
             Add account
           </button>

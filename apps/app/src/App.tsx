@@ -6,6 +6,7 @@ import { Add } from './pages/Add';
 import { Accounts } from './pages/Accounts';
 import { Connect } from './pages/Connect';
 import { History } from './pages/History';
+import { Goals } from './pages/Goals';
 import { Onboarding } from './pages/Onboarding';
 import { Settings } from './pages/Settings';
 import { Tour } from './pages/Tour';
@@ -44,6 +45,7 @@ export function App() {
               }
             />
             <Route path="accounts" element={<Accounts />} />
+            <Route path="goals" element={<Goals />} />
             <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

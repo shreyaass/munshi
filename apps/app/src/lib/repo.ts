@@ -232,11 +232,17 @@ type CategoryRow = {
 /* Accounts & transfers                                                        */
 /* -------------------------------------------------------------------------- */
 
-export async function addAccount(input: {
+export interface AddAccountInput {
   name: string;
   type: AccountRow['type'];
   openingBalancePaise: number;
-}): Promise<string> {
+  kind?: 'bank' | 'cash' | 'wallet' | 'card';
+  isSavings?: boolean;
+  last4?: string;
+  bankName?: string;
+}
+
+export async function addAccount(input: AddAccountInput): Promise<string> {
   const id = newId();
   const ts = nowISO();
 
@@ -246,6 +252,10 @@ export async function addAccount(input: {
     type: input.type,
     opening_balance_paise: input.openingBalancePaise,
     active: true,
+    kind: input.kind ?? input.type,
+    is_savings: Boolean(input.isSavings),
+    last4: input.last4 ? input.last4.slice(-4) : '',
+    bank_name: input.bankName ?? '',
     updated_at: ts,
     device_id: getDeviceId(),
     deleted: false,
@@ -257,7 +267,16 @@ export async function addAccount(input: {
 
 export async function updateAccount(
   id: string,
-  patch: Partial<{ name: string; type: AccountRow['type']; opening_balance_paise: number; active: boolean }>,
+  patch: Partial<{
+    name: string;
+    type: AccountRow['type'];
+    opening_balance_paise: number;
+    active: boolean;
+    kind: 'bank' | 'cash' | 'wallet' | 'card';
+    is_savings: boolean;
+    last4: string;
+    bank_name: string;
+  }>,
 ): Promise<void> {
   const existing = await db.rows.get(rowKey('Accounts', id));
   if (!existing) return;
@@ -299,6 +318,197 @@ export async function addTransfer(input: {
   };
 
   await db.rows.put(toLocalRow('Transfers', row, true));
+  return id;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Goals & Contributions (v3)                                                 */
+/* -------------------------------------------------------------------------- */
+
+export interface AddGoalInput {
+  name: string;
+  targetPaise: number;
+  recurrence: 'once' | 'monthly' | 'yearly';
+  deadline?: string;
+  startDate?: string;
+  endDate?: string;
+  priority?: number;
+  linkedAccountId: string;
+  icon?: string;
+}
+
+export async function addGoal(input: AddGoalInput): Promise<string> {
+  const existing = await db.rows.where('tab').equals('Goals').toArray();
+  const liveGoals = existing.filter((r) => !r.deleted).map((r) => r.data);
+  const maxPriority = liveGoals.reduce((max, g) => Math.max(max, Number(g.priority) || 0), 0);
+
+  const id = newId();
+  const ts = nowISO();
+
+  const row: Row = {
+    id,
+    name: input.name.trim(),
+    target_paise: input.targetPaise,
+    recurrence: input.recurrence,
+    deadline: input.deadline ?? '',
+    start_date: input.startDate ?? '',
+    end_date: input.endDate ?? '',
+    priority: input.priority ?? maxPriority + 1,
+    linked_account_id: input.linkedAccountId,
+    icon: input.icon ?? 'savings',
+    status: 'active',
+    created_at: ts,
+    updated_at: ts,
+    device_id: getDeviceId(),
+    deleted: false,
+  };
+
+  await db.rows.put(toLocalRow('Goals', row, true));
+  return id;
+}
+
+export async function updateGoal(
+  id: string,
+  patch: Partial<Row>,
+): Promise<void> {
+  const existing = await db.rows.get(rowKey('Goals', id));
+  if (!existing) return;
+
+  const next: Row = {
+    ...existing.data,
+    ...(patch as Record<string, unknown>),
+    updated_at: nowISO(),
+    device_id: getDeviceId(),
+  };
+  await db.rows.put(toLocalRow('Goals', next, true));
+}
+
+export async function deleteGoal(id: string): Promise<void> {
+  await softDelete('Goals', id);
+  // Re-number remaining goals sequentially 1, 2, 3...
+  const existing = await db.rows.where('tab').equals('Goals').toArray();
+  const live = existing
+    .filter((r) => !r.deleted && r.id !== id)
+    .map((r) => r.data)
+    .sort((a, b) => (Number(a.priority) || 0) - (Number(b.priority) || 0));
+
+  const ts = nowISO();
+  for (let i = 0; i < live.length; i++) {
+    const nextPriority = i + 1;
+    if (Number(live[i].priority) !== nextPriority) {
+      await db.rows.put(
+        toLocalRow('Goals', { ...live[i], priority: nextPriority, updated_at: ts, device_id: getDeviceId() }, true),
+      );
+    }
+  }
+}
+
+export async function reorderGoals(goalIds: string[]): Promise<void> {
+  const ts = nowISO();
+  for (let i = 0; i < goalIds.length; i++) {
+    const id = goalIds[i];
+    const existing = await db.rows.get(rowKey('Goals', id));
+    if (existing && !existing.deleted) {
+      await db.rows.put(
+        toLocalRow('Goals', { ...existing.data, priority: i + 1, updated_at: ts, device_id: getDeviceId() }, true),
+      );
+    }
+  }
+}
+
+export async function addContribution(input: {
+  goalId: string;
+  fromAccountId: string;
+  toAccountId: string;
+  amountPaise: number;
+  date: string;
+  notes?: string;
+}): Promise<string> {
+  const id = newId();
+  const ts = nowISO();
+
+  const row: Row = {
+    id,
+    date: input.date,
+    amount_paise: input.amountPaise,
+    goal_id: input.goalId,
+    from_account_id: input.fromAccountId,
+    to_account_id: input.toAccountId,
+    notes: input.notes ?? '',
+    created_at: ts,
+    updated_at: ts,
+    device_id: getDeviceId(),
+    deleted: false,
+  };
+
+  await db.rows.put(toLocalRow('Contributions', row, true));
+  return id;
+}
+
+export async function setSpendingCap(input: {
+  categoryId: string; // 'ALL' for overall limit, or category_id
+  amountPaise: number;
+  month?: string;
+}): Promise<void> {
+  const month = input.month ?? '*';
+  const kind = input.categoryId === 'ALL' ? 'total' : 'category';
+  const categoryId = input.categoryId;
+
+  const existing = (await db.rows.where('tab').equals('Budgets').toArray()).find(
+    (r) =>
+      !r.deleted &&
+      String(r.data.kind) === kind &&
+      String(r.data.month) === month &&
+      String(r.data.category_id ?? '') === categoryId,
+  );
+
+  const ts = nowISO();
+  const row: Row = existing
+    ? {
+        ...existing.data,
+        amount_paise: input.amountPaise,
+        updated_at: ts,
+        device_id: getDeviceId(),
+        deleted: false,
+      }
+    : {
+        id: newId(),
+        month,
+        kind,
+        category_id: categoryId,
+        amount_paise: input.amountPaise,
+        updated_at: ts,
+        device_id: getDeviceId(),
+        deleted: false,
+      };
+
+  await db.rows.put(toLocalRow('Budgets', row, true));
+}
+
+export async function recordClosedPeriod(input: {
+  goalId: string;
+  periodKey: string;
+  targetPaise: number;
+  contributedPaise: number;
+  status: 'hit' | 'partial' | 'missed';
+}): Promise<string> {
+  const id = newId();
+  const ts = nowISO();
+
+  const row: Row = {
+    id,
+    goal_id: input.goalId,
+    period_key: input.periodKey,
+    target_paise: input.targetPaise,
+    contributed_paise: input.contributedPaise,
+    status: input.status,
+    created_at: ts,
+    updated_at: ts,
+    device_id: getDeviceId(),
+    deleted: false,
+  };
+
+  await db.rows.put(toLocalRow('GoalPeriods', row, true));
   return id;
 }
 

@@ -29,3 +29,19 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# Build outputs
+*.apk
+*.aab
+
+# Internal notes & task prompts
+expense-manager-plan.md
+New_tasks_prompt.md
+PROGRESS.md
+
+

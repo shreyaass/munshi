@@ -2,6 +2,7 @@
   "name": "expense-manager",
   "private": true,
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "workspaces": [
     "apps/app",
@@ -13,5 +14,8 @@
     "preview": "npm run preview --workspace @em/app",
     "typecheck": "npm run typecheck --workspace @em/core && npm run typecheck --workspace @em/app",
     "test": "npm run test --workspace @em/core"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
   }
 }

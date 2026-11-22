@@ -10,7 +10,7 @@ interface Step {
 const STEPS: Step[] = [
   {
     title: 'Copy the template',
-    body: 'Tap the link we send you, then “Make a copy”. A version of the sheet lands in your own Google Drive — that copy is yours, we never see it.',
+    body: 'Tap the link we send you, then "Make a copy". A version of the sheet lands in your own Google Drive — that copy is yours, we never see it.',
     art: '📄',
   },
   {
@@ -20,7 +20,7 @@ const STEPS: Step[] = [
   },
   {
     title: 'Deploy it',
-    body: 'Deploy → New deployment → Web app. Choose “Execute as: Me” and “Who has access: Anyone”. Then Authorize.',
+    body: 'Deploy → New deployment → Web app. Choose "Execute as: Me" and "Who has access: Anyone". Then Authorize.',
     art: '🚀',
   },
   {
@@ -43,7 +43,7 @@ export function Tour() {
   const isLast = index === STEPS.length - 1;
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-surface px-6 py-8 text-ink ">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-surface px-6 py-8 text-text ">
       <div className="flex items-center justify-between">
         <button type="button" onClick={() => navigate('/connect')} className="text-sm font-medium text-muted">
           Skip
@@ -53,7 +53,7 @@ export function Tour() {
             <span
               key={s.title}
               className={`h-1.5 rounded-full transition-all ${
-                i === index ? 'w-6 bg-brand' : 'w-1.5 bg-line '
+                i === index ? 'w-6 bg-accent' : 'w-1.5 bg-line '
               }`}
             />
           ))}
@@ -66,7 +66,7 @@ export function Tour() {
       <div className="flex flex-1 flex-col items-center justify-center text-center">
         <div
           key={step.title}
-          className="animate-pop mb-8 flex h-32 w-32 items-center justify-center rounded-[2rem] bg-accent-soft/50 text-6xl shadow-inner "
+          className="animate-pop mb-8 flex h-32 w-32 items-center justify-center rounded-[2rem] bg-accent/15 text-6xl shadow-inner "
         >
           {step.art}
         </div>
@@ -78,7 +78,7 @@ export function Tour() {
         <button
           type="button"
           onClick={() => (isLast ? navigate('/connect') : setIndex(index + 1))}
-          className="w-full rounded-xl bg-brand py-3.5 text-sm font-semibold text-brand-ink transition active:scale-[0.99]"
+          className="w-full rounded-xl bg-accent py-3.5 text-sm font-semibold text-on-accent transition active:scale-[0.99]"
         >
           {isLast ? 'Connect now' : 'Next'}
         </button>

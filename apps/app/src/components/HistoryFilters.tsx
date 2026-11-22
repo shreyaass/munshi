@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Row } from '@em/core';
 import { Sheet } from './Sheet';
+import { CustomDatePicker } from './CustomDatePicker';
 import { asBool, asString } from '../lib/analytics';
 import {
   defaultFilters,
@@ -28,7 +29,7 @@ function Segmented<T extends string>({ label, value, options, columns, onChange 
     <div
       role="group"
       aria-label={label}
-      className="grid gap-1 rounded-xl bg-surface-muted p-1"
+      className="grid gap-1 rounded-xl bg-raised p-1"
       style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
     >
       {options.map((option) => {
@@ -40,7 +41,7 @@ function Segmented<T extends string>({ label, value, options, columns, onChange 
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
             className={`rounded-lg py-2 text-[12px] font-semibold transition ${
-              selected ? 'bg-surface text-ink shadow-sm' : 'text-muted'
+              selected ? 'bg-surface text-text shadow-sm' : 'text-muted'
             }`}
           >
             {option.label}
@@ -149,7 +150,7 @@ export function HistoryFiltersSheet({
           <button
             type="button"
             onClick={() => setDraft(defaultFilters())}
-            className="flex-1 rounded-xl border border-line py-3 text-sm font-semibold text-ink"
+            className="flex-1 rounded-xl border border-line py-3 text-sm font-semibold text-text"
           >
             Clear all
           </button>
@@ -159,7 +160,7 @@ export function HistoryFiltersSheet({
               onApply(draft);
               onClose();
             }}
-            className="flex-[1.4] rounded-xl bg-brand py-3 text-sm font-semibold text-brand-ink"
+            className="flex-[1.4] rounded-xl bg-accent py-3 text-sm font-semibold text-on-accent"
           >
             Show results
           </button>
@@ -184,25 +185,23 @@ export function HistoryFiltersSheet({
                 setDraft((current) => ({ ...current, month: e.target.value || current.month }))
               }
               aria-label="Month"
-              className="w-full rounded-xl bg-surface-muted px-3.5 py-2.5 text-sm outline-none ring-brand focus:ring-2"
+              className="w-full rounded-xl bg-raised px-3.5 py-2.5 text-sm outline-none ring-accent focus:ring-2"
             />
           )}
 
           {draft.range === 'custom' && (
             <div className="grid grid-cols-2 gap-2">
-              <input
-                type="date"
+              <CustomDatePicker
                 value={draft.from}
-                onChange={(e) => setDraft((current) => ({ ...current, from: e.target.value }))}
+                onChange={(from) => setDraft((current) => ({ ...current, from }))}
                 aria-label="From date"
-                className="w-full rounded-xl bg-surface-muted px-3 py-2.5 text-sm outline-none ring-brand focus:ring-2"
+                placeholder="From"
               />
-              <input
-                type="date"
+              <CustomDatePicker
                 value={draft.to}
-                onChange={(e) => setDraft((current) => ({ ...current, to: e.target.value }))}
+                onChange={(to) => setDraft((current) => ({ ...current, to }))}
                 aria-label="To date"
-                className="w-full rounded-xl bg-surface-muted px-3 py-2.5 text-sm outline-none ring-brand focus:ring-2"
+                placeholder="To"
               />
             </div>
           )}
@@ -227,7 +226,7 @@ export function HistoryFiltersSheet({
             onChange={(amountOp) => setDraft((current) => ({ ...current, amountOp }))}
           />
           <div
-            className={`flex items-center rounded-xl bg-surface-muted px-3.5 transition ${
+            className={`flex items-center rounded-xl bg-raised px-3.5 transition ${
               amountDisabled ? 'opacity-50' : ''
             }`}
           >
@@ -251,7 +250,7 @@ export function HistoryFiltersSheet({
               onClick={() => setDraft((current) => ({ ...current, categoryId: '' }))}
               className={`rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${
                 draft.categoryId === ''
-                  ? 'border-brand bg-brand/10 text-brand'
+                  ? 'border-accent bg-accent/15 text-accent'
                   : 'border-line text-muted'
               }`}
             >
@@ -267,7 +266,7 @@ export function HistoryFiltersSheet({
                     setDraft((current) => ({ ...current, categoryId: category.id }))
                   }
                   className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${
-                    selected ? 'border-brand bg-brand/10 text-brand' : 'border-line text-muted'
+                    selected ? 'border-accent bg-accent/15 text-accent' : 'border-line text-muted'
                   }`}
                 >
                   <span>{category.icon}</span>

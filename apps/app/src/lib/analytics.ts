@@ -32,8 +32,13 @@ export function categoriesFor(categories: Row[], type: 'expense' | 'income'): Ro
     .sort((a, b) => asString(a.name).localeCompare(asString(b.name)));
 }
 
-/** Opening balance + income - expenses + transfers in - transfers out. */
-export function accountBalances(accounts: Row[], transactions: Tx[], transfers: Row[]): Map<string, number> {
+/** Opening balance + income - expenses + transfers in - transfers out + contributions in - out. */
+export function accountBalances(
+  accounts: Row[],
+  transactions: Tx[],
+  transfers: Row[],
+  contributions: Row[] = [],
+): Map<string, number> {
   const balances = new Map<string, number>();
   for (const a of accounts) {
     if (asBool(a.deleted)) continue;
@@ -56,7 +61,41 @@ export function accountBalances(accounts: Row[], transactions: Tx[], transfers: 
     if (balances.has(to)) balances.set(to, (balances.get(to) ?? 0) + amount);
   }
 
+  for (const c of contributions) {
+    if (asBool(c.deleted)) continue;
+    const amount = asNumber(c.amount_paise);
+    const from = asString(c.from_account_id);
+    const to = asString(c.to_account_id);
+    if (balances.has(from)) balances.set(from, (balances.get(from) ?? 0) - amount);
+    if (balances.has(to)) balances.set(to, (balances.get(to) ?? 0) + amount);
+  }
+
   return balances;
+}
+
+export function balanceBreakdown(
+  accounts: Row[],
+  balances: Map<string, number>,
+): { total: number; spendable: number; saved: number } {
+  let spendable = 0;
+  let saved = 0;
+
+  for (const a of accounts) {
+    if (asBool(a.deleted)) continue;
+    const id = asString(a.id);
+    const bal = balances.get(id) ?? 0;
+    if (asBool(a.is_savings)) {
+      saved += bal;
+    } else {
+      spendable += bal;
+    }
+  }
+
+  return {
+    total: spendable + saved,
+    spendable,
+    saved,
+  };
 }
 
 export interface MonthTotals {

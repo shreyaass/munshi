@@ -8,7 +8,7 @@
  * Amounts are ALWAYS integer paise. Never floats, never rupees-with-decimals.
  */
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export type TabName =
   | 'Expenses'
@@ -18,6 +18,9 @@ export type TabName =
   | 'Categories'
   | 'Budgets'
   | 'Recurring'
+  | 'Goals'
+  | 'Contributions'
+  | 'GoalPeriods'
   | 'Meta';
 
 /** Tabs that hold synced records (everything except the key/value Meta tab). */
@@ -29,6 +32,9 @@ export const DATA_TABS = [
   'Categories',
   'Budgets',
   'Recurring',
+  'Goals',
+  'Contributions',
+  'GoalPeriods',
 ] as const satisfies readonly TabName[];
 
 export type DataTab = (typeof DATA_TABS)[number];
@@ -70,7 +76,19 @@ export const HEADERS: Record<TabName, readonly string[]> = {
     'created_at',
     ...BASE,
   ],
-  Accounts: ['id', 'name', 'type', 'opening_balance_paise', 'active', ...BASE],
+  Accounts: [
+    'id',
+    'name',
+    'type',
+    'opening_balance_paise',
+    'active',
+    ...BASE,
+    // v3 additions
+    'kind',
+    'is_savings',
+    'last4',
+    'bank_name',
+  ],
   Categories: [
     'id',
     'name',
@@ -96,6 +114,42 @@ export const HEADERS: Record<TabName, readonly string[]> = {
     'rule',
     'next_date',
     'active',
+    ...BASE,
+  ],
+  Goals: [
+    'id',
+    'name',
+    'target_paise',
+    'recurrence',
+    'deadline',
+    'start_date',
+    'end_date',
+    'priority',
+    'linked_account_id',
+    'icon',
+    'status',
+    'created_at',
+    ...BASE,
+  ],
+  Contributions: [
+    'id',
+    'date',
+    'amount_paise',
+    'goal_id',
+    'from_account_id',
+    'to_account_id',
+    'notes',
+    'created_at',
+    ...BASE,
+  ],
+  GoalPeriods: [
+    'id',
+    'goal_id',
+    'period_key',
+    'target_paise',
+    'contributed_paise',
+    'status',
+    'created_at',
     ...BASE,
   ],
   Meta: ['key', 'value'],

@@ -1,31 +1,37 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GoalCard } from './GoalCard';
-import { Icon } from './Icon';
 
 export interface GoalItem {
-  categoryId: string;
+  id?: string;
+  categoryId?: string;
   name: string;
   emoji: string;
   target: number;
   spent: number;
+  priority?: number;
+  recurrence?: 'once' | 'monthly' | 'yearly';
 }
 
 interface GoalsCarouselProps {
   goals: GoalItem[];
   currency: string;
   locale: string;
-  onOpen: (categoryId: string) => void;
+  onOpen: (id: string) => void;
 }
 
 /**
- * Peek-style carousel: the centred goal is full size, its neighbours peek in at
- * both edges at reduced scale. Swiping is native CSS scroll-snap — no drag
- * handlers, so it never fights the page's vertical scroll on Android.
+ * Centered carousel matching the Munshi Kaala Bahi design:
+ * - When 1 goal: displays full width.
+ * - When multiple goals: centers the active card with equal side peeks and scale transitions.
+ * - Active card illuminated with accent glow border.
+ * - Pill pagination indicator below.
  */
 export function GoalsCarousel({ goals, currency, locale, onOpen }: GoalsCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
   const [active, setActive] = useState(0);
+
+  const isMulti = goals.length > 1;
 
   const measure = useCallback(() => {
     const track = trackRef.current;
@@ -75,24 +81,47 @@ export function GoalsCarousel({ goals, currency, locale, onOpen }: GoalsCarousel
     });
   }
 
-  const atStart = active <= 0;
-  const atEnd = active >= goals.length - 1;
+  // Single goal: render cleanly full width
+  if (!isMulti && goals.length === 1) {
+    const goal = goals[0];
+    const key = goal.id || goal.categoryId || 'single';
+    return (
+      <div className="w-full">
+        <GoalCard
+          name={goal.name}
+          emoji={goal.emoji}
+          target={goal.target}
+          spent={goal.spent}
+          priority={goal.priority}
+          recurrence={goal.recurrence}
+          currency={currency}
+          locale={locale}
+          active={true}
+          onOpen={() => onOpen(key)}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div aria-roledescription="carousel" aria-label="Goals">
-      <div className="relative">
-        <div
-          ref={trackRef}
-          onScroll={onScroll}
-          className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1"
-        >
-          <div aria-hidden="true" className="w-[11%] shrink-0" />
-          {goals.map((goal, index) => (
+    <div aria-roledescription="carousel" aria-label="Goals" className="relative">
+      {/* Scroll track with centered peek */}
+      <div
+        ref={trackRef}
+        onScroll={onScroll}
+        className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3.5 overflow-x-auto overscroll-x-contain py-2"
+      >
+        {/* Left spacer so the 1st card centers in the viewport */}
+        <div aria-hidden="true" className="w-[10%] shrink-0" />
+
+        {goals.map((goal, index) => {
+          const key = goal.id || goal.categoryId || String(index);
+          return (
             <div
-              key={goal.categoryId}
+              key={key}
               data-goal={`goal-${index}`}
-              className={`w-[78%] shrink-0 snap-center transition-[transform,opacity] duration-300 ${
-                index === active ? 'scale-100 opacity-100' : 'scale-[0.94] opacity-55'
+              className={`w-[80%] shrink-0 snap-center transition-all duration-300 ${
+                index === active ? 'scale-100 opacity-100 z-10' : 'scale-[0.95] opacity-55'
               }`}
             >
               <GoalCard
@@ -100,56 +129,39 @@ export function GoalsCarousel({ goals, currency, locale, onOpen }: GoalsCarousel
                 emoji={goal.emoji}
                 target={goal.target}
                 spent={goal.spent}
+                priority={goal.priority}
+                recurrence={goal.recurrence}
                 currency={currency}
                 locale={locale}
                 active={index === active}
-                onOpen={() => onOpen(goal.categoryId)}
+                onOpen={() => onOpen(key)}
               />
             </div>
-          ))}
-          <div aria-hidden="true" className="w-[11%] shrink-0" />
-        </div>
+          );
+        })}
 
-        {goals.length > 1 && (
-          <>
-            <button
-              type="button"
-              aria-label="Previous goal"
-              onClick={() => scrollTo(active - 1)}
-              disabled={atStart}
-              className="absolute left-0 top-1/2 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface text-ink shadow-sm transition disabled:opacity-0 md:flex"
-            >
-              <Icon name="back" className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              aria-label="Next goal"
-              onClick={() => scrollTo(active + 1)}
-              disabled={atEnd}
-              className="absolute right-0 top-1/2 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface text-ink shadow-sm transition disabled:opacity-0 md:flex"
-            >
-              <Icon name="back" className="h-4 w-4 rotate-180" />
-            </button>
-          </>
-        )}
+        {/* Right spacer so the last card also centers in the viewport */}
+        <div aria-hidden="true" className="w-[10%] shrink-0" />
       </div>
 
-      {goals.length > 1 && (
-        <div className="mt-2 flex justify-center gap-1.5">
-          {goals.map((goal, index) => (
+      {/* Pagination dots */}
+      <div className="mt-2.5 flex items-center justify-center gap-1.5">
+        {goals.map((goal, index) => {
+          const key = goal.id || goal.categoryId || String(index);
+          return (
             <button
-              key={goal.categoryId}
+              key={key}
               type="button"
               aria-label={`Go to goal ${index + 1}: ${goal.name}`}
               aria-current={index === active}
               onClick={() => scrollTo(index)}
-              className={`h-1.5 rounded-full transition-all ${
-                index === active ? 'w-4 bg-brand' : 'w-1.5 bg-line'
+              className={`rounded-full transition-all duration-300 ${
+                index === active ? 'h-1.5 w-6 bg-accent' : 'h-1.5 w-1.5 bg-line'
               }`}
             />
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }

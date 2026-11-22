@@ -129,7 +129,7 @@ export function BudgetSheet({ open, onClose, month }: BudgetSheetProps) {
           type="button"
           onClick={save}
           disabled={busy}
-          className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-brand-ink disabled:bg-surface-muted disabled:text-muted"
+          className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-on-accent disabled:bg-raised disabled:text-muted"
         >
           {busy ? 'Saving…' : 'Save budgets'}
         </button>
@@ -138,10 +138,10 @@ export function BudgetSheet({ open, onClose, month }: BudgetSheetProps) {
       <div className="space-y-4 pt-1">
         <p className="text-[11px] leading-relaxed text-muted">
           A total caps the month. A daily figure is a pace target of its own. Category goals live
-          in <span className="font-medium text-ink">Goals</span> and never add up to the total.
+          in <span className="font-medium text-text">Goals</span> and never add up to the total.
         </p>
 
-        <div className="flex rounded-lg bg-surface-muted p-0.5 text-[12px] font-medium">
+        <div className="flex rounded-lg bg-raised p-0.5 text-[12px] font-medium">
           {(
             [
               ['standing', 'Every month'],
@@ -153,7 +153,7 @@ export function BudgetSheet({ open, onClose, month }: BudgetSheetProps) {
               type="button"
               onClick={() => loadScope(value)}
               className={`flex-1 rounded-md px-2 py-1.5 transition ${
-                scope === value ? 'bg-surface text-ink shadow-sm' : 'text-muted'
+                scope === value ? 'bg-surface text-text shadow-sm' : 'text-muted'
               }`}
             >
               {label}
@@ -180,7 +180,7 @@ export function BudgetSheet({ open, onClose, month }: BudgetSheetProps) {
           <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-muted">
             Monthly total
           </span>
-          <div className="flex items-center rounded-xl bg-surface-muted px-3.5 focus-within:ring-2 focus-within:ring-brand">
+          <div className="flex items-center rounded-xl bg-raised px-3.5 focus-within:ring-2 focus-within:ring-accent">
             <span className="money text-sm text-muted">₹</span>
             <input
               value={total}
@@ -202,7 +202,7 @@ export function BudgetSheet({ open, onClose, month }: BudgetSheetProps) {
           <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-muted">
             Daily pace
           </span>
-          <div className="flex items-center rounded-xl bg-surface-muted px-3.5 focus-within:ring-2 focus-within:ring-brand">
+          <div className="flex items-center rounded-xl bg-raised px-3.5 focus-within:ring-2 focus-within:ring-accent">
             <span className="money text-sm text-muted">₹</span>
             <input
               value={daily}

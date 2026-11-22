@@ -23,7 +23,7 @@ function applyTheme(mode: ThemeMode): 'light' | 'dark' {
   root.style.colorScheme = dark ? 'dark' : 'light';
 
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', dark ? '#07251b' : '#073d2b');
+  if (meta) meta.setAttribute('content', dark ? '#0D0F12' : '#EFEDE8');
 
   return dark ? 'dark' : 'light';
 }

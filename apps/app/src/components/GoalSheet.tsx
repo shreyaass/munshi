@@ -151,9 +151,9 @@ export function GoalSheet({ open, onClose, categoryId, month }: GoalSheetProps) 
               type="button"
               onClick={remove}
               disabled={busy}
-              className="flex items-center justify-center gap-1.5 rounded-xl bg-danger-soft px-4 text-sm font-semibold text-danger disabled:opacity-60"
+              className="flex items-center justify-center gap-1.5 rounded-xl bg-expense/10 px-4 text-sm font-semibold text-expense disabled:opacity-60"
             >
-              <Icon name="trash" className="h-4 w-4" />
+              <Icon name="delete" className="h-4 w-4" />
               Remove
             </button>
           )}
@@ -161,7 +161,7 @@ export function GoalSheet({ open, onClose, categoryId, month }: GoalSheetProps) 
             type="button"
             onClick={save}
             disabled={busy}
-            className="flex-1 rounded-xl bg-brand py-3 text-sm font-semibold text-brand-ink disabled:bg-surface-muted disabled:text-muted"
+            className="flex-1 rounded-xl bg-accent py-3 text-sm font-semibold text-on-accent disabled:bg-raised disabled:text-muted"
           >
             {busy ? 'Saving…' : 'Save goal'}
           </button>
@@ -170,7 +170,7 @@ export function GoalSheet({ open, onClose, categoryId, month }: GoalSheetProps) 
     >
       <div className="space-y-4 pt-1">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-muted text-xl">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-raised text-xl">
             {emoji}
           </span>
           <div className="min-w-0">
@@ -183,7 +183,7 @@ export function GoalSheet({ open, onClose, categoryId, month }: GoalSheetProps) 
           </div>
         </div>
 
-        <div className="flex rounded-lg bg-surface-muted p-0.5 text-[12px] font-medium">
+        <div className="flex rounded-lg bg-raised p-0.5 text-[12px] font-medium">
           {(
             [
               ['standing', 'Every month'],
@@ -195,7 +195,7 @@ export function GoalSheet({ open, onClose, categoryId, month }: GoalSheetProps) 
               type="button"
               onClick={() => switchScope(value)}
               className={`flex-1 rounded-md px-2 py-1.5 transition ${
-                scope === value ? 'bg-surface text-ink shadow-sm' : 'text-muted'
+                scope === value ? 'bg-surface text-text shadow-sm' : 'text-muted'
               }`}
             >
               {label}
@@ -207,7 +207,7 @@ export function GoalSheet({ open, onClose, categoryId, month }: GoalSheetProps) 
           <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-muted">
             Goal amount
           </span>
-          <div className="flex items-center rounded-xl bg-surface-muted px-3.5 focus-within:ring-2 focus-within:ring-brand">
+          <div className="flex items-center rounded-xl bg-raised px-3.5 focus-within:ring-2 focus-within:ring-accent">
             <span className="money text-sm text-muted">₹</span>
             <input
               value={amount}

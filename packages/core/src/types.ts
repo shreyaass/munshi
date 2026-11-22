@@ -37,6 +37,43 @@ export interface Account extends BaseRecord {
   type: import('./schema.js').AccountType;
   opening_balance_paise: number;
   active: boolean;
+  kind?: 'bank' | 'cash' | 'wallet' | 'card';
+  is_savings?: boolean;
+  last4?: string;
+  bank_name?: string;
+}
+
+export interface Goal extends BaseRecord {
+  name: string;
+  target_paise: number;
+  recurrence: 'once' | 'monthly' | 'yearly';
+  deadline?: string;
+  start_date?: string;
+  end_date?: string;
+  priority: number;
+  linked_account_id: string;
+  icon?: string;
+  status?: 'active' | 'achieved' | 'overdue';
+  created_at: string;
+}
+
+export interface Contribution extends BaseRecord {
+  date: string;
+  amount_paise: number;
+  goal_id: string;
+  from_account_id: string;
+  to_account_id: string;
+  notes?: string;
+  created_at: string;
+}
+
+export interface GoalPeriod extends BaseRecord {
+  goal_id: string;
+  period_key: string;
+  target_paise: number;
+  contributed_paise: number;
+  status: 'hit' | 'partial' | 'missed';
+  created_at: string;
 }
 
 export interface Category extends BaseRecord {

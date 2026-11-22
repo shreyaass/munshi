@@ -40,18 +40,23 @@ describe('date', () => {
   });
 });
 
-describe('schema v2', () => {
-  it('is at version 2', () => {
-    expect(SCHEMA_VERSION).toBe(2);
+describe('schema v3', () => {
+  it('is at version 3', () => {
+    expect(SCHEMA_VERSION).toBe(3);
     expect(HEADERS.Categories).toContain('pinned');
     expect(HEADERS.Categories).toContain('sort_order');
     expect(HEADERS.Budgets).toContain('kind');
+    expect(HEADERS.Accounts).toContain('is_savings');
+    expect(HEADERS.Accounts).toContain('last4');
+    expect(HEADERS.Goals).toBeDefined();
+    expect(HEADERS.Contributions).toBeDefined();
     expect(BUDGET_KINDS).toEqual(['total', 'daily', 'category']);
     expect(BUDGET_DEFAULT_MONTH).toBe('*');
   });
 
   it('accepts a correct header row', () => {
     expect(validateHeaders('Expenses', [...HEADERS.Expenses])).toEqual([]);
+    expect(validateHeaders('Goals', [...HEADERS.Goals])).toEqual([]);
   });
 
   it('accepts reordered headers (name matching, not position)', () => {
@@ -74,13 +79,14 @@ describe('schema v2', () => {
 
   it('round-trips rows through header mapping', () => {
     const headers = [...HEADERS.Accounts, 'my_note'];
-    const values = ['id-1', 'Cash', 'cash', 0, true, 'ts', 'dev', false, 'hello'];
+    // 12 columns for Accounts + 1 for my_note
+    const values = ['id-1', 'Cash', 'cash', 0, true, 'ts', 'dev', false, 'cash', false, '', '', 'hello'];
     const row = rowFromValues(headers, values);
     expect(row.id).toBe('id-1');
     expect(row.my_note).toBe('hello');
     const back = valuesFromRow(headers, { ...row, name: 'Wallet' });
     expect(back[1]).toBe('Wallet');
-    expect(back[8]).toBe('hello');
+    expect(back[12]).toBe('hello');
   });
 });
 

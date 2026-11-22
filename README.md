@@ -1,91 +1,153 @@
-# Expense Manager
+# Munshi (मुंशी) — The Private Ledger & Goal Tracker
 
-A private expense tracker where **your own Google Sheet is the database**.
-No accounts, no server to run, no cost. Works as an installable PWA and (later) an Android APK
-from the same codebase.
+> **Your money. Your rules. Your private Google Sheet as the database.**  
+> Zero subscriptions · Zero server costs · 100% Data Ownership · Offline-First PWA & Android App.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.0-646CFF.svg)](https://vitejs.dev/)
+[![Capacitor](https://img.shields.io/badge/Capacitor-Android-119EFF.svg)](https://capacitorjs.com/)
+
+---
+
+## 🌟 For Everyday Users (The Layman's Guide)
+
+### What is Munshi?
+Most expense tracker apps force you to store your private bank details, transactions, and life savings on someone else's company servers. If they go out of business or change their pricing, your data is locked behind a paywall.
+
+**Munshi** (Hindi for *Accountant / Bookkeeper*) changes that. It is a handcrafted, dark-brass themed personal ledger (*Kaala Bahi*) that runs directly in your browser or on your Android phone as a native app — but **stores everything inside your own personal Google Sheet**.
+
+### Why you'll love it:
+- 🔒 **100% Private**: Nobody else ever sees your financial numbers — not even us. It talks directly to your private Google account.
+- ⚡ **Works Offline**: Add expenses or transfer money anywhere, even on a plane. The app syncs seamlessly once you're back online.
+- 🌊 **Fluid Saving Goals**: Visual animated water cards show exactly how close you are to buying that new phone, laptop, or dream vacation.
+- 🛡️ **Pace & Limit Guardrails**: Keep your monthly spending under control with live pace indicators that warn you before you overshoot.
+- 💰 **Zero Cost**: Completely free forever. No ads, no monthly in-app purchases.
+
+---
+
+## 🚀 Getting Started in 3 Steps
+
+You only need a Google account and 3 minutes to set up:
+
+1. **Make a Copy of the Ledger Sheet**
+   - Upload the provided `sheet/ExpenseManager-template.xlsx` to your [Google Drive](https://drive.google.com) and click **File → Save as Google Sheets**.
+2. **Deploy the Private Script**
+   - In your Google Sheet, go to **Extensions → Apps Script**.
+   - Paste the code from `sheet/AppsScript.gs`, click **Deploy → New deployment → Web app**.
+   - Select **Execute as: Me** and **Who has access: Anyone**.
+3. **Connect & Track**
+   - Open the **Expense Tracker** menu in your Sheet → **Show connection info**.
+   - Open Munshi, paste your connection URL and security token, and you are ready to track!
+
+---
+
+## 🛠️ For Developers & Builders
+
+Munshi is structured as an enterprise-grade TypeScript monorepo with an offline-first, local-first architecture.
+
+### Architecture Overview
+
+```text
+┌────────────────────────────────────────────────────────┐
+│               Munshi Client (PWA / Android)           │
+│                                                        │
+│  React 18 + Tailwind + Framer Motion + Lucide Icons    │
+│  IndexedDB Cache (Dexie / Local-first Outbox)          │
+└───────────────────────────┬────────────────────────────┘
+                            │ HTTPS (Encrypted JSON envelope)
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│               Apps Script Web App Backend             │
+│                                                        │
+│  Runs inside user's private Google account             │
+│  LockService mutex serialization · Token validation    │
+└───────────────────────────┬────────────────────────────┘
+                            │ Sheet Service API
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│               User's Private Google Sheet             │
+│                                                        │
+│  Accounts · Entries · Goals · Categories · MonthlyCaps │
+└────────────────────────────────────────────────────────┘
 ```
-React app (PWA / Capacitor)
-   │  local-first: IndexedDB = instant UI, offline, outbox
-   ▼
-Apps Script Web App URL   ← pasted once
-   │  runs as the sheet owner · LockService mutex · sheet stays private
-   ▼
-Your Google Sheet (one file, 8 data tabs + 2 generated)
+
+### Key Engineering Principles
+- **Integer Arithmetic Everywhere**: Floating-point math is banned. All currency values are strictly stored and computed in integer paise ($1 = 100 \text{ paise}$) via `@em/core`.
+- **CRDT / Outbox Sync Engine**: Every record contains `{ id, updated_at, device_id, deleted }`. Local changes write instantly to IndexedDB with `dirty=1`. Background sync resolves conflicts with deterministic last-write-wins.
+- **Mock Backend for Fast Iteration**: Run `npm run dev` and connect with URL `http://localhost:5173/__mock` and token `dev-token` to develop full features without touching Google APIs.
+
+### Project Structure
+
+```text
+├── apps/
+│   ├── app/               # React 18 + Vite PWA + Capacitor Android wrapper
+│   │   ├── android/       # Native Android Studio project (Capacitor)
+│   │   ├── src/           # UI components, pages, hooks, state
+│   │   └── capacitor.config.ts
+│   └── script/            # Apps Script source files (modular .gs files)
+├── packages/
+│   └── core/              # Shared platform-agnostic business logic & unit tests
+├── sheet/                 # Bundled AppsScript.gs & Excel template generator
+├── scripts/               # Icon & asset generation pipelines
+└── LICENSE                # MIT Open Source License
 ```
 
-The local database is a **disposable cache**. It rehydrates from the sheet on launch, so only
-unsynced writes are ever at risk.
+---
 
-## Quick start
+## 💻 Developer Quickstart
+
+### Prerequisites
+- Node.js 18+ and npm
+- Java OpenJDK 17 (only required for compiling Android APK)
+
+### Installation & Local Development
 
 ```bash
+# Clone the repository
+git clone https://github.com/shreyaass/munshi.git
+cd munshi
+
+# Install dependencies across all workspaces
 npm install
-npm run dev          # http://localhost:5173
-npm run build        # production PWA in apps/app/dist
-npm run typecheck
-npm test
+
+# Start development server with built-in mock backend
+npm run dev
 ```
 
-### Develop without touching Google
+Visit `http://localhost:5173` in your browser.
 
-`npm run dev` also serves a fake Apps Script endpoint at `POST /__mock`
-(see `apps/app/dev/mockSheetPlugin.ts`), pre-seeded with accounts, categories
-and a month of transactions. Connect with:
+### Run Tests & Quality Checks
 
-| Field | Value |
-|---|---|
-| Web App URL | `http://localhost:5173/__mock` |
-| Token | `dev-token` |
+```bash
+npm run typecheck    # Strict TypeScript checks across packages
+npm test             # Vitest unit test suite (core calculations & sync)
+npm run build        # Production PWA build in apps/app/dist
+```
 
-That exercises the real transport, sync engine, dashboard and history with no
-Google account. The mock is dev-only (`apply: 'serve'`) and never ships.
+### Building the Android APK
 
-## Real sheet
+```bash
+# Sync production web assets into Android project
+npx cap sync android
 
-Everything needed to stand up the private backend is in `sheet/`:
+# Build debug APK
+cd apps/app/android
+./gradlew assembleDebug
+```
+The output APK will be generated at `apps/app/android/app/build/outputs/apk/debug/app-debug.apk`.
 
-| File | What it is |
-|---|---|
-| `ExpenseManager-template.xlsx` | Upload to Drive → Save as Google Sheets. |
-| `AppsScript.gs` | The whole backend as one paste-ready file. |
-| `SETUP.md` | Step-by-step install, deploy and verification. |
+---
 
-`AppsScript.gs` is generated (`node sheet/bundle.mjs`) from `apps/script/*.gs`.
-The `.xlsx` is generated (`python sheet/build_template.py`, needs `openpyxl`)
-from `packages/core/src/schema.ts` + `apps/script/Setup.gs`.
+## 🔒 Security & Privacy Audited
+- No analytics trackers or spyware embedded in application code.
+- No third-party servers: direct peer-to-cloud communication between your device and Google's servers.
+- Stored credentials and tokens are kept in secure client storage and never broadcasted.
 
-## Repo layout
+---
 
-| Path | What it is |
-|---|---|
-| `apps/app` | React + Vite + Tailwind. Builds the PWA, later wrapped by Capacitor. |
-| `apps/script` | The Apps Script backend (`ping` / `readAll` / `batch`). See its README. |
-| `packages/core` | Platform-free domain: schema, money, dates, sheet client, sync engine, tests. |
-| `expense-manager-plan.md` | The authoritative plan. Read this before changing scope. |
-| `sheet` | Uploadable `.xlsx` template, paste-ready script, and setup guide. |
+## 📄 License
 
-## How sync works
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for more details.
 
-Every row has `id`, `updated_at`, `device_id`, `deleted`.
-
-1. **Write** → local row (`dirty=1`) immediately. The UI never waits on the network.
-2. **Push** → one `batch` call with `{upserts, deletes}`. The server dedupes by `id`.
-3. **Pull** → one `readAll`, applied only where `remote.updated_at > local.updated_at`.
-4. **Delete** → tombstone, never a row removal, so it can travel to other devices.
-5. **Conflict** → last-write-wins per row; counted in Settings, never silent.
-
-## Money rules
-
-Amounts are **integer paise** everywhere. `packages/core/src/money.ts` is the only place that
-parses or formats money. Floating point never touches a stored amount.
-
-## Setup checklist (Phase 1)
-
-1. Open the template sheet → **Extensions → Apps Script** → paste `apps/script/*`.
-2. **Deploy → New deployment → Web app** · Execute as **Me** · Access **Anyone**.
-3. Sheet menu → **Expense Tracker → Setup / repair sheet**.
-4. **Expense Tracker → Show connection info** → copy URL + token.
-5. Paste both into the app's connect screen.
-
-Status of each phase lives in `expense-manager-plan.md` → *Build phases*.
+Crafted with care by [shreyaass](https://github.com/shreyaass).

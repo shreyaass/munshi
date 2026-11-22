@@ -74,7 +74,7 @@ export function Connect() {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-bg px-5 py-8 text-ink">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-bg px-5 py-8 text-text">
       <div className="mb-7 flex items-center gap-3">
         <img src="/icons/icon-192.png" alt="" className="h-12 w-12 rounded-2xl" />
         <div>
@@ -99,7 +99,7 @@ export function Connect() {
             autoCorrect="off"
             spellCheck={false}
             inputMode="url"
-            className="w-full rounded-xl border border-line bg-bg px-3.5 py-3 font-mono text-[13px] outline-none ring-brand focus:ring-2 "
+            className="w-full rounded-xl border border-line bg-bg px-3.5 py-3 font-mono text-[13px] outline-none ring-accent focus:ring-2 "
           />
         </label>
 
@@ -114,13 +114,13 @@ export function Connect() {
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck={false}
-            className="w-full rounded-xl border border-line bg-bg px-3.5 py-3 font-mono text-[13px] outline-none ring-brand focus:ring-2 "
+            className="w-full rounded-xl border border-line bg-bg px-3.5 py-3 font-mono text-[13px] outline-none ring-accent focus:ring-2 "
           />
         </label>
 
         {error && (
-          <div className="flex gap-2 rounded-xl bg-danger-soft px-3.5 py-3 text-sm text-danger ">
-            <Icon name="alert" className="mt-0.5 h-4 w-4 shrink-0" />
+          <div className="flex gap-2 rounded-xl bg-expense/10 px-3.5 py-3 text-sm text-expense ">
+            <Icon name="info" className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -140,7 +140,7 @@ export function Connect() {
           type="button"
           onClick={handleConnect}
           disabled={busy}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-semibold text-brand-ink transition active:scale-[0.99] disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3.5 text-sm font-semibold text-on-accent transition active:scale-[0.99] disabled:opacity-60"
         >
           {busy ? 'Checking…' : 'Connect'}
           {!busy && <Icon name="check" className="h-4 w-4" />}

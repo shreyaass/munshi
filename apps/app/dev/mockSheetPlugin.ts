@@ -12,7 +12,7 @@ import type { Plugin } from 'vite';
  */
 
 const TOKEN = 'dev-token';
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 type Row = Record<string, unknown>;
 type Tab = string;
@@ -21,10 +21,13 @@ const HEADERS: Record<Tab, string[]> = {
   Expenses: ['id', 'date', 'amount_paise', 'category_id', 'account_id', 'payee', 'notes', 'tags', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Income: ['id', 'date', 'amount_paise', 'category_id', 'account_id', 'payee', 'notes', 'tags', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Transfers: ['id', 'date', 'amount_paise', 'from_account_id', 'to_account_id', 'notes', 'created_at', 'updated_at', 'device_id', 'deleted'],
-  Accounts: ['id', 'name', 'type', 'opening_balance_paise', 'active', 'updated_at', 'device_id', 'deleted'],
+  Accounts: ['id', 'name', 'type', 'opening_balance_paise', 'active', 'updated_at', 'device_id', 'deleted', 'kind', 'is_savings', 'last4', 'bank_name'],
   Categories: ['id', 'name', 'type', 'parent_id', 'icon', 'color', 'monthly_budget_paise', 'active', 'updated_at', 'device_id', 'deleted', 'pinned', 'sort_order'],
   Budgets: ['id', 'month', 'kind', 'category_id', 'amount_paise', 'updated_at', 'device_id', 'deleted'],
   Recurring: ['id', 'amount_paise', 'type', 'category_id', 'account_id', 'payee', 'rule', 'next_date', 'active', 'updated_at', 'device_id', 'deleted'],
+  Goals: ['id', 'name', 'target_paise', 'recurrence', 'deadline', 'start_date', 'end_date', 'priority', 'linked_account_id', 'icon', 'status', 'created_at', 'updated_at', 'device_id', 'deleted'],
+  Contributions: ['id', 'date', 'amount_paise', 'goal_id', 'from_account_id', 'to_account_id', 'notes', 'created_at', 'updated_at', 'device_id', 'deleted'],
+  GoalPeriods: ['id', 'goal_id', 'period_key', 'target_paise', 'contributed_paise', 'status', 'created_at', 'updated_at', 'device_id', 'deleted'],
 };
 
 const now = () => new Date().toISOString();
@@ -50,25 +53,43 @@ const rows: Record<Tab, Row[]> = {
     base('cat-inc-3', { name: 'Interest', type: 'income', parent_id: '', icon: '📈', color: '#7c3aed', monthly_budget_paise: 0, active: true, pinned: false, sort_order: 0 }),
   ],
   Accounts: [
-    base('acc-cash', { name: 'Cash', type: 'cash', opening_balance_paise: 500000, active: true }),
-    base('acc-bank', { name: 'Bank', type: 'bank', opening_balance_paise: 4200000, active: true }),
-    base('acc-upi', { name: 'UPI', type: 'upi', opening_balance_paise: 300000, active: true }),
+    base('acc-kotak', { name: 'Kotak · Salary', type: 'bank', kind: 'bank', bank_name: 'Kotak Mahindra Bank', last4: '4821', opening_balance_paise: 2239700, is_savings: false, active: true }),
+    base('acc-bank', { name: 'Kotak', type: 'bank', kind: 'bank', bank_name: 'Kotak Mahindra Bank', last4: '4821', opening_balance_paise: 2239700, is_savings: false, active: true }),
+    base('acc-cash', { name: 'Cash', type: 'cash', kind: 'cash', opening_balance_paise: 0, is_savings: false, active: true }),
+    base('acc-upi', { name: 'UPI', type: 'upi', kind: 'wallet', opening_balance_paise: 35000, is_savings: false, active: true }),
+    base('acc-hdfc-savings', { name: 'HDFC · Savings', type: 'bank', kind: 'bank', bank_name: 'HDFC Bank', last4: '7310', opening_balance_paise: 3460000, is_savings: true, active: true }),
   ],
   Expenses: [],
   Income: [],
   Transfers: [],
   Budgets: [
-    base('bud-total', { month: '*', kind: 'total', category_id: '', amount_paise: 3000000 }),
-    base('bud-daily', { month: '*', kind: 'daily', category_id: '', amount_paise: 150000 }),
-    base('bud-cat-food', { month: '*', kind: 'category', category_id: 'cat-exp-1', amount_paise: 400000 }),
-    base('bud-cat-groc', { month: '*', kind: 'category', category_id: 'cat-exp-2', amount_paise: 600000 }),
-    base('bud-cat-bills', { month: '*', kind: 'category', category_id: 'cat-exp-4', amount_paise: 1200000 }),
-    // Varied goal states for the water cards: low, over and untouched/full.
-    base('bud-cat-shopping', { month: '*', kind: 'category', category_id: 'cat-exp-5', amount_paise: 100000 }),
-    base('bud-cat-health', { month: '*', kind: 'category', category_id: 'cat-exp-6', amount_paise: 30000 }),
-    base('bud-cat-travel', { month: '*', kind: 'category', category_id: 'cat-exp-8', amount_paise: 500000 }),
+    base('bud-overall', { month: '*', kind: 'total', category_id: 'ALL', amount_paise: 2000000 }),
+    base('bud-food', { month: '*', kind: 'category', category_id: 'cat-exp-1', amount_paise: 600000 }),
+    base('bud-groc', { month: '*', kind: 'category', category_id: 'cat-exp-2', amount_paise: 500000 }),
   ],
   Recurring: [],
+  Goals: [
+    base('goal-1', { name: 'Samsung S25', target_paise: 6500000, recurrence: 'once', deadline: '2027-01-31', priority: 1, linked_account_id: 'acc-hdfc-savings', icon: '📱', status: 'active', created_at: now() }),
+    base('goal-2', { name: 'Laptop', target_paise: 10000000, recurrence: 'once', deadline: '2027-06-30', priority: 2, linked_account_id: 'acc-hdfc-savings', icon: '💻', status: 'active', created_at: now() }),
+    base('goal-3', { name: 'Bike', target_paise: 30000000, recurrence: 'once', deadline: '2027-12-31', priority: 3, linked_account_id: 'acc-hdfc-savings', icon: '🏍️', status: 'active', created_at: now() }),
+  ],
+  Contributions: [
+    base('con-1', { date: today(), amount_paise: 1200000, goal_id: 'goal-1', from_account_id: 'acc-kotak', to_account_id: 'acc-hdfc-savings', notes: 'Goa fund' }),
+    base('con-2', { date: today(), amount_paise: 620000, goal_id: 'goal-2', from_account_id: 'acc-kotak', to_account_id: 'acc-hdfc-savings', notes: 'Monthly savings' }),
+    base('con-3', { date: today(), amount_paise: 1440000, goal_id: 'goal-3', from_account_id: 'acc-kotak', to_account_id: 'acc-hdfc-savings', notes: 'Laptop fund' }),
+  ],
+  GoalPeriods: [
+    base('gp-1', { goal_id: 'goal-2', period_key: '2026-01', target_paise: 1000000, contributed_paise: 1000000, status: 'hit', created_at: now() }),
+    base('gp-2', { goal_id: 'goal-2', period_key: '2026-02', target_paise: 1000000, contributed_paise: 1000000, status: 'hit', created_at: now() }),
+    base('gp-3', { goal_id: 'goal-2', period_key: '2026-03', target_paise: 1000000, contributed_paise: 600000, status: 'partial', created_at: now() }),
+    base('gp-4', { goal_id: 'goal-2', period_key: '2026-04', target_paise: 1000000, contributed_paise: 1000000, status: 'hit', created_at: now() }),
+    base('gp-5', { goal_id: 'goal-2', period_key: '2026-05', target_paise: 1000000, contributed_paise: 0, status: 'missed', created_at: now() }),
+    base('gp-6', { goal_id: 'goal-2', period_key: '2026-06', target_paise: 1000000, contributed_paise: 1000000, status: 'hit', created_at: now() }),
+    base('gp-7', { goal_id: 'goal-2', period_key: '2026-07', target_paise: 1000000, contributed_paise: 1000000, status: 'hit', created_at: now() }),
+    base('gp-8', { goal_id: 'goal-2', period_key: '2026-08', target_paise: 1000000, contributed_paise: 500000, status: 'partial', created_at: now() }),
+    base('gp-9', { goal_id: 'goal-2', period_key: '2026-09', target_paise: 1000000, contributed_paise: 1000000, status: 'hit', created_at: now() }),
+    base('gp-10', { goal_id: 'goal-2', period_key: '2026-10', target_paise: 1000000, contributed_paise: 0, status: 'missed', created_at: now() }),
+  ],
 };
 
 function seedTransactions() {

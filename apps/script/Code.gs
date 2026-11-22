@@ -13,18 +13,32 @@
  * Keep this file's surface frozen. All product logic belongs in the app.
  */
 
-var SCHEMA_VERSION = 2;
+var SCHEMA_VERSION = 3;
 
-var DATA_TABS = ['Expenses', 'Income', 'Transfers', 'Accounts', 'Categories', 'Budgets', 'Recurring'];
+var DATA_TABS = [
+  'Expenses',
+  'Income',
+  'Transfers',
+  'Accounts',
+  'Categories',
+  'Budgets',
+  'Recurring',
+  'Goals',
+  'Contributions',
+  'GoalPeriods'
+];
 
 var HEADERS = {
   Expenses: ['id', 'date', 'amount_paise', 'category_id', 'account_id', 'payee', 'notes', 'tags', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Income: ['id', 'date', 'amount_paise', 'category_id', 'account_id', 'payee', 'notes', 'tags', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Transfers: ['id', 'date', 'amount_paise', 'from_account_id', 'to_account_id', 'notes', 'created_at', 'updated_at', 'device_id', 'deleted'],
-  Accounts: ['id', 'name', 'type', 'opening_balance_paise', 'active', 'updated_at', 'device_id', 'deleted'],
+  Accounts: ['id', 'name', 'type', 'opening_balance_paise', 'active', 'updated_at', 'device_id', 'deleted', 'kind', 'is_savings', 'last4', 'bank_name'],
   Categories: ['id', 'name', 'type', 'parent_id', 'icon', 'color', 'monthly_budget_paise', 'active', 'updated_at', 'device_id', 'deleted', 'pinned', 'sort_order'],
   Budgets: ['id', 'month', 'kind', 'category_id', 'amount_paise', 'updated_at', 'device_id', 'deleted'],
   Recurring: ['id', 'amount_paise', 'type', 'category_id', 'account_id', 'payee', 'rule', 'next_date', 'active', 'updated_at', 'device_id', 'deleted'],
+  Goals: ['id', 'name', 'target_paise', 'recurrence', 'deadline', 'start_date', 'end_date', 'priority', 'linked_account_id', 'icon', 'status', 'created_at', 'updated_at', 'device_id', 'deleted'],
+  Contributions: ['id', 'date', 'amount_paise', 'goal_id', 'from_account_id', 'to_account_id', 'notes', 'created_at', 'updated_at', 'device_id', 'deleted'],
+  GoalPeriods: ['id', 'goal_id', 'period_key', 'target_paise', 'contributed_paise', 'status', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Meta: ['key', 'value']
 };
 
@@ -32,10 +46,13 @@ var NUMERIC_FIELDS = {
   amount_paise: true,
   opening_balance_paise: true,
   monthly_budget_paise: true,
-  sort_order: true
+  sort_order: true,
+  target_paise: true,
+  priority: true,
+  contributed_paise: true
 };
 
-var BOOLEAN_FIELDS = { active: true, deleted: true, pinned: true };
+var BOOLEAN_FIELDS = { active: true, deleted: true, pinned: true, is_savings: true };
 
 /* -------------------------------------------------------------------------- */
 /* Router                                                                      */

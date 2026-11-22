@@ -44,21 +44,21 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            className="relative w-full max-w-md overflow-hidden rounded-t-3xl border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] "
+            className="relative w-full max-w-md overflow-hidden rounded-t-3xl border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] sm:border-x"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 380, damping: 34 }}
           >
             <div className="flex items-center justify-between px-4 pb-2 pt-4">
-              <h2 className="text-sm font-semibold tracking-tight">{title}</h2>
+              <h2 className="font-display text-[18px] text-text">{title}</h2>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-muted transition active:scale-95"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-raised text-muted transition active:scale-95"
               >
-                <Icon name="close" className="h-[18px] w-[18px]" strokeWidth={2} />
+                <Icon name="close" size={18} />
               </button>
             </div>
             <div className="max-h-[70vh] overflow-y-auto px-4 pb-4">{children}</div>

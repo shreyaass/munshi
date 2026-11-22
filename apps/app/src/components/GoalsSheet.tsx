@@ -95,7 +95,7 @@ export function GoalsSheet({ open, onClose, month }: GoalsSheetProps) {
               type="button"
               onClick={() => setMode('pick')}
               disabled={available.length === 0}
-              className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-brand-ink disabled:bg-surface-muted disabled:text-muted"
+              className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-on-accent disabled:bg-raised disabled:text-muted"
             >
               {available.length === 0 ? 'All categories have a goal' : 'New goal'}
             </button>
@@ -103,7 +103,7 @@ export function GoalsSheet({ open, onClose, month }: GoalsSheetProps) {
             <button
               type="button"
               onClick={() => setMode('list')}
-              className="w-full rounded-xl bg-surface-muted py-3 text-sm font-semibold text-ink"
+              className="w-full rounded-xl bg-raised py-3 text-sm font-semibold text-text"
             >
               Back to goals
             </button>
@@ -130,7 +130,7 @@ export function GoalsSheet({ open, onClose, month }: GoalsSheetProps) {
                   const progress = goalProgress(goal.target, goal.spent);
                   const tone =
                     progress.status === 'over'
-                      ? 'text-danger'
+                      ? 'text-expense'
                       : progress.status === 'low'
                         ? 'text-goal-low'
                         : progress.status === 'warn'
@@ -141,9 +141,9 @@ export function GoalsSheet({ open, onClose, month }: GoalsSheetProps) {
                       <button
                         type="button"
                         onClick={() => pick(goal.categoryId)}
-                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition active:bg-surface-muted/60"
+                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition active:bg-raised/60"
                       >
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted text-base">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-raised text-base">
                           {goal.emoji}
                         </span>
                         <span className="min-w-0 flex-1">
@@ -169,7 +169,7 @@ export function GoalsSheet({ open, onClose, month }: GoalsSheetProps) {
                               ? 'Met'
                               : `${Math.round(progress.fill * 100)}%`}
                         </span>
-                        <Icon name="back" className="h-4 w-4 shrink-0 rotate-180 text-muted" />
+                        <Icon name="arrow_back" className="h-4 w-4 shrink-0 rotate-180 text-muted" />
                       </button>
                     </li>
                   );
@@ -198,9 +198,9 @@ export function GoalsSheet({ open, onClose, month }: GoalsSheetProps) {
                       <button
                         type="button"
                         onClick={() => pick(id)}
-                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition active:bg-surface-muted/60"
+                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition active:bg-raised/60"
                       >
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted text-base">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-raised text-base">
                           {asString(category.icon) || '📦'}
                         </span>
                         <span className="min-w-0 flex-1 truncate text-[13px] font-medium">

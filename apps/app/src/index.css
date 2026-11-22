@@ -1,148 +1,106 @@
-/* Bundled locally so the PWA keeps its typography offline. */
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/fraunces';
+/* Google Fonts: loaded via <link> in index.html, NOT @import here */
+
 @import 'tailwindcss';
 
-/* Class-based dark mode so Settings can override the system preference. */
+/* Class-based dark mode so Settings can override system preference */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* -------------------------------------------------------------------------- */
-/* Munshi brand palette                                                        */
-/* -------------------------------------------------------------------------- */
-/* Light: ivory paper + deep forest + antique gold.                            */
-/* Dark: warm forest, never black. Gold becomes the primary action colour.     */
+/* -------------------------------------------------------------------------
+   MUNSHI KAALA BAHI — Design tokens
+   Dark: Brass (#0D0F12 bg, #C8A45C accent)
+   Light: Copper (#EFEDE8 bg, #A95F32 accent)
+   ------------------------------------------------------------------------- */
 :root {
-  --brand: #073d2b;
-  --brand-hover: #14563d;
-  --brand-ink: #fff6e8;
+  /* Surfaces */
+  --bg: #EFEDE8;
+  --surface: #FFFFFF;
+  --raised: #F6F4EF;
+  --line: #DDD9CF;
 
-  --accent: #d6a747;
-  --accent-soft: #f3d58a;
-  --accent-ink: #24352d;
+  /* Text */
+  --text: #14171B;
+  --muted: #5F6670;
 
-  --bg: #fff6e8;
-  --surface: #ffffff;
-  --surface-muted: #e9dfc9;
+  /* Accent (Copper) */
+  --accent: #A95F32;
+  --on-accent: #FFFFFF;
 
-  --ink: #24352d;
-  --muted: #6b6457;
-  --line: #e9dfc9;
+  /* Semantic */
+  --income: #2F7A57;
+  --expense: #B4482C;
 
-  --success: #287a50;
-  --warning: #8a5a12;
-  --danger: #a03c3a;
+  /* Goal water states */
+  --goal-ok: #2F7A57;
+  --goal-ok-soft: #DCEFE4;
+  --goal-warn: #C88D2B;
+  --goal-warn-soft: #F9EED9;
+  --goal-low: #B4482C;
+  --goal-low-soft: #F8E0D6;
 
-  --danger-soft: #f7e7e4;
-  --warning-soft: #fbf0d9;
-
-  /* Fixed high-contrast tones for use on the deep-green hero card. */
-  --hero: #073d2b;
-  --hero-ink: #fff6e8;
-  --hero-muted: #b7cfc3;
-  --gold-on-hero: #f0ce86;
-  --success-bright: #8fd3ac;
-  --danger-bright: #f0a6a1;
-
-  /* Goal water. The level carries the meaning; colour only reinforces it. */
-  --goal-card: #ffffff;
-  --goal-ok: #2f7a58;
-  --goal-ok-soft: #dcefe4;
-  --goal-warn: #b07a1e;
-  --goal-warn-soft: #f8e9cc;
-  --goal-low: #b5573a;
-  --goal-low-soft: #f8e0d6;
+  /* Radius */
+  --radius-card: 16px;
+  --radius-btn: 12px;
 
   color-scheme: light;
 }
 
 .dark {
-  --brand: #e3b65c;
-  --brand-hover: #f3d58a;
-  --brand-ink: #07251b;
+  /* Surfaces */
+  --bg: #0D0F12;
+  --surface: #15181D;
+  --raised: #1E232A;
+  --line: #2C323B;
 
-  --accent: #d6a747;
-  --accent-soft: #4a3b1d;
-  --accent-ink: #07251b;
+  /* Text */
+  --text: #E9E6DF;
+  --muted: #9AA1AB;
 
-  --bg: #07251b;
-  --surface: #0c3325;
-  --surface-muted: #123f2f;
+  /* Accent (Brass) */
+  --accent: #C8A45C;
+  --on-accent: #0D0F12;
 
-  --ink: #fff6e8;
-  --muted: #b9b19f;
-  --line: #1d4a38;
+  /* Semantic */
+  --income: #6FB38F;
+  --expense: #E8876C;
 
-  --success: #6fbf93;
-  --warning: #e0b25b;
-  --danger: #e08a87;
-
-  --danger-soft: #3a1f1e;
-  --warning-soft: #3a2e17;
-
-  --hero: #0c3325;
-  --hero-ink: #fff6e8;
-  --hero-muted: #b9b19f;
-  --gold-on-hero: #f0ce86;
-  --success-bright: #8fd3ac;
-  --danger-bright: #f0a6a1;
-
-  /* Goal water stays readable on the dark card without turning neon. */
-  --goal-card: #0c3325;
-  --goal-ok: #4f9e77;
-  --goal-ok-soft: #164736;
-  --goal-warn: #c9993f;
-  --goal-warn-soft: #3d3119;
-  --goal-low: #b9705a;
-  --goal-low-soft: #3d241d;
+  /* Goal water states */
+  --goal-ok: #6FB38F;
+  --goal-ok-soft: #163E2C;
+  --goal-warn: #E0A63E;
+  --goal-warn-soft: #3D2D14;
+  --goal-low: #E8876C;
+  --goal-low-soft: #3D1E18;
 
   color-scheme: dark;
 }
 
+/* Tailwind theme bridge — maps CSS vars to Tailwind color names */
 @theme inline {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  /* Fonts */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 
-  --color-brand: var(--brand);
-  --color-brand-hover: var(--brand-hover);
-  --color-brand-ink: var(--brand-ink);
-
-  --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
-  --color-accent-ink: var(--accent-ink);
-
-  --color-bg: var(--bg);
-  --color-surface: var(--surface);
-  --color-surface-muted: var(--surface-muted);
-
-  --color-ink: var(--ink);
-  --color-muted: var(--muted);
-  --color-line: var(--line);
-
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-danger: var(--danger);
-  --color-danger-soft: var(--danger-soft);
-  --color-warning-soft: var(--warning-soft);
-
-  --color-hero: var(--hero);
-  --color-hero-ink: var(--hero-ink);
-  --color-hero-muted: var(--hero-muted);
-  --color-gold-on-hero: var(--gold-on-hero);
-  --color-success-bright: var(--success-bright);
-  --color-danger-bright: var(--danger-bright);
-
-  --color-goal-card: var(--goal-card);
-  --color-goal-ok: var(--goal-ok);
-  --color-goal-ok-soft: var(--goal-ok-soft);
-  --color-goal-warn: var(--goal-warn);
+  /* Colors */
+  --color-bg:             var(--bg);
+  --color-surface:        var(--surface);
+  --color-raised:         var(--raised);
+  --color-line:           var(--line);
+  --color-text:           var(--text);
+  --color-muted:          var(--muted);
+  --color-accent:         var(--accent);
+  --color-on-accent:      var(--on-accent);
+  --color-income:         var(--income);
+  --color-expense:        var(--expense);
+  --color-goal-ok:        var(--goal-ok);
+  --color-goal-ok-soft:   var(--goal-ok-soft);
+  --color-goal-warn:      var(--goal-warn);
   --color-goal-warn-soft: var(--goal-warn-soft);
-  --color-goal-low: var(--goal-low);
-  --color-goal-low-soft: var(--goal-low-soft);
+  --color-goal-low:       var(--goal-low);
+  --color-goal-low-soft:  var(--goal-low-soft);
 }
 
-html,
-body,
-#root {
+html, body, #root {
   height: 100%;
 }
 
@@ -150,88 +108,141 @@ body {
   margin: 0;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
-  font-feature-settings: 'cv11', 'ss01';
   background-color: var(--bg);
-  color: var(--ink);
+  color: var(--text);
+  font-family: var(--font-sans);
 }
 
-/* Display face, reserved for money. */
+/* ── Typography helpers ─────────────────────────────────────────────── */
+
+/* Fraunces for screen titles / headings (weight 500) */
 .font-display {
-  font-optical-sizing: auto;
-  font-variation-settings:
-    'SOFT' 0,
-    'WONK' 0;
-  letter-spacing: -0.01em;
-}
-
-/* Money: lining, tabular figures so amounts line up and ₹ never breaks rhythm. */
-.money {
   font-family: var(--font-display);
-  font-variant-numeric: lining-nums tabular-nums;
-  font-feature-settings:
-    'lnum' 1,
-    'tnum' 1;
-  letter-spacing: -0.015em;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 0, 'WONK' 0;
 }
 
+/* IBM Plex Mono for all numbers/amounts/dates */
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Numbers always tabular so columns line up */
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
-/* Safe areas for Android / iOS standalone mode */
+/* Money: mono + tabular */
+.money {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ── Safe areas ─────────────────────────────────────────────────────── */
 .safe-bottom {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.25rem);
 }
 
-@keyframes pop {
-  0% {
-    transform: scale(0.94);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+/* ── Themed Form Controls: Dropdowns & Calendars ───────────────────── */
+select {
+  background-color: var(--raised);
+  color: var(--text);
+  border-color: var(--line);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C8A45C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.25rem;
 }
 
+:root:not(.dark) select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A95F32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+select option {
+  background-color: var(--surface);
+  color: var(--text);
+  padding: 8px 12px;
+}
+
+select option:checked {
+  background-color: var(--accent);
+  color: var(--on-accent);
+}
+
+input[type="date"] {
+  background-color: var(--raised);
+  color: var(--text);
+  border-color: var(--line);
+  cursor: pointer;
+}
+
+.dark input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  filter: invert(0.75) sepia(1) saturate(3) hue-rotate(5deg);
+}
+
+:root:not(.dark) input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.35) sepia(1) saturate(4) hue-rotate(345deg);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* ── Animations ─────────────────────────────────────────────────────── */
+@keyframes pop {
+  0%   { transform: scale(0.94); opacity: 0; }
+  100% { transform: scale(1);    opacity: 1; }
+}
 .animate-pop {
   animation: pop 160ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
-/* Hide scrollbars on horizontal chip rows without losing touch scrolling. */
-.no-scrollbar {
-  scrollbar-width: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* Hide scrollbars on horizontal chip rows */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ── Material Symbols ───────────────────────────────────────────────── */
+/* Loaded via Google Fonts link in index.html with weight 300 */
+.material-icon {
+  font-family: 'Material Symbols Outlined';
+  font-weight: 300;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  flex-shrink: 0;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Goal water                                                                 */
-/* -------------------------------------------------------------------------- */
-/* The wave strip is drawn twice as wide as the card and slides exactly half   */
-/* its own width, so the loop is seamless. Two layers at different speeds and  */
-/* opacities read as moving water without any JS ticker.                       */
+/* ── Goal water animation ─────────────────────────────────────────── */
 @keyframes goal-wave {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
-
-.goal-wave-slow {
-  animation: goal-wave 13s linear infinite;
-}
-
-.goal-wave-fast {
-  animation: goal-wave 9s linear infinite reverse;
-}
+.goal-wave-slow { animation: goal-wave 5.5s linear infinite; }
+.goal-wave-fast { animation: goal-wave 3.8s linear infinite reverse; }
 
 @media (prefers-reduced-motion: reduce) {
   .goal-wave-slow,
-  .goal-wave-fast {
-    animation: none;
-  }
+  .goal-wave-fast { animation: none; }
 }

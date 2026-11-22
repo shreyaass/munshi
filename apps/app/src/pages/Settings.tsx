@@ -1,26 +1,23 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { currentMonthKey, formatPaise, resolveBudgets } from '@em/core';
 import { useConnectionState } from '../lib/connection';
-import { exportCsv, useMetaValue, useSyncMeta, useTabRows } from '../lib/repo';
+import { exportCsv, useSyncMeta } from '../lib/repo';
 import { useSync } from '../lib/SyncProvider';
 import { useTheme, type ThemeMode } from '../lib/theme';
 import { db } from '../lib/db';
-import { BudgetSheet } from '../components/BudgetSheet';
-import { GoalsSheet } from '../components/GoalsSheet';
-import { Icon } from '../components/Icon';
+import { Icon, type IconName } from '../components/Icon';
 
-const THEMES: { value: ThemeMode; label: string; emoji: string }[] = [
-  { value: 'system', label: 'System', emoji: '🖥️' },
-  { value: 'light', label: 'Light', emoji: '☀️' },
-  { value: 'dark', label: 'Dark', emoji: '🌙' },
+const THEMES: { value: ThemeMode; label: string; icon: IconName }[] = [
+  { value: 'system', label: 'System', icon: 'computer' },
+  { value: 'light', label: 'Light', icon: 'light_mode' },
+  { value: 'dark', label: 'Dark', icon: 'dark_mode' },
 ];
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 px-3.5 py-2.5 text-sm">
-      <span className="text-muted">{label}</span>
-      <span className="max-w-[62%] truncate text-right font-medium">{value}</span>
+    <div className="flex justify-between items-baseline px-4 py-3 text-sm border-b border-line last:border-b-0">
+      <span className="text-text">{label}</span>
+      <span className="font-mono text-muted max-w-[62%] truncate text-right">{value}</span>
     </div>
   );
 }
@@ -29,7 +26,7 @@ function ThemeControl() {
   const { mode, setMode } = useTheme();
   return (
     <div
-      className="grid grid-cols-3 gap-1 rounded-xl bg-surface-muted p-1 "
+      className="grid grid-cols-3 gap-1 rounded-[12px] bg-raised p-1"
       role="radiogroup"
       aria-label="Theme"
     >
@@ -40,12 +37,12 @@ function ThemeControl() {
           role="radio"
           aria-checked={mode === t.value}
           onClick={() => setMode(t.value)}
-          className={`flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition ${
-            mode === t.value ? 'bg-surface text-ink shadow-sm ' : 'text-muted '
+          className={`flex items-center justify-center gap-2 rounded-[10px] py-2 text-xs font-semibold transition ${
+            mode === t.value ? 'bg-accent text-on-accent' : 'text-muted'
           }`}
         >
-          <span aria-hidden="true">{t.emoji}</span>
-          {t.label}
+          <Icon name={t.icon} size={16} />
+          <span>{t.label}</span>
         </button>
       ))}
     </div>
@@ -59,20 +56,6 @@ export function Settings() {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [budgetOpen, setBudgetOpen] = useState(false);
-  const [goalsOpen, setGoalsOpen] = useState(false);
-  const budgetRows = useTabRows('Budgets');
-  const currency = useMetaValue('currency', 'INR');
-  const locale = useMetaValue('locale', 'en-IN');
-  const budget = resolveBudgets(budgetRows ?? [], currentMonthKey());
-  const budgetSummary =
-    budget.ceiling > 0
-      ? `${formatPaise(budget.ceiling, locale, currency, { decimals: false })} this month`
-      : 'Not set';
-  const goalsSummary =
-    budget.byCategory.size > 0
-      ? `${budget.byCategory.size} ${budget.byCategory.size === 1 ? 'goal' : 'goals'}`
-      : 'Not set';
 
   const shortUrl = conn ? conn.url.replace(/^https:\/\/script\.google\.com\/macros\/s\//, '…/') : '—';
 
@@ -121,123 +104,111 @@ export function Settings() {
   }
 
   return (
-    <div className="space-y-4">
-      <section className="overflow-hidden rounded-xl border border-line ">
-        <h2 className="border-b border-line bg-bg px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted ">
-          Appearance
-        </h2>
-        <div className="px-3.5 py-3">
-          <ThemeControl />
+    <div className="space-y-6">
+      {/* Desktop / Tablet Header (md+) */}
+      <div className="hidden md:flex items-center justify-between pb-2 pt-1">
+        <div>
+          <h1 className="font-display text-3xl lg:text-4xl font-medium text-text">Settings</h1>
+          <p className="text-xs text-muted mt-1 uppercase tracking-[0.08em] font-medium">
+            Appearance, planning and sync
+          </p>
         </div>
-      </section>
-
-      <section className="overflow-hidden rounded-xl border border-line ">
-        <h2 className="border-b border-line bg-bg px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted ">
-          Planning
-        </h2>
-        <button
-          type="button"
-          onClick={() => setGoalsOpen(true)}
-          className="flex w-full items-center justify-between gap-3 border-b border-line px-3.5 py-2.5 text-left text-sm transition active:bg-surface-muted/60"
-        >
-          <span>Goals</span>
-          <span className="flex items-center gap-1.5 text-[11px] text-muted">
-            {goalsSummary}
-            <Icon name="back" className="h-3.5 w-3.5 rotate-180" />
-          </span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setBudgetOpen(true)}
-          className="flex w-full items-center justify-between gap-3 px-3.5 py-2.5 text-left text-sm transition active:bg-surface-muted/60"
-        >
-          <span>Monthly budgets</span>
-          <span className="flex items-center gap-1.5 text-[11px] text-muted">
-            {budgetSummary}
-            <Icon name="back" className="h-3.5 w-3.5 rotate-180" />
-          </span>
-        </button>
-      </section>
-
-      <section className="overflow-hidden rounded-xl border border-line ">
-        <h2 className="border-b border-line bg-bg px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted ">
-          Connection
-        </h2>
-        <Row label="Web App URL" value={shortUrl} />
-        <Row label="Token" value={conn ? `${'•'.repeat(12)}${conn.token.slice(-4)}` : '—'} />
-        <Row label="Connected" value={conn ? new Date(conn.connectedAt).toLocaleDateString() : '—'} />
-      </section>
-
-      <section className="overflow-hidden rounded-xl border border-line ">
-        <h2 className="border-b border-line bg-bg px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted ">
-          Sync
-        </h2>
-        <Row
-          label="Status"
-          value={
-            status === 'syncing'
-              ? 'Syncing…'
-              : status === 'error'
-                ? 'Failed'
-                : status === 'offline'
-                  ? 'Offline'
-                  : 'Idle'
-          }
-        />
-        <Row label="Pending writes" value={String(pending)} />
-        <Row label="Conflicts resolved" value={String(conflicts)} />
-        <Row label="Last sync" value={lastSync ? new Date(lastSync).toLocaleTimeString() : 'Never'} />
-      </section>
-
-      {message && <p className="rounded-lg bg-surface-muted px-3 py-2 text-xs text-muted ">{message}</p>}
-
-      <div className="space-y-2">
-        <button
-          type="button"
-          onClick={handleSync}
-          disabled={busy}
-          className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-brand-ink disabled:opacity-60"
-        >
-          {busy ? 'Syncing…' : 'Sync now'}
-        </button>
-        <button
-          type="button"
-          onClick={handleExport}
-          className="w-full rounded-xl border border-line py-3 text-sm font-medium text-ink "
-        >
-          Export CSV
-        </button>
-        <Link
-          to="/tour"
-          className="block w-full rounded-xl border border-line py-3 text-center text-sm font-medium text-ink "
-        >
-          Replay setup guide
-        </Link>
-        <button
-          type="button"
-          onClick={handleDisconnect}
-          className="w-full rounded-xl bg-danger-soft py-3 text-sm font-semibold text-danger "
-        >
-          Disconnect
-        </button>
       </div>
 
-      <p className="pt-2 text-center text-[10px] leading-relaxed text-muted">
-        Munshi v0.1 · schema v2
-        <br />
-        Your entries live in your Google Sheet. This app holds only a local cache.
-      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+        {/* Left Column: Appearance, Connection, Data */}
+        <div className="space-y-5">
+          {/* Appearance */}
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-muted font-semibold mb-2">Appearance</p>
+            <section className="bg-surface border border-line rounded-[16px] overflow-hidden p-3.5">
+              <ThemeControl />
+            </section>
+          </div>
 
-      <BudgetSheet
-        open={budgetOpen}
-        onClose={() => setBudgetOpen(false)}
-        month={currentMonthKey()}
-      />
-      <GoalsSheet
-        open={goalsOpen}
-        onClose={() => setGoalsOpen(false)}
-        month={currentMonthKey()}
-      />
+          {/* Connection */}
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-muted font-semibold mb-2">Connection</p>
+            <section className="bg-surface border border-line rounded-[16px] overflow-hidden">
+              <Row label="Web App URL" value={shortUrl} />
+              <Row label="Token" value={conn ? `${'•'.repeat(12)}${conn.token.slice(-4)}` : '—'} />
+              <Row label="Connected" value={conn ? new Date(conn.connectedAt).toLocaleDateString() : '—'} />
+            </section>
+          </div>
+
+          {/* Data */}
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-muted font-semibold mb-2">Data</p>
+            <section className="bg-surface border border-line rounded-[16px] overflow-hidden p-3.5 space-y-2">
+              <button
+                type="button"
+                onClick={handleExport}
+                className="w-full rounded-xl border border-line bg-raised py-2.5 text-xs font-semibold text-text hover:bg-line transition"
+              >
+                Export CSV
+              </button>
+              <Link
+                to="/tour"
+                className="block text-center w-full rounded-xl border border-line bg-raised py-2.5 text-xs font-semibold text-text hover:bg-line transition"
+              >
+                Replay setup guide
+              </Link>
+              <button
+                type="button"
+                onClick={handleDisconnect}
+                className="w-full rounded-xl border border-expense/50 py-2.5 text-xs font-semibold text-expense hover:bg-expense/10 transition"
+              >
+                Disconnect
+              </button>
+            </section>
+          </div>
+        </div>
+
+        {/* Right Column: Sync */}
+        <div className="space-y-5">
+          {/* Sync */}
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-muted font-semibold mb-2">Sync</p>
+            <section className="bg-surface border border-line rounded-[16px] overflow-hidden">
+              <Row
+                label="Status"
+                value={
+                  status === 'syncing'
+                    ? 'Syncing…'
+                    : status === 'error'
+                      ? 'Failed'
+                      : status === 'offline'
+                        ? 'Offline'
+                        : 'Idle'
+                }
+              />
+              <Row label="Pending writes" value={String(pending)} />
+              <Row label="Conflicts resolved" value={String(conflicts)} />
+              <Row label="Last sync" value={lastSync ? new Date(lastSync).toLocaleTimeString() : 'Never'} />
+              <div className="p-3.5">
+                <button
+                  type="button"
+                  onClick={handleSync}
+                  disabled={busy}
+                  className="bg-accent text-on-accent rounded-xl py-3 w-full font-semibold text-sm transition hover:brightness-105 active:scale-[0.99] disabled:opacity-60"
+                >
+                  {busy ? 'Syncing…' : 'Sync now'}
+                </button>
+              </div>
+            </section>
+          </div>
+
+          {message && (
+            <p className="rounded-xl bg-raised border border-line px-4 py-3 text-xs text-text">{message}</p>
+          )}
+
+          <p className="pt-2 text-center text-[10px] leading-relaxed text-muted">
+            Munshi v0.1 · schema v2
+            <br />
+            Your entries live in your Google Sheet. This app holds only a local cache.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
