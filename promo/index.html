@@ -118,6 +118,21 @@ html, body {
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
+/* Kinetic Word Roll-Up Typography */
+.roll-box {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  margin-right: 0.16em;
+  padding-bottom: 0.05em;
+}
+.roll-word {
+  display: inline-block;
+  transform: translateY(125%);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
 /* Category Badge */
 .category-badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -485,7 +500,7 @@ html, body {
         </div>
 
       </div>
-      <div class="font-mono" id="act1Tagline" style="margin-top:20px; font-size:14px; color:var(--brass-light); letter-spacing:2px; text-transform:uppercase;">
+      <div class="font-mono rollup-text" id="act1Tagline" style="margin-top:20px; font-size:14px; color:var(--brass-light); letter-spacing:2px; text-transform:uppercase;">
         MUNSHI · THE PRIVATE LEDGER
       </div>
     </div>
@@ -508,7 +523,7 @@ html, body {
           <line x1="16" y1="8" x2="2" y2="22"/>
           <line x1="17.5" y1="15" x2="9" y2="15"/>
         </svg>
-        <span>The Digital Bahi Khata</span>
+        <span class="rollup-text">The Digital Bahi Khata</span>
       </div>
 
       <div class="book-stage" id="bookStage">
@@ -519,10 +534,10 @@ html, body {
             <circle cx="50" cy="50" r="44" stroke="#C8A45C" stroke-width="2"/>
             <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" stroke="#C8A45C" stroke-width="5" stroke-linecap="round"/>
           </svg>
-          <div class="font-fraunces" style="font-size:clamp(22px, 3vw, 32px); color:#FFF; margin-top:16px;">
+          <div class="font-fraunces rollup-text" style="font-size:clamp(22px, 3vw, 32px); color:#FFF; margin-top:16px;">
             MUNSHI
           </div>
-          <div class="font-mono" style="font-size:12px; color:var(--brass-light); letter-spacing:2px; margin-top:4px;">
+          <div class="font-mono rollup-text" style="font-size:12px; color:var(--brass-light); letter-spacing:2px; margin-top:4px;">
             100% PRIVATE LEDGER
           </div>
         </div>
@@ -534,7 +549,7 @@ html, body {
           <div class="book-page book-page-left">
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="font-mono" style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--income);">
+                <span class="font-mono rollup-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--income);">
                   CREDIT · आवक
                 </span>
                 <span class="font-mono" style="font-size:12px; color:var(--muted-dark);">MARCH 2026</span>
@@ -545,11 +560,11 @@ html, body {
             </div>
 
             <div style="margin: 16px 0;">
-              <div class="page-entry-row">
+              <div class="page-entry-row" id="row1">
                 <span style="color:#FFF;">Consulting & Retainer</span>
                 <span class="font-mono" style="color:var(--income);">+₹65,000</span>
               </div>
-              <div class="page-entry-row">
+              <div class="page-entry-row" id="row2">
                 <span style="color:#FFF;">Dividends & Yield</span>
                 <span class="font-mono" style="color:var(--income);">+₹20,000</span>
               </div>
@@ -564,7 +579,7 @@ html, body {
           <div class="book-page book-page-right">
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="font-mono" style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--expense);">
+                <span class="font-mono rollup-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--expense);">
                   DEBIT · जावक
                 </span>
                 <span class="font-mono" style="font-size:12px; color:var(--muted-dark);">19 TRANSACTIONS</span>
@@ -575,11 +590,11 @@ html, body {
             </div>
 
             <div style="margin: 16px 0;">
-              <div class="page-entry-row">
+              <div class="page-entry-row" id="row3">
                 <span style="color:#FFF;">Studio & Workspace</span>
                 <span class="font-mono" style="color:var(--expense);">-₹18,000</span>
               </div>
-              <div class="page-entry-row">
+              <div class="page-entry-row" id="row4">
                 <span style="color:#FFF;">Groceries & Pantry</span>
                 <span class="font-mono" style="color:var(--expense);">-₹14,450</span>
               </div>
@@ -606,13 +621,13 @@ html, body {
           <circle cx="12" cy="12" r="10"/>
           <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
         </svg>
-        <span>Disciplined Wealth Control</span>
+        <span class="rollup-text">Disciplined Wealth Control</span>
       </div>
 
-      <h2 class="font-fraunces" style="font-size:clamp(26px, 4vw, 48px); text-align:center; margin-bottom:6px;">
+      <h2 class="font-fraunces rollup-text" style="font-size:clamp(26px, 4vw, 48px); text-align:center; margin-bottom:6px;">
         Living Goals. <span class="gold-gradient-text">Zero Guesswork.</span>
       </h2>
-      <p class="sub-desc-text" style="font-size:clamp(14px, 1.8vw, 19px); color:var(--muted-dark); text-align:center; max-width:850px; margin-bottom: 16px;">
+      <p class="sub-desc-text rollup-text" style="font-size:clamp(14px, 1.8vw, 19px); color:var(--muted-dark); text-align:center; max-width:850px; margin-bottom: 16px;">
         Watch your savings targets rise like water, while daily guardrails keep every rupee protected.
       </p>
 
@@ -645,7 +660,7 @@ html, body {
                 </svg>
               </div>
               <div>
-                <div class="font-fraunces" style="font-size:clamp(20px, 2.4vw, 26px); font-weight:700;">
+                <div class="font-fraunces rollup-text" style="font-size:clamp(20px, 2.4vw, 26px); font-weight:700;">
                   Himalayan Expedition
                 </div>
                 <div class="font-mono" style="font-size:clamp(12px, 1.3vw, 14px); opacity:0.75; margin-top:2px;">
@@ -673,7 +688,7 @@ html, body {
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div style="width:10px; height:10px; border-radius:50%; background:var(--income); box-shadow:0 0 10px var(--income);"></div>
-              <span class="font-mono" style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;">
+              <span class="font-mono rollup-text" style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;">
                 Monthly Limit Guardrail
               </span>
             </div>
@@ -728,13 +743,13 @@ html, body {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
-        <span>Peer-to-Cloud Architecture</span>
+        <span class="rollup-text">Peer-to-Cloud Architecture</span>
       </div>
 
-      <h2 class="font-fraunces" style="font-size:clamp(26px, 4vw, 48px); text-align:center; margin-bottom:8px;">
+      <h2 class="font-fraunces rollup-text" style="font-size:clamp(26px, 4vw, 48px); text-align:center; margin-bottom:8px;">
         Your Devices. <span class="gold-gradient-text">Your Private Google Sheet.</span>
       </h2>
-      <p style="font-size:clamp(14px, 1.8vw, 19px); color:var(--muted-dark); text-align:center; max-width:850px; line-height:1.5; margin-bottom: clamp(16px, 2.5vh, 28px);">
+      <p class="rollup-text" style="font-size:clamp(14px, 1.8vw, 19px); color:var(--muted-dark); text-align:center; max-width:850px; line-height:1.5; margin-bottom: clamp(16px, 2.5vh, 28px);">
         Zero company servers in between. You own every formula and every row.
       </p>
 
@@ -756,7 +771,7 @@ html, body {
                 LOCAL-FIRST
               </div>
             </div>
-            <div class="font-fraunces" style="font-size:clamp(20px, 2.2vw, 24px); font-weight:700; color:#FFF; margin-bottom:6px;">
+            <div class="font-fraunces rollup-text" style="font-size:clamp(20px, 2.2vw, 24px); font-weight:700; color:#FFF; margin-bottom:6px;">
               Munshi Client
             </div>
             <div style="font-size:clamp(13px, 1.3vw, 14px); color:var(--muted-dark); line-height:1.5;">
@@ -793,7 +808,7 @@ html, body {
                 YOUR DRIVE
               </div>
             </div>
-            <div class="font-fraunces" style="font-size:clamp(20px, 2.2vw, 24px); font-weight:700; color:#FFF; margin-bottom:6px;">
+            <div class="font-fraunces rollup-text" style="font-size:clamp(20px, 2.2vw, 24px); font-weight:700; color:#FFF; margin-bottom:6px;">
               Personal Google Sheet
             </div>
             <div style="font-size:clamp(13px, 1.3vw, 14px); color:var(--muted-dark); line-height:1.5;">
@@ -837,11 +852,11 @@ html, body {
         <path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/>
       </svg>
 
-      <h1 class="font-fraunces" style="font-size:clamp(36px, 5.5vw, 68px); font-weight:800; margin-bottom:8px; text-align:center;">
+      <h1 class="font-fraunces rollup-text" style="font-size:clamp(36px, 5.5vw, 68px); font-weight:800; margin-bottom:8px; text-align:center;">
         MUNSHI <span style="font-weight:400; color:var(--brass);">(मुंशी)</span>
       </h1>
       
-      <p style="font-size:clamp(15px, 2vw, 22px); color:var(--muted-dark); letter-spacing:0.5px; text-align:center; max-width:850px;">
+      <p class="rollup-text" style="font-size:clamp(15px, 2vw, 22px); color:var(--muted-dark); letter-spacing:0.5px; text-align:center; max-width:850px;">
         The 100% Private Expense & Wealth Tracker You Truly Own
       </p>
 
@@ -1156,6 +1171,36 @@ class PromoSoundEngine {
     noise.stop(now + 0.7);
   }
 
+  // Act 2: Individual financial entry insertion sound (tactile typewriter/register strike + coin chime)
+  playEntryInserted(isCredit, pitchOffset = 0) {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const clickOsc = this.ctx.createOscillator();
+    const clickGain = this.ctx.createGain();
+    clickOsc.type = 'triangle';
+    clickOsc.frequency.setValueAtTime(isCredit ? 980 + pitchOffset : 620 + pitchOffset, now);
+    clickGain.gain.setValueAtTime(0.24, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    clickOsc.connect(clickGain);
+    clickGain.connect(this.masterGain);
+    clickOsc.start(now);
+    clickOsc.stop(now + 0.09);
+    
+    if (isCredit) {
+      const coinOsc = this.ctx.createOscillator();
+      const coinGain = this.ctx.createGain();
+      coinOsc.type = 'sine';
+      coinOsc.frequency.setValueAtTime(1864 + pitchOffset, now + 0.01);
+      coinGain.gain.setValueAtTime(0.1, now + 0.01);
+      coinGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      coinOsc.connect(coinGain);
+      coinGain.connect(this.masterGain);
+      coinOsc.start(now + 0.01);
+      coinOsc.stop(now + 0.36);
+    }
+  }
+
+  // Act 2: Surplus stamp verification chime
   playSurplusStamp() {
     if (!this.ctx || !this.enabled) return;
     const now = this.ctx.currentTime;
@@ -1173,37 +1218,102 @@ class PromoSoundEngine {
     });
   }
 
-  playWaterSwell() {
+  // Act 3: Water filling into bucket sound (rushing fluid noise + rising bubbling droplets)
+  playWaterPour() {
     if (!this.ctx || !this.enabled) return;
     const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
+    const dur = 2.2;
+    
+    // Liquid rush body
+    const bufferSize = Math.floor(this.ctx.sampleRate * dur);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.setValueAtTime(4.2, now);
+    filter.frequency.setValueAtTime(300, now);
+    filter.frequency.exponentialRampToValueAtTime(1400, now + dur);
+    
     const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(180, now);
-    osc.frequency.exponentialRampToValueAtTime(420, now + 1.8);
-    gain.gain.setValueAtTime(0.04, now);
-    gain.gain.linearRampToValueAtTime(0.12, now + 0.9);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.85);
-    osc.connect(gain);
+    gain.gain.setValueAtTime(0.01, now);
+    gain.gain.linearRampToValueAtTime(0.22, now + 0.3);
+    gain.gain.linearRampToValueAtTime(0.22, now + dur - 0.3);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    
+    noise.connect(filter);
+    filter.connect(gain);
     gain.connect(this.masterGain);
-    osc.start(now);
-    osc.stop(now + 1.9);
+    noise.start(now);
+    noise.stop(now + dur + 0.05);
+
+    // Rising frequency bubbly droplets
+    for (let i = 0; i < 14; i++) {
+      const dropTime = now + 0.1 + (i * 0.14) + (Math.random() * 0.05);
+      const osc = this.ctx.createOscillator();
+      const dropGain = this.ctx.createGain();
+      const startFreq = 420 + i * 50 + Math.random() * 80;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(startFreq, dropTime);
+      osc.frequency.exponentialRampToValueAtTime(startFreq + 260, dropTime + 0.07);
+      dropGain.gain.setValueAtTime(0.12, dropTime);
+      dropGain.gain.exponentialRampToValueAtTime(0.001, dropTime + 0.08);
+      osc.connect(dropGain);
+      dropGain.connect(this.masterGain);
+      osc.start(dropTime);
+      osc.stop(dropTime + 0.09);
+    }
   }
 
-  playToggleClick() {
+  // Act 3: Tactile physical switch click (Dark <-> Light Mode)
+  playTactileSwitch() {
     if (!this.ctx || !this.enabled) return;
     const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(1400, now);
-    osc.frequency.exponentialRampToValueAtTime(240, now + 0.035);
-    gain.gain.setValueAtTime(0.24, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    osc.start(now);
-    osc.stop(now + 0.05);
+    [2800, 920].forEach((freq, idx) => {
+      const t = now + idx * 0.015;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = idx === 0 ? 'square' : 'triangle';
+      osc.frequency.setValueAtTime(freq, t);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.35, t + 0.03);
+      gain.gain.setValueAtTime(idx === 0 ? 0.3 : 0.22, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(t);
+      osc.stop(t + 0.045);
+    });
+  }
+
+  // Act 4: Data movement track (rhythmic high-speed encrypted telemetry pulses)
+  playDataStreamTrack() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const notes = [880, 1174, 1318, 1760, 2093, 2637];
+    for (let i = 0; i < 24; i++) {
+      const t = now + i * 0.12;
+      const freq = notes[i % notes.length];
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, t);
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(freq, t);
+      filter.Q.setValueAtTime(8, t);
+      
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(t);
+      osc.stop(t + 0.09);
+    }
   }
 
   playLaserPulse() {
@@ -1239,34 +1349,91 @@ class PromoSoundEngine {
     });
   }
 
-  playFinaleSwell() {
+  // Act 5: Conclusion track (triumphant brass chord progression + warm sub-bass + shimmer)
+  playConclusionTrack() {
     if (!this.ctx || !this.enabled) return;
     const now = this.ctx.currentTime;
-    const freqs = [146.83, 220.00, 349.23, 440.00, 523.25, 659.25];
-    freqs.forEach((freq, i) => {
+    
+    // Warm sub-bass foundation
+    const sub = this.ctx.createOscillator();
+    const subG = this.ctx.createGain();
+    sub.type = 'sine';
+    sub.frequency.setValueAtTime(73.42, now); // D2
+    subG.gain.setValueAtTime(0.35, now);
+    subG.gain.linearRampToValueAtTime(0.4, now + 1.5);
+    subG.exponentialRampToValueAtTime(0.001, now + 4.8);
+    sub.connect(subG);
+    subG.connect(this.masterGain);
+    sub.start(now);
+    sub.stop(now + 4.9);
+    
+    // Triumphant orchestral brass chords (D major 9th progression)
+    const chord = [146.83, 220.00, 369.99, 440.00, 554.37, 659.25, 880.00];
+    chord.forEach((freq, idx) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      osc.type = i < 2 ? 'sawtooth' : 'triangle';
-      osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(0.02, now);
-      gain.gain.linearRampToValueAtTime(0.12, now + 1.2);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 3.8);
+      osc.type = idx < 2 ? 'sawtooth' : 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.02);
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.13, now + 0.8);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 4.5);
       
       const filter = this.ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(800, now);
-      filter.frequency.linearRampToValueAtTime(3200, now + 1.4);
+      filter.frequency.setValueAtTime(600, now);
+      filter.frequency.linearRampToValueAtTime(3600, now + 1.2);
       
       osc.connect(filter);
       filter.connect(gain);
       gain.connect(this.masterGain);
-      osc.start(now);
-      osc.stop(now + 3.9);
+      osc.start(now + idx * 0.02);
+      osc.stop(now + 4.6);
+    });
+
+    // Shimmering sparkle chimes on the logo
+    [1760, 2217, 2637, 3520].forEach((freq, i) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + 0.6 + i * 0.1);
+      gain.gain.setValueAtTime(0.08, now + 0.6 + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6 + i * 0.1 + 1.2);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now + 0.6 + i * 0.1);
+      osc.stop(now + 0.6 + i * 0.1 + 1.25);
     });
   }
 }
 
 const soundEngine = new PromoSoundEngine();
+
+// ==================== 2.8 KINETIC WORD ROLL-UP SETUP ====================
+function setupWordRollUps() {
+  document.querySelectorAll('.rollup-text').forEach(el => {
+    const raw = el.innerHTML.trim();
+    const temp = document.createElement('div');
+    temp.innerHTML = raw;
+    const words = [];
+    
+    function extractWords(node, parentClasses = '') {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const parts = node.textContent.split(/\s+/).filter(Boolean);
+        parts.forEach(w => words.push({ text: w, classes: parentClasses }));
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const cls = node.className || '';
+        node.childNodes.forEach(child => extractWords(child, cls));
+      }
+    }
+    temp.childNodes.forEach(child => extractWords(child));
+    
+    el.innerHTML = words.map(item => {
+      const spanClass = item.classes ? ` class="${item.classes}"` : '';
+      return `<span class="roll-box"><span class="roll-word"${spanClass}>${item.text}</span></span>`;
+    }).join(' ');
+  });
+}
+setupWordRollUps();
 
 // 3. MASTER CINEMATIC TIMELINE (Responsive 3D Depth)
 const master = gsap.timeline({ repeat: -1 });
@@ -1283,7 +1450,8 @@ master
   .call(() => soundEngine.resume(), null, 0.1)
   .fromTo('#act1LogoFrame', { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: 'back.out(1.4)' }, 0)
   .call(() => soundEngine.playEmblemChime(), null, 0.5)
-  .fromTo('#act1Tagline', { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+  // Words roll up in Act 1!
+  .fromTo('#act1 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.05, duration: 0.55, ease: 'power3.out' }, 0.2)
   
   // Ledger drops down from logo into depth
   .to('#logoFallingLedger', { y: 350, z: -280, rotationX: 40, duration: 1.0, ease: 'power2.in' }, '+=0.3')
@@ -1294,24 +1462,41 @@ master
   .to('#act1Tagline', { opacity: 0, duration: 0.4 }, '-=0.7')
   .to('#act1', { autoAlpha: 0, duration: 0.2 }, '-=0.1')
   
-  // === ACT 2 (3.2s - 8.5s): Impact Ripples & Ledger Swings Open ===
+  // === ACT 2 (3.2s - 8.5s): Impact Ripples & Fast-Tracked Ledger Opens ===
   // Ledger lands in place in Act 2
-  .to('#act2', { autoAlpha: 1, z: 0, scale: 1, duration: 0.5, ease: 'power2.out' }, '-=0.1')
+  .to('#act2', { autoAlpha: 1, z: 0, scale: 1, duration: 0.4, ease: 'power2.out' }, '-=0.1')
   .call(() => soundEngine.playImpactThud(), null, 3.2)
-  .fromTo('#bookStage', { y: -180, scale: 0.75 }, { y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.4)' }, '-=0.4')
+  .fromTo('#bookStage', { y: -180, scale: 0.75 }, { y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.4)' }, '-=0.4')
   
   // Impact concentric ripples expand outward from the landed ledger
-  .call(() => soundEngine.playRippleResonance(), null, 3.4)
+  .call(() => soundEngine.playRippleResonance(), null, 3.3)
   .fromTo('#impRipple1', { scale: 0.2, opacity: 1 }, { scale: 2.2, opacity: 0, duration: 1.4, ease: 'power2.out' }, '-=0.4')
   .fromTo('#impRipple2', { scale: 0.2, opacity: 1 }, { scale: 2.7, opacity: 0, duration: 1.6, delay: 0.2, ease: 'power2.out' }, '-=0.4')
   .fromTo('#impRipple3', { scale: 0.2, opacity: 1 }, { scale: 3.2, opacity: 0, duration: 1.8, delay: 0.4, ease: 'power2.out' }, '-=0.4')
   
-  // Ledger cover rotates open along left spine
-  .call(() => soundEngine.playBookOpen(), null, 4.3)
-  .to('#bookCover', { rotationY: -115, duration: 1.5, ease: 'power2.inOut' }, '+=0.1')
-  .fromTo('.page-entry-row', { opacity: 0, x: -10 }, { opacity: 1, x: 0, stagger: 0.12, duration: 0.5, ease: 'power2.out' }, '-=0.6')
-  .call(() => soundEngine.playSurplusStamp(), null, 6.0)
-  .fromTo('.surplus-stamp', { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.8)' }, '-=0.2')
+  // Words roll up in Act 2 header / cover!
+  .fromTo('#act2 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.04, duration: 0.45, ease: 'power3.out' }, 3.3)
+  
+  // FAST-TRACKED: Ledger cover swings open crisply!
+  .call(() => soundEngine.playBookOpen(), null, 3.5)
+  .to('#bookCover', { rotationY: -115, duration: 0.85, ease: 'power3.inOut' }, 3.5)
+  
+  // Financial entries inserted one by one with distinct entry insertion sounds!
+  .call(() => soundEngine.playEntryInserted(true, 0), null, 4.3)
+  .fromTo('#row1', { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, 4.3)
+  
+  .call(() => soundEngine.playEntryInserted(true, 80), null, 4.6)
+  .fromTo('#row2', { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, 4.6)
+  
+  .call(() => soundEngine.playEntryInserted(false, 0), null, 4.9)
+  .fromTo('#row3', { opacity: 0, x: 16 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, 4.9)
+  
+  .call(() => soundEngine.playEntryInserted(false, -50), null, 5.2)
+  .fromTo('#row4', { opacity: 0, x: 16 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, 5.2)
+  
+  // Surplus verified seal stamp pops in
+  .call(() => soundEngine.playSurplusStamp(), null, 5.7)
+  .fromTo('.surplus-stamp', { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2)' }, 5.7)
   .to('#world', { rotationY: 3, z: 15, duration: 2.5, ease: 'power1.inOut' }, '-=1.8')
   
   // Transition Act 2 -> Act 3
@@ -1325,25 +1510,28 @@ master
   .fromTo('.guardrail-card', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
   .fromTo('#sceneThemeControl', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.5')
   
-  // The Bucket Fills Up with Liquid Waves
-  .call(() => soundEngine.playWaterSwell(), null, 8.7)
-  .fromTo('.wave-container', { height: '0%' }, { height: '75%', duration: 2.0, ease: 'power2.out' }, '-=0.2')
+  // Words roll up in Act 3!
+  .fromTo('#act3 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.035, duration: 0.55, ease: 'power3.out' }, 8.4)
+  
+  // Authentic Water Filling Sound while fluid waves rise to 75%!
+  .call(() => soundEngine.playWaterPour(), null, 8.6)
+  .fromTo('.wave-container', { height: '0%' }, { height: '75%', duration: 2.2, ease: 'power2.out' }, '-=0.2')
   .to(goalCounter, {
     val: 112500,
     percent: 75,
-    duration: 2.0,
+    duration: 2.2,
     ease: 'power2.out',
     onUpdate: () => {
       document.getElementById('goalAmountCount').textContent = '₹' + Math.floor(goalCounter.val).toLocaleString('en-IN');
       document.getElementById('goalPercentCount').textContent = Math.floor(goalCounter.percent) + '%';
     }
-  }, '-=2.0')
+  }, '-=2.2')
   .fromTo('#paceFillBar', { width: '0%' }, { width: '62%', duration: 1.6, ease: 'power2.out' }, '-=1.8')
   
-  // EXTERNAL THEME TOGGLE CLICKS & SCREEN-WIDE LIGHT THEME MORPH!
+  // EXTERNAL THEME TOGGLE CLICKS WITH REALISTIC SWITCH SOUND & SCREEN-WIDE LIGHT THEME MORPH!
   .to('#sceneToggleThumb', { x: 20, duration: 0.4, ease: 'power2.out' }, '+=0.2')
   .call(() => {
-    soundEngine.playToggleClick();
+    soundEngine.playTactileSwitch();
     const act3 = document.getElementById('act3');
     const label = document.getElementById('sceneThemeLabel');
     if (act3) act3.classList.add('light-theme-active');
@@ -1362,12 +1550,16 @@ master
   .to('#act3', { autoAlpha: 0, z: 350, rotationX: 12, duration: 0.7, ease: 'power2.in' })
   .to('#act4', { autoAlpha: 1, z: 0, rotationY: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
 
-// === ACT 4 (15.0s - 20.5s): Architecture Diagram (Strict Confined Loader) ===
+// === ACT 4 (15.0s - 20.5s): Architecture Diagram (Data Movement Track) ===
 master
   .fromTo('#act4 .arch-card-app', { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' })
   .fromTo('#act4 .arch-card-sheet', { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, '-=0.5')
-  // Confined pulse beam inside pipe
-  .call(() => soundEngine.playLaserPulse(), null, 15.0)
+  
+  // Words roll up in Act 4!
+  .fromTo('#act4 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.035, duration: 0.55, ease: 'power3.out' }, 14.8)
+  
+  // Moving of data sound track & laser pulse through pipe!
+  .call(() => soundEngine.playDataStreamTrack(), null, 15.0)
   .fromTo('#syncPulseBeam', { x: '-100%', opacity: 0 }, { x: '320%', opacity: 1, repeat: 2, duration: 1.1, ease: 'power1.inOut' }, '-=0.4')
   .call(() => soundEngine.playLaserPulse(), null, 16.1)
   .call(() => soundEngine.playSyncPing(), null, 17.2)
@@ -1378,11 +1570,14 @@ master
   .to('#act4', { autoAlpha: 0, z: 350, duration: 0.7, ease: 'power2.in' })
   .to('#act5', { autoAlpha: 1, z: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
 
-// === ACT 5 (20.5s - 26.0s): Grand Finale & CTA ===
+// === ACT 5 (20.5s - 26.0s): Grand Finale (Conclusion Track) ===
 master
-  .call(() => soundEngine.playFinaleSwell(), null, 20.6)
+  // Triumphant conclusion track as logo appears!
+  .call(() => soundEngine.playConclusionTrack(), null, 20.5)
   .fromTo('.brand-logo-large', { scale: 0.65, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: 'back.out(1.5)' })
-  .fromTo('#act5 h1', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, '-=0.3')
+  
+  // Words roll up in Act 5!
+  .fromTo('#act5 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.04, duration: 0.6, ease: 'power3.out' }, 20.6)
   .fromTo('.pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: 'power2.out' }, '-=0.3')
   .fromTo('.cta-button', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.6)' }, '-=0.2')
   .to('#world', { z: -70, duration: 2.5, ease: 'power1.inOut' }, '-=1.2')
