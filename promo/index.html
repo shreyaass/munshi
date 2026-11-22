@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="en">
 <!--
-  Munshi (मुंशी) — Cinematic Promotional Motion Ad
-  Built with bang-motion (GSAP 3 + Three.js + SVG Fluid Waves + CSS 3D Camera)
-  Theme: Dark Luxury Kaala Bahi (#0D0F12, #15181D, #C8A45C Brass Accent)
+  Munshi (मुंशी) — Cinematic Promotional Motion Ad (v2.0)
+  Built with bang-motion (GSAP 3 + Three.js + SVG Fluid Waves + 3D Camera Depth)
+  Theme: Dual-Theme Architecture (Dark Obsidian Brass + Warm Sand Copper)
 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Munshi — The Private Ledger & Goal Tracker (Promo Ad)</title>
+<title>Munshi — The Sovereign Private Ledger (Motion Ad)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script type="importmap">
 {"imports":{
@@ -20,57 +20,69 @@
 </script>
 <style>
 :root {
-  --bg: #0D0F12;
-  --surface: #15181D;
-  --raised: #1E232A;
-  --line: #2C323B;
-  --text: #E9E6DF;
-  --muted: #9AA1AB;
+  /* Dark Obsidian Palette */
+  --bg-dark: #0D0F12;
+  --surface-dark: #15181D;
+  --raised-dark: #1E232A;
+  --line-dark: #2C323B;
+  --text-dark: #E9E6DF;
+  --muted-dark: #9AA1AB;
   --brass: #C8A45C;
   --brass-light: #E5C07B;
-  --brass-glow: rgba(200, 164, 92, 0.45);
+  --brass-glow: rgba(200, 164, 92, 0.4);
+
+  /* Light Warm Sand Palette */
+  --bg-light: #EFEDE8;
+  --surface-light: #FFFFFF;
+  --raised-light: #F6F4EF;
+  --line-light: #DDD9CF;
+  --text-light: #14171B;
+  --muted-light: #5F6670;
   --copper: #A95F32;
-  --income: #6FB38F;
-  --expense: #E8876C;
+  --copper-glow: rgba(169, 95, 50, 0.35);
+
+  /* Semantic */
+  --income: #4EAD7B;
+  --expense: #E87A5D;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body {
-  width:100%; height:100%; background:#07080A; overflow:hidden;
-  font-family:'Inter', system-ui, sans-serif; color:var(--text);
+  width:100%; height:100%; background:#060709; overflow:hidden;
+  font-family:'Inter', system-ui, sans-serif; color:var(--text-dark);
   user-select:none;
 }
 
-/* 1920x1080 fixed stage scaled dynamically */
+/* 1920x1080 fixed master stage scaled dynamically to fit any window */
 #viewport {
   position: absolute; top: 50%; left: 50%;
   width: 1920px; height: 1080px;
   transform: translate(-50%, -50%);
   transform-origin: center center;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 40%, #15181E 0%, #0D0F12 55%, #060709 100%);
-  box-shadow: 0 0 100px rgba(0,0,0,0.9);
+  background: radial-gradient(circle at 50% 40%, #161A22 0%, #0D0F12 55%, #050608 100%);
+  box-shadow: 0 0 120px rgba(0,0,0,0.95);
 }
 
-/* Background 3D WebGL Canvas */
+/* Ambient 3D WebGL Canvas */
 #gl-canvas {
   position: absolute; inset: 0; width: 100%; height: 100%;
   pointer-events: none; z-index: 1; opacity: 0.85;
 }
 
-/* Ambient Grain & Vignette */
+/* Cinematic Grain & Grid Overlay */
 .vignette {
   position: absolute; inset: 0; pointer-events: none; z-index: 2;
-  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(5,6,8,0.7) 100%);
+  background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(4,5,7,0.75) 100%);
 }
 .grid-lines {
-  position: absolute; inset: 0; pointer-events: none; z-index: 2; opacity: 0.05;
-  background-image: linear-gradient(var(--line) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  position: absolute; inset: 0; pointer-events: none; z-index: 2; opacity: 0.04;
+  background-image: linear-gradient(var(--line-dark) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--line-dark) 1px, transparent 1px);
   background-size: 80px 80px;
 }
 
-/* 3D World Camera Container */
+/* 3D World Camera Rig */
 #world {
   position: absolute; inset: 0; width: 100%; height: 100%;
   perspective: 1200px;
@@ -78,91 +90,171 @@ html, body {
   z-index: 3;
 }
 
-/* Common Act Containers (Placed in 3D Space) */
+/* Act Containers */
 .act {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   transform-style: preserve-3d;
   will-change: transform, opacity;
+  padding: 60px;
 }
 
-/* TYPOGRAPHY STYLES */
+/* Typography Helpers */
 .font-fraunces { font-family: 'Fraunces', serif; }
 .font-mono { font-family: 'IBM Plex Mono', monospace; }
 
 .gold-gradient-text {
-  background: linear-gradient(135deg, #FFF1D0 0%, #C8A45C 50%, #8A6828 100%);
+  background: linear-gradient(135deg, #FFF0CF 0%, #C8A45C 50%, #94712A 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.copper-gradient-text {
+  background: linear-gradient(135deg, #FFD2BC 0%, #A95F32 60%, #6E3816 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-/* ACT 1: THE PROBLEM */
-#act1 .trap-badge {
+/* Section Header Badge */
+.category-badge {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 18px; border-radius: 999px;
-  background: rgba(232, 135, 108, 0.12); border: 1px solid rgba(232, 135, 108, 0.3);
-  color: var(--expense); font-size: 16px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 2px; margin-bottom: 24px;
+  padding: 8px 20px; border-radius: 999px;
+  font-size: 15px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 2.5px; margin-bottom: 20px;
 }
+.badge-danger {
+  background: rgba(232, 122, 93, 0.12); border: 1px solid rgba(232, 122, 93, 0.35);
+  color: var(--expense);
+}
+.badge-gold {
+  background: rgba(200, 164, 92, 0.12); border: 1px solid rgba(200, 164, 92, 0.4);
+  color: var(--brass-light);
+}
+
+/* ==================== ACT 1: THE TRAP ==================== */
 #act1 .hero-quote {
   font-size: 64px; line-height: 1.15; font-weight: 700; text-align: center;
-  max-width: 1200px; margin-bottom: 30px;
+  max-width: 1240px; margin-bottom: 24px;
 }
 #act1 .sub-quote {
-  font-size: 26px; color: var(--muted); text-align: center; max-width: 800px; line-height: 1.5;
+  font-size: 26px; color: var(--muted-dark); text-align: center; max-width: 850px; line-height: 1.5;
 }
 .shattered-card {
-  width: 460px; height: 140px; border-radius: 20px;
-  background: rgba(21, 24, 29, 0.85); border: 1px dashed rgba(232, 135, 108, 0.4);
-  display: flex; align-items: center; justify-content: space-between; padding: 24px 32px;
-  margin-top: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  width: 500px; height: 130px; border-radius: 20px;
+  background: rgba(21, 24, 29, 0.9); border: 1.5px dashed rgba(232, 122, 93, 0.45);
+  display: flex; align-items: center; justify-content: space-between; padding: 24px 36px;
+  margin-top: 36px; box-shadow: 0 25px 60px rgba(0,0,0,0.7);
 }
 
-/* ACT 2: THE REVELATION */
-#act2 .revelation-box {
-  display: flex; align-items: center; gap: 60px;
-  max-width: 1300px;
+/* ==================== ACT 2: ARCHITECTURE DIAGRAM (APP -> SHEET) ==================== */
+#act2 .diagram-container {
+  display: flex; flex-direction: column; align-items: center;
+  width: 1400px; margin-top: 20px;
 }
-.ledger-hero {
-  width: 360px; height: 480px; border-radius: 28px;
-  background: linear-gradient(145deg, #1C2129 0%, #111418 100%);
-  border: 1px solid rgba(200, 164, 92, 0.4);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 50px var(--brass-glow);
-  position: relative; overflow: hidden;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transform: rotateY(-14deg) rotateX(8deg);
+.nodes-row {
+  display: flex; align-items: center; justify-content: center; gap: 50px;
+  width: 100%; position: relative;
 }
-.ledger-spine {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
-  background: linear-gradient(180deg, #C8A45C 0%, #79571D 100%);
-  border-right: 2px solid #5A4013;
+.arch-card {
+  width: 420px; border-radius: 26px;
+  padding: 36px 32px; position: relative; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.85);
+  transform-style: preserve-3d;
 }
-.gold-seal {
-  width: 140px; height: 140px; border-radius: 50%;
-  background: radial-gradient(circle, #C8A45C 0%, #684814 100%);
+.arch-card-app {
+  background: linear-gradient(145deg, #181C23 0%, #111419 100%);
+  border: 1.5px solid rgba(200, 164, 92, 0.45);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 45px var(--brass-glow);
+}
+.arch-card-sheet {
+  background: linear-gradient(145deg, #121A15 0%, #0B120E 100%);
+  border: 1.5px solid rgba(78, 173, 123, 0.45);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 45px rgba(78, 173, 123, 0.25);
+}
+.arch-card-icon {
+  width: 70px; height: 70px; border-radius: 20px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 30px var(--brass-glow);
+  font-size: 34px; margin-bottom: 20px;
 }
 
-/* ACT 3: FLUID SAVING GOALS */
-#act3 .goal-stage {
-  display: flex; flex-direction: column; align-items: center; gap: 36px;
+/* Sync Connector Channel */
+.sync-connector {
+  flex: 1; max-width: 380px; display: flex; flex-direction: column; align-items: center;
+  position: relative;
 }
-.card-stack {
-  position: relative; width: 620px; height: 380px;
+.sync-pipe {
+  width: 100%; height: 6px; border-radius: 999px;
+  background: #252C36; position: relative; overflow: visible;
 }
-.stack-bg-card {
-  position: absolute; inset: 0; border-radius: 28px;
-  background: #12151A; border: 1px solid var(--line);
-  transform: translateY(32px) scale(0.92); opacity: 0.5;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+.sync-beam {
+  position: absolute; top: 0; left: 0; width: 45%; height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent 0%, #C8A45C 50%, #FFF 100%);
+  box-shadow: 0 0 18px #C8A45C, 0 0 30px #C8A45C;
 }
-.stack-front-card {
-  position: absolute; inset: 0; border-radius: 28px;
-  background: #181C23; border: 1.5px solid rgba(200, 164, 92, 0.45);
-  box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 40px rgba(200, 164, 92, 0.15);
-  overflow: hidden; padding: 36px; display: flex; flex-direction: column; justify-content: space-between;
+.sync-badge-center {
+  margin-top: 16px; padding: 8px 20px; border-radius: 999px;
+  background: rgba(30, 36, 45, 0.95); border: 1px solid rgba(200, 164, 92, 0.4);
+  color: var(--brass-light); font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
-/* Liquid Wave Fill */
+.trust-banner {
+  display: flex; gap: 24px; margin-top: 40px;
+}
+.trust-pill {
+  padding: 10px 22px; border-radius: 12px; font-size: 16px; font-weight: 600;
+  background: rgba(22, 26, 33, 0.85); border: 1px solid rgba(44, 50, 59, 0.8);
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* ==================== ACT 3: DASHBOARD & DUAL THEME SHOWCASE ==================== */
+#act3 .dual-stage {
+  display: flex; align-items: center; justify-content: center; gap: 70px;
+  width: 1450px; margin-top: 15px;
+}
+/* Phone Frame for Real Dashboard Screenshot */
+.phone-mockup {
+  width: 380px; height: 640px; border-radius: 46px;
+  background: #090B0E; border: 4px solid #282E38;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9), 0 0 60px rgba(200, 164, 92, 0.25);
+  position: relative; overflow: hidden; display: flex; flex-direction: column;
+  transform: rotateY(-8deg) rotateX(4deg);
+}
+.phone-notch {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  width: 110px; height: 22px; border-radius: 999px; background: #15181D; z-index: 5;
+}
+.phone-screen-img {
+  width: 100%; height: 100%; object-fit: cover; object-position: top;
+  border-radius: 42px;
+}
+
+/* Real-time Insights Floating Card */
+.insights-floating-card {
+  width: 480px; border-radius: 28px;
+  background: rgba(21, 24, 29, 0.92); border: 1.5px solid rgba(200, 164, 92, 0.35);
+  padding: 36px; box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  backdrop-filter: blur(12px);
+}
+
+/* Light Theme Preview Card */
+.theme-split-card {
+  width: 440px; border-radius: 28px;
+  background: #EFEDE8; border: 1.5px solid #DDD9CF;
+  color: #14171B; padding: 36px; box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+}
+
+/* ==================== ACT 4: FLUID GOALS & MONTHLY LIMIT GUARDRAIL ==================== */
+#act4 .goals-limits-stage {
+  display: flex; align-items: center; justify-content: center; gap: 50px;
+  width: 1500px; margin-top: 15px;
+}
+/* Fluid Goal Card */
+.goal-water-card {
+  width: 580px; height: 420px; border-radius: 30px;
+  background: #171B22; border: 1.5px solid rgba(200, 164, 92, 0.45);
+  position: relative; overflow: hidden; padding: 36px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.8), 0 0 50px rgba(200, 164, 92, 0.15);
+}
 .wave-container {
   position: absolute; left: 0; right: 0; bottom: 0;
   height: 65%; pointer-events: none; overflow: hidden;
@@ -171,57 +263,56 @@ html, body {
   position: absolute; left: -100%; width: 300%; height: 100%;
 }
 
-/* ACT 4: MONTHLY LIMIT CARD */
-#act4 .limit-container {
-  width: 740px; border-radius: 30px;
-  background: #161A20; border: 1.5px solid rgba(200, 164, 92, 0.35);
-  padding: 44px 50px; box-shadow: 0 30px 80px rgba(0,0,0,0.75);
+/* Monthly Limit Guardrail Card */
+.limit-guardrail-card {
+  width: 620px; border-radius: 30px;
+  background: #15181E; border: 1.5px solid rgba(78, 173, 123, 0.4);
+  padding: 40px; box-shadow: 0 30px 80px rgba(0,0,0,0.8);
 }
 .pace-track {
   width: 100%; height: 16px; border-radius: 999px;
-  background: #252B35; position: relative; margin: 28px 0; overflow: visible;
+  background: #252B35; position: relative; margin: 26px 0; overflow: visible;
 }
 .pace-fill {
   height: 100%; border-radius: 999px;
-  background: linear-gradient(90deg, #6FB38F 0%, #C8A45C 80%);
-  width: 58%; box-shadow: 0 0 15px rgba(200, 164, 92, 0.4);
+  background: linear-gradient(90deg, #4EAD7B 0%, #C8A45C 85%);
+  width: 62%; box-shadow: 0 0 16px rgba(200, 164, 92, 0.45);
 }
 .pace-needle {
   position: absolute; top: -8px; bottom: -8px; width: 4px; border-radius: 2px;
-  background: #FFF; box-shadow: 0 0 10px #FFF;
-  left: 68%;
+  background: #FFF; box-shadow: 0 0 12px #FFF; left: 68%;
 }
 
-/* ACT 5: GRAND FINALE */
+/* ==================== ACT 5: GRAND FINALE ==================== */
 #act5 .brand-logo-large {
-  width: 150px; height: 150px; border-radius: 34px;
-  box-shadow: 0 20px 60px rgba(200, 164, 92, 0.35);
-  margin-bottom: 24px;
+  width: 140px; height: 140px; border-radius: 32px;
+  box-shadow: 0 25px 70px rgba(200, 164, 92, 0.4);
+  margin-bottom: 20px;
 }
-#act5 .feature-pills {
-  display: flex; gap: 16px; margin: 30px 0 40px 0;
+.feature-pills {
+  display: flex; gap: 16px; margin: 28px 0 36px 0; flex-wrap: wrap; justify-content: center;
 }
 .pill {
-  padding: 10px 22px; border-radius: 999px; font-size: 17px; font-weight: 500;
-  background: rgba(30, 35, 42, 0.85); border: 1px solid rgba(200, 164, 92, 0.3);
-  color: var(--text); display: flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 999px; font-size: 17px; font-weight: 600;
+  background: rgba(28, 33, 41, 0.85); border: 1px solid rgba(200, 164, 92, 0.35);
+  color: var(--text-dark); display: flex; align-items: center; gap: 9px;
 }
 .cta-button {
-  display: inline-flex; align-items: center; gap: 12px;
-  padding: 18px 48px; border-radius: 18px;
-  background: linear-gradient(135deg, #E5C07B 0%, #C8A45C 100%);
-  color: #0D0F12; font-size: 22px; font-weight: 700;
-  box-shadow: 0 10px 30px rgba(200, 164, 92, 0.4);
-  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 18px 52px; border-radius: 20px;
+  background: linear-gradient(135deg, #F0D597 0%, #C8A45C 60%, #99732B 100%);
+  color: #0A0C0E; font-size: 24px; font-weight: 800;
+  box-shadow: 0 15px 40px rgba(200, 164, 92, 0.45);
+  text-decoration: none; transition: transform 0.2s ease;
 }
 
-/* Scrub & Controls (Hidden by default, Space=Pause, R=Restart) */
+/* Minimal HUD Bar (space = pause, R = restart) */
 #hud-indicator {
-  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
   display: flex; align-items: center; gap: 12px; z-index: 10;
-  padding: 8px 18px; border-radius: 999px;
-  background: rgba(13, 15, 18, 0.7); backdrop-filter: blur(8px);
-  border: 1px solid rgba(44, 50, 59, 0.6); font-size: 13px; color: var(--muted);
+  padding: 8px 20px; border-radius: 999px;
+  background: rgba(13, 15, 18, 0.75); backdrop-filter: blur(8px);
+  border: 1px solid rgba(44, 50, 59, 0.6); font-size: 13px; color: var(--muted-dark);
 }
 .hud-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brass); }
 </style>
@@ -229,7 +320,7 @@ html, body {
 <body>
 
 <div id="viewport">
-  <!-- Three.js Ambient Particle Space -->
+  <!-- Three.js Ambient Particle Field -->
   <canvas id="gl-canvas"></canvas>
   <div class="vignette"></div>
   <div class="grid-lines"></div>
@@ -237,147 +328,290 @@ html, body {
   <!-- 3D Camera World -->
   <div id="world">
 
-    <!-- ==================== ACT 1: THE PROBLEM (0s - 5.5s) ==================== -->
+    <!-- =========================================================================
+         ACT 1: THE PROBLEM (0s - 4.5s)
+         Fast, punchy setup: Subscription fatigue & privacy loss
+         ========================================================================= -->
     <div class="act" id="act1">
-      <div class="trap-badge">
+      <div class="category-badge badge-danger">
         <span>⚠</span> <span>The Modern Finance Trap</span>
       </div>
       <h1 class="hero-quote font-fraunces">
-        Every money app wants your bank logins.<br>
-        <span style="color:var(--expense)">And ₹499 every month.</span>
+        Every money app wants your bank credentials.<br>
+        <span style="color:var(--expense)">And ₹499 every single month.</span>
       </h1>
       <p class="sub-quote">
-        Your most sensitive personal numbers stored on private corporate servers.
+        Your most sensitive personal numbers locked into closed corporate databases.
       </p>
 
       <div class="shattered-card">
         <div>
-          <div style="font-size:18px; font-weight:600; color:var(--expense); margin-bottom:4px;">PRO Subscription</div>
-          <div style="font-size:14px; color:var(--muted);">Access to your own financial history</div>
+          <div style="font-size:18px; font-weight:700; color:var(--expense); margin-bottom:4px;">PRO Subscription</div>
+          <div style="font-size:14px; color:var(--muted-dark);">Access to your own financial history</div>
         </div>
-        <div class="font-mono" style="font-size:26px; font-weight:700; color:var(--expense);">₹4,999/yr</div>
+        <div class="font-mono" style="font-size:26px; font-weight:700; color:var(--expense); text-decoration: line-through;">
+          ₹4,999/yr
+        </div>
       </div>
     </div>
 
-    <!-- ==================== ACT 2: THE REVELATION (5.5s - 11.5s) ==================== -->
+    <!-- =========================================================================
+         ACT 2: ARCHITECTURE FLOW (4.5s - 10.0s)
+         The Requested App -> Google Sheet Sync Diagram (100% Private, Zero Middleman)
+         ========================================================================= -->
     <div class="act" id="act2">
-      <div class="revelation-box">
-        <div class="ledger-hero">
-          <div class="ledger-spine"></div>
-          <div class="gold-seal">
-            <svg width="60" height="60" viewBox="0 0 100 100" fill="none">
-              <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" stroke="#FFF" stroke-width="6" stroke-linecap="round"/>
+      <div class="category-badge badge-gold">
+        <span>🔒</span> <span>100% Peer-to-Cloud Architecture</span>
+      </div>
+      
+      <h2 class="font-fraunces" style="font-size:52px; text-align:center; margin-bottom:12px;">
+        Your Device. <span class="gold-gradient-text">Your Private Google Sheet.</span>
+      </h2>
+      <p style="font-size:21px; color:var(--muted-dark); text-align:center; max-width:850px; line-height:1.5;">
+        No intermediary company servers. No data harvesting. You own every single cell.
+      </p>
+
+      <div class="diagram-container">
+        <div class="nodes-row">
+          
+          <!-- Node 1: Munshi Mobile / Web App -->
+          <div class="arch-card arch-card-app">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div class="arch-card-icon" style="background:rgba(200, 164, 92, 0.15); border:1px solid rgba(200, 164, 92, 0.4);">
+                📱
+              </div>
+              <div class="font-mono" style="font-size:12px; color:var(--brass-light); background:rgba(200,164,92,0.15); padding:4px 10px; border-radius:6px;">
+                LOCAL FIRST
+              </div>
+            </div>
+            <div class="font-fraunces" style="font-size:28px; font-weight:700; color:#FFF; margin-bottom:8px;">
+              Munshi Client
+            </div>
+            <div style="font-size:15px; color:var(--muted-dark); line-height:1.5;">
+              Offline PWA & Android app. High-speed IndexedDB cache on your phone.
+            </div>
+          </div>
+
+          <!-- Connector Channel with Flowing Pulse Beam -->
+          <div class="sync-connector">
+            <div class="sync-pipe">
+              <div class="sync-beam" id="syncPulseBeam"></div>
+            </div>
+            <div class="sync-badge-center font-mono">
+              <span>⚡</span> <span>Direct Apps Script API</span>
+            </div>
+          </div>
+
+          <!-- Node 2: Personal Google Sheet -->
+          <div class="arch-card arch-card-sheet">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div class="arch-card-icon" style="background:rgba(78, 173, 123, 0.15); border:1px solid rgba(78, 173, 123, 0.4);">
+                📊
+              </div>
+              <div class="font-mono" style="font-size:12px; color:#68D391; background:rgba(78,173,123,0.15); padding:4px 10px; border-radius:6px;">
+                YOUR DRIVE
+              </div>
+            </div>
+            <div class="font-fraunces" style="font-size:28px; font-weight:700; color:#FFF; margin-bottom:8px;">
+              Your Google Sheet
+            </div>
+            <div style="font-size:15px; color:var(--muted-dark); line-height:1.5;">
+              Stored in your private Google account. Accessible anywhere, exportable anytime.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="trust-banner font-mono">
+          <div class="trust-pill" style="border-color:rgba(232,122,93,0.4); color:var(--expense);">
+            <span>✕</span> Zero Third-Party Databases
+          </div>
+          <div class="trust-pill" style="border-color:rgba(78,173,123,0.4); color:var(--income);">
+            <span>✓</span> End-to-End Google Auth
+          </div>
+          <div class="trust-pill" style="border-color:rgba(200,164,92,0.4); color:var(--brass-light);">
+            <span>✓</span> 100% Free & Open Source
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 3: DASHBOARD & DUAL THEME SHOWCASE (10.0s - 15.5s)
+         Real Dashboard Screenshot + Light/Dark Color Palettes
+         ========================================================================= -->
+    <div class="act" id="act3">
+      <div class="category-badge badge-gold">
+        <span>✨</span> <span>Designed For Daily Mastery</span>
+      </div>
+      
+      <h2 class="font-fraunces" style="font-size:52px; text-align:center; margin-bottom:8px;">
+        Command Your Limits. <span class="gold-gradient-text">Follow Up With Ease.</span>
+      </h2>
+      <p style="font-size:20px; color:var(--muted-dark); text-align:center; max-width:850px; margin-bottom:20px;">
+        Real-time cash flow intelligence with both Dark Obsidian and Warm Sand daylight themes.
+      </p>
+
+      <div class="dual-stage">
+        
+        <!-- Phone Mockup with Real App Dashboard -->
+        <div class="phone-mockup" id="phoneMockup">
+          <div class="phone-notch"></div>
+          <img src="assets/dashboard-screen.png" class="phone-screen-img" alt="Munshi Dashboard Screen">
+        </div>
+
+        <!-- Floating Dashboard Metrics Detail -->
+        <div class="insights-floating-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <span class="font-mono" style="font-size:14px; text-transform:uppercase; letter-spacing:1.5px; color:var(--brass);">
+              Cash Flow Pulse
+            </span>
+            <span class="font-mono" style="font-size:13px; color:var(--income); background:rgba(78,173,123,0.15); padding:4px 10px; border-radius:6px;">
+              SURPLUS +₹26,600
+            </span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:24px;">
+            <div>
+              <div style="font-size:14px; color:var(--muted-dark);">Received (This Month)</div>
+              <div class="font-mono" style="font-size:36px; font-weight:700; color:#FFF; margin-top:4px;">₹45,000</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:14px; color:var(--muted-dark);">Spent</div>
+              <div class="font-mono" style="font-size:32px; font-weight:700; color:var(--expense); margin-top:4px;">₹18,400</div>
+            </div>
+          </div>
+
+          <!-- Light Mode Color Callout Box -->
+          <div style="background:#EFEDE8; border-radius:18px; padding:20px; color:#14171B; margin-top:16px; border:1px solid #DDD9CF;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <div style="font-weight:700; font-size:16px; color:#14171B;">☀️ Warm Sand Daylight Mode</div>
+              <div class="font-mono" style="font-size:12px; background:#A95F32; color:#FFF; padding:2px 8px; border-radius:4px; font-weight:600;">
+                COPPER THEME
+              </div>
+            </div>
+            <div style="font-size:14px; color:#5F6670; line-height:1.4;">
+              Handcrafted dual themes: switch between deep nocturnal obsidian and warm tactile parchment in one tap.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 4: FLUID GOALS & MONTHLY LIMIT GUARDRAIL (15.5s - 21.5s)
+         Fluid Wave Goal Card + Safe-to-Spend Limit Guardrail
+         ========================================================================= -->
+    <div class="act" id="act4">
+      <div class="category-badge badge-gold">
+        <span>🎯</span> <span>Active Target Tracking</span>
+      </div>
+
+      <h2 class="font-fraunces" style="font-size:52px; text-align:center; margin-bottom:10px;">
+        Living Goals. <span class="gold-gradient-text">Strict Spending Limits.</span>
+      </h2>
+      <p style="font-size:20px; color:var(--muted-dark); text-align:center; max-width:850px; margin-bottom:24px;">
+        Dynamic liquid waves show your target progress, while daily guardrails keep every rupee disciplined.
+      </p>
+
+      <div class="goals-limits-stage">
+        
+        <!-- Liquid Wave Goal Card (Himalayan Expedition & Travel Reserve) -->
+        <div class="goal-water-card" id="fluidGoalCard">
+          <!-- Fluid Wave Animation -->
+          <div class="wave-container">
+            <svg class="wave-svg" viewBox="0 0 1200 400" preserveAspectRatio="none">
+              <!-- Back Wave Layer -->
+              <path id="waveBack" fill="rgba(200, 164, 92, 0.18)" d="M0,80 C300,140 600,20 900,80 C1200,140 1500,20 1800,80 L1800,400 L0,400 Z"/>
+              <!-- Front Golden Wave Layer -->
+              <path id="waveFront" fill="rgba(200, 164, 92, 0.35)" stroke="rgba(200, 164, 92, 0.95)" stroke-width="2.5" d="M0,60 C300,10 600,110 900,60 C1200,10 1500,110 1800,60 L1800,400 L0,400 Z"/>
             </svg>
           </div>
-          <div class="font-fraunces" style="font-size:24px; color:#FFF; margin-top:24px; letter-spacing:1px;">KAALA BAHI</div>
-          <div class="font-mono" style="font-size:13px; color:var(--brass); margin-top:6px;">100% PRIVATE LEDGER</div>
-        </div>
 
-        <div style="max-width:680px;">
-          <div style="color:var(--brass); font-weight:600; text-transform:uppercase; letter-spacing:3px; margin-bottom:14px; font-size:16px;">
-            A New Philosophy
-          </div>
-          <h2 class="font-fraunces" style="font-size:56px; line-height:1.15; margin-bottom:24px;">
-            Your Money.<br>
-            <span class="gold-gradient-text">Your Private Google Sheet.</span>
-          </h2>
-          <p style="font-size:22px; color:var(--muted); line-height:1.6;">
-            Zero external servers. Zero subscriptions.<br>
-            Direct peer-to-cloud sync between your phone and your private Google account.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== ACT 3: FLUID SAVING GOALS (11.5s - 18.5s) ==================== -->
-    <div class="act" id="act3">
-      <div class="goal-stage">
-        <div style="text-align:center;">
-          <div style="color:var(--brass); font-weight:600; text-transform:uppercase; letter-spacing:3px; margin-bottom:10px; font-size:16px;">
-            Interactive 3D Deck
-          </div>
-          <h2 class="font-fraunces" style="font-size:52px;">
-            Living, Breathing <span class="gold-gradient-text">Fluid Goals</span>
-          </h2>
-        </div>
-
-        <div class="card-stack">
-          <div class="stack-bg-card"></div>
-          
-          <div class="stack-front-card">
-            <!-- Fluid Wave Canvas / SVG -->
-            <div class="wave-container">
-              <svg class="wave-svg" viewBox="0 0 1200 400" preserveAspectRatio="none">
-                <!-- Back Sine Wave -->
-                <path id="waveBack" fill="rgba(200, 164, 92, 0.18)" d="M0,80 C300,140 600,20 900,80 C1200,140 1500,20 1800,80 L1800,400 L0,400 Z"/>
-                <!-- Front Golden Wave -->
-                <path id="waveFront" fill="rgba(200, 164, 92, 0.32)" stroke="rgba(200, 164, 92, 0.9)" stroke-width="2.5" d="M0,60 C300,10 600,110 900,60 C1200,10 1500,110 1800,60 L1800,400 L0,400 Z"/>
-              </svg>
-            </div>
-
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:2;">
-              <div style="display:flex; gap:16px; align-items:center;">
-                <div style="font-size:42px; background:rgba(0,0,0,0.3); padding:10px 14px; border-radius:18px;">📱</div>
-                <div>
-                  <div class="font-fraunces" style="font-size:32px; font-weight:700;">Samsung S25 Ultra</div>
-                  <div class="font-mono" style="font-size:15px; color:var(--muted); margin-top:4px;">Target: ₹65,000 · Kotak Savings</div>
+          <!-- Goal Header Info -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:2;">
+            <div style="display:flex; gap:18px; align-items:center;">
+              <!-- Brass Theme-Matching Glyph -->
+              <div style="width:62px; height:62px; border-radius:18px; background:rgba(200,164,92,0.18); border:1.5px solid rgba(200,164,92,0.5); display:flex; align-items:center; justify-content:center;">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+                  <line x1="9" y1="3" x2="9" y2="18"></line>
+                  <line x1="15" y1="6" x2="15" y2="21"></line>
+                </svg>
+              </div>
+              <div>
+                <div class="font-fraunces" style="font-size:30px; font-weight:700; color:#FFF;">
+                  Himalayan Expedition
+                </div>
+                <div class="font-mono" style="font-size:15px; color:var(--muted-dark); margin-top:4px;">
+                  Target: ₹1,00,000 · Main Savings
                 </div>
               </div>
-              <div class="font-mono" style="background:rgba(200, 164, 92, 0.15); border:1px solid rgba(200, 164, 92, 0.4); padding:6px 14px; border-radius:999px; color:var(--brass); font-weight:700; font-size:16px;">
-                #1 PRIORITY
-              </div>
             </div>
-
-            <div style="display:flex; justify-content:space-between; align-items:flex-end; position:relative; z-index:2;">
-              <div>
-                <div style="font-size:15px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Current Progress</div>
-                <div class="font-mono" id="goalAmountCount" style="font-size:46px; font-weight:700; color:#FFF;">₹0</div>
-              </div>
-              <div class="font-mono" id="goalPercentCount" style="font-size:52px; font-weight:800; color:var(--brass-light);">0%</div>
+            <div class="font-mono" style="background:rgba(200, 164, 92, 0.2); border:1px solid rgba(200, 164, 92, 0.5); padding:6px 14px; border-radius:999px; color:var(--brass-light); font-weight:700; font-size:15px;">
+              #1 PRIORITY
             </div>
           </div>
+
+          <!-- Animated Progress Counters -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; position:relative; z-index:2;">
+            <div>
+              <div style="font-size:14px; color:var(--muted-dark); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Current Progress</div>
+              <div class="font-mono" id="goalAmountCount" style="font-size:46px; font-weight:800; color:#FFF;">₹0</div>
+            </div>
+            <div class="font-mono" id="goalPercentCount" style="font-size:54px; font-weight:800; color:var(--brass-light);">0%</div>
+          </div>
         </div>
+
+        <!-- Monthly Limit Guardrail Card -->
+        <div class="limit-guardrail-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:12px; height:12px; border-radius:50%; background:var(--income); box-shadow:0 0 10px var(--income);"></div>
+              <div class="font-mono" style="font-size:16px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted-dark);">
+                Monthly Limit Guardrail
+              </div>
+            </div>
+            <div class="font-mono" style="color:var(--income); font-size:15px; font-weight:700; background:rgba(78,173,123,0.15); padding:4px 10px; border-radius:6px;">
+              ON PACE (62%)
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:22px;">
+            <div>
+              <div class="font-mono" style="font-size:13px; color:var(--muted-dark);">SAFE TO SPEND</div>
+              <div class="font-mono" style="font-size:48px; font-weight:800; color:var(--brass-light); margin-top:4px;">
+                ₹1,450<span style="font-size:20px; color:var(--muted-dark); font-weight:400;">/day</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div class="font-mono" style="font-size:13px; color:var(--muted-dark);">REMAINING BUDGET</div>
+              <div class="font-mono" style="font-size:32px; font-weight:700; color:#FFF; margin-top:4px;">
+                ₹18,850 <span style="font-size:18px; color:var(--muted-dark);">/ ₹50,000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pace Progress Bar -->
+          <div class="pace-track">
+            <div class="pace-fill" id="paceFillBar"></div>
+            <div class="pace-needle" title="Current Day Marker"></div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--muted-dark); font-family:'IBM Plex Mono';">
+            <span>Day 19 of 30</span>
+            <span style="color:var(--income);">11 days remaining · Zero Overspending</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- ==================== ACT 4: MONTHLY SPENDING LIMITS (18.5s - 24.5s) ==================== -->
-    <div class="act" id="act4">
-      <div class="limit-container">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="width:12px; height:12px; border-radius:50%; background:var(--income);"></div>
-            <div class="font-mono" style="font-size:16px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted);">
-              Monthly Spending Guardrail
-            </div>
-          </div>
-          <div class="font-mono" style="color:var(--income); font-size:16px; font-weight:600;">ON PACE (62%)</div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:20px;">
-          <div>
-            <div class="font-mono" style="font-size:14px; color:var(--muted);">SAFE PER DAY</div>
-            <div class="font-mono" style="font-size:48px; font-weight:800; color:var(--brass-light); margin-top:4px;">₹1,450<span style="font-size:22px; color:var(--muted); font-weight:400;">/day</span></div>
-          </div>
-          <div style="text-align:right;">
-            <div class="font-mono" style="font-size:14px; color:var(--muted);">REMAINING BUDGET</div>
-            <div class="font-mono" style="font-size:32px; font-weight:700; color:#FFF; margin-top:4px;">₹18,850 <span style="font-size:18px; color:var(--muted);">/ ₹50,000</span></div>
-          </div>
-        </div>
-
-        <!-- Pace Tracker Bar -->
-        <div class="pace-track">
-          <div class="pace-fill" id="paceFillBar"></div>
-          <div class="pace-needle" title="Pace Marker"></div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--muted); font-family:'IBM Plex Mono';">
-          <span>Day 19 of 30</span>
-          <span>11 days remaining · No Overspending</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== ACT 5: GRAND FINALE (24.5s - 30.0s) ==================== -->
+    <!-- =========================================================================
+         ACT 5: GRAND FINALE & CTA (21.5s - 26.5s)
+         Clean Branding, Core Pillars, Live Hosted App Link
+         ========================================================================= -->
     <div class="act" id="act5">
       <svg class="brand-logo-large" viewBox="0 0 100 100" fill="none">
         <rect width="100" height="100" rx="23" fill="#0D0F12"/>
@@ -390,18 +624,19 @@ html, body {
         <path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/>
       </svg>
 
-      <h1 class="font-fraunces" style="font-size:74px; font-weight:800; margin-bottom:12px;">
+      <h1 class="font-fraunces" style="font-size:74px; font-weight:800; margin-bottom:10px;">
         MUNSHI <span style="font-weight:400; color:var(--brass);">(मुंशी)</span>
       </h1>
-      <p style="font-size:24px; color:var(--muted); letter-spacing:1px;">
-        The Private Kaala Bahi Ledger & Goal Tracker
+      <p style="font-size:24px; color:var(--muted-dark); letter-spacing:1px;">
+        Your Sovereign Personal Ledger & Wealth Compass
       </p>
 
       <div class="feature-pills">
-        <div class="pill"><span>🔒</span> 100% Data Ownership</div>
-        <div class="pill"><span>📊</span> Google Sheet Backend</div>
+        <div class="pill"><span>🔒</span> 100% Peer-to-Sheet Sync</div>
+        <div class="pill"><span>📊</span> Personal Google Drive Storage</div>
         <div class="pill"><span>⚡</span> Offline-First PWA & Android</div>
-        <div class="pill"><span>💸</span> Zero Subscriptions</div>
+        <div class="pill"><span>🎨</span> Dark Obsidian & Warm Sand Themes</div>
+        <div class="pill"><span>💸</span> Zero Subscriptions Ever</div>
       </div>
 
       <a href="https://munshi.shreyaas.workers.dev" target="_blank" class="cta-button">
@@ -409,27 +644,27 @@ html, body {
         <span>→</span>
       </a>
 
-      <div class="font-mono" style="margin-top:20px; font-size:15px; color:var(--brass);">
+      <div class="font-mono" style="margin-top:22px; font-size:16px; color:var(--brass-light); letter-spacing:1px;">
         munshi.shreyaas.workers.dev
       </div>
     </div>
 
   </div>
 
-  <!-- HUD Status / Controls -->
+  <!-- HUD Player Status / Keyboard Controls -->
   <div id="hud-indicator">
     <div class="hud-dot"></div>
-    <span id="time-display">00:00</span>
+    <span id="time-display">00:00 / 00:26</span>
     <span style="opacity:0.4;">|</span>
     <span>Space to pause · R to restart</span>
   </div>
 </div>
 
-<!-- ==================== THREE.JS PARTICLES & GSAP MOTION TIMELINE ==================== -->
+<!-- ==================== THREE.JS PARTICLES & SNAPPY GSAP MASTER TIMELINE ==================== -->
 <script type="module">
 import * as THREE from 'three';
 
-// 1. DYNAMIC STAGE SCALING
+// 1. DYNAMIC STAGE SCALING (Auto-scales 1920x1080 canvas to fit any screen)
 function resizeStage() {
   const vp = document.getElementById('viewport');
   const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
@@ -448,22 +683,20 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(60, 1920 / 1080, 0.1, 1000);
 camera.position.z = 250;
 
-const particleCount = 280;
+const particleCount = 240;
 const geometry = new THREE.BufferGeometry();
 const positions = new Float32Array(particleCount * 3);
-const scales = new Float32Array(particleCount);
 
 for (let i = 0; i < particleCount; i++) {
-  positions[i * 3] = (Math.random() - 0.5) * 800;
-  positions[i * 3 + 1] = (Math.random() - 0.5) * 500;
-  positions[i * 3 + 2] = (Math.random() - 0.5) * 400;
-  scales[i] = Math.random() * 3 + 1;
+  positions[i * 3] = (Math.random() - 0.5) * 850;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 550;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 450;
 }
 
 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 const material = new THREE.PointsMaterial({
   color: 0xC8A45C,
-  size: 3,
+  size: 3.2,
   transparent: true,
   opacity: 0.55,
   blending: THREE.AdditiveBlending
@@ -473,8 +706,8 @@ const particles = new THREE.Points(geometry, material);
 scene.add(particles);
 
 function renderGL() {
-  particles.rotation.y += 0.0008;
-  particles.rotation.x += 0.0004;
+  particles.rotation.y += 0.001;
+  particles.rotation.x += 0.0005;
   renderer.render(scene, camera);
   requestAnimationFrame(renderGL);
 }
@@ -483,95 +716,100 @@ renderGL();
 // 3. CONTINUOUS WAVE UNDULATION
 gsap.to('#waveFront', {
   x: -600,
-  duration: 4.5,
+  duration: 4,
   repeat: -1,
   ease: 'none'
 });
 gsap.to('#waveBack', {
   x: -600,
-  duration: 6.5,
+  duration: 6,
   repeat: -1,
   ease: 'none'
 });
 
-// 4. MASTER CINEMATIC TIMELINE (30 Seconds Loop)
+// 4. MASTER CINEMATIC TIMELINE (Fast, punchy ~26.5s loop)
 const master = gsap.timeline({ repeat: -1 });
 
 // Initial 3D Act Setup
 gsap.set('#act1', { zIndex: 5, autoAlpha: 1 });
-gsap.set('#act2', { zIndex: 4, autoAlpha: 0, z: -400, rotationY: 20 });
-gsap.set('#act3', { zIndex: 3, autoAlpha: 0, z: -500, rotationX: -15 });
-gsap.set('#act4', { zIndex: 2, autoAlpha: 0, z: -500, rotationY: -20 });
-gsap.set('#act5', { zIndex: 1, autoAlpha: 0, z: -600 });
+gsap.set('#act2', { zIndex: 4, autoAlpha: 0, z: -400, rotationY: 15 });
+gsap.set('#act3', { zIndex: 3, autoAlpha: 0, z: -400, rotationX: -12 });
+gsap.set('#act4', { zIndex: 2, autoAlpha: 0, z: -450, rotationY: -15 });
+gsap.set('#act5', { zIndex: 1, autoAlpha: 0, z: -500 });
 
-// === SCENE 1 (0s - 5.5s): The Problem ===
+// === ACT 1 (0.0s - 4.5s): The Problem ===
 master
-  .fromTo('#act1 .trap-badge', { y: -30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' })
-  .fromTo('#act1 .hero-quote', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.2, ease: 'power2.out' }, '-=0.5')
-  .fromTo('#act1 .sub-quote', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, '-=0.7')
-  .fromTo('#act1 .shattered-card', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'back.out(1.5)' }, '-=0.5')
-  .to('#world', { z: -80, rotationY: -4, duration: 3.5, ease: 'power1.inOut' }, '-=1.5')
+  .fromTo('#act1 .category-badge', { y: -25, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' })
+  .fromTo('#act1 .hero-quote', { scale: 0.92, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9, ease: 'power2.out' }, '-=0.4')
+  .fromTo('#act1 .sub-quote', { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+  .fromTo('#act1 .shattered-card', { y: 35, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'back.out(1.5)' }, '-=0.4')
+  .to('#world', { z: -60, rotationY: -3, duration: 2.5, ease: 'power1.inOut' }, '-=1.0')
   
-  // Transition Act 1 -> Act 2 (Push-through with depth)
-  .to('#act1', { autoAlpha: 0, z: 400, rotationY: -15, duration: 1.1, ease: 'power2.in' })
-  .to('#act2', { autoAlpha: 1, z: 0, rotationY: 0, duration: 1.3, ease: 'power3.out' }, '-=0.5');
+  // Transition Act 1 -> Act 2 (Swift push-through)
+  .to('#act1', { autoAlpha: 0, z: 350, rotationY: -10, duration: 0.8, ease: 'power2.in' })
+  .to('#act2', { autoAlpha: 1, z: 0, rotationY: 0, duration: 0.9, ease: 'power3.out' }, '-=0.4');
 
-// === SCENE 2 (5.5s - 11.5s): The Revelation (Munshi & Google Sheets) ===
+// === ACT 2 (4.5s - 10.0s): Architecture Diagram (App -> Sheet) ===
 master
-  .fromTo('.ledger-hero', { rotationY: -35, scale: 0.8 }, { rotationY: -10, scale: 1, duration: 1.5, ease: 'power2.out' }, '-=0.8')
-  .to('#world', { rotationY: 6, z: 20, duration: 4, ease: 'power1.inOut' }, '-=1.0')
+  .fromTo('#act2 .arch-card-app', { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' })
+  .fromTo('#act2 .arch-card-sheet', { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.6')
+  .fromTo('#syncPulseBeam', { left: '-40%', opacity: 0 }, { left: '100%', opacity: 1, repeat: 2, duration: 1.2, ease: 'power1.inOut' }, '-=0.5')
+  .fromTo('.trust-pill', { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'power2.out' }, '-=0.8')
+  .to('#world', { rotationY: 4, z: 15, duration: 3.2, ease: 'power1.inOut' }, '-=2.0')
   
   // Transition Act 2 -> Act 3
-  .to('#act2', { autoAlpha: 0, z: 500, rotationY: 20, duration: 1.1, ease: 'power2.in' })
-  .to('#act3', { autoAlpha: 1, z: 0, rotationX: 0, duration: 1.3, ease: 'power3.out' }, '-=0.5');
+  .to('#act2', { autoAlpha: 0, z: 400, rotationY: 15, duration: 0.8, ease: 'power2.in' })
+  .to('#act3', { autoAlpha: 1, z: 0, rotationX: 0, duration: 0.9, ease: 'power3.out' }, '-=0.4');
 
-// === SCENE 3 (11.5s - 18.5s): Fluid Saving Goals ===
+// === ACT 3 (10.0s - 15.5s): Dashboard & Dual Themes ===
+master
+  .fromTo('#phoneMockup', { y: 50, scale: 0.88, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.9, ease: 'back.out(1.2)' })
+  .fromTo('#act3 .insights-floating-card', { x: 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.5')
+  .to('#world', { z: -30, rotationY: -4, duration: 3.0, ease: 'power1.inOut' }, '-=1.5')
+  
+  // Transition Act 3 -> Act 4
+  .to('#act3', { autoAlpha: 0, z: 450, rotationX: 15, duration: 0.8, ease: 'power2.in' })
+  .to('#act4', { autoAlpha: 1, z: 0, rotationY: 0, duration: 0.9, ease: 'power3.out' }, '-=0.4');
+
+// === ACT 4 (15.5s - 21.5s): Living Goals & Limits Guardrail ===
 const goalCounter = { val: 0, percent: 0 };
 master
-  .fromTo('.card-stack', { y: 60, scale: 0.85 }, { y: 0, scale: 1, duration: 1.2, ease: 'back.out(1.2)' })
-  .fromTo('.wave-container', { height: '0%' }, { height: '72%', duration: 2.8, ease: 'power2.out' }, '-=0.6')
+  .fromTo('#fluidGoalCard', { scale: 0.9, y: 30 }, { scale: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+  .fromTo('.limit-guardrail-card', { scale: 0.9, y: 30 }, { scale: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.6')
+  .fromTo('.wave-container', { height: '0%' }, { height: '76%', duration: 2.0, ease: 'power2.out' }, '-=0.4')
   .to(goalCounter, {
-    val: 48750,
-    percent: 75,
-    duration: 2.6,
+    val: 78000,
+    percent: 78,
+    duration: 2.0,
     ease: 'power2.out',
     onUpdate: () => {
       document.getElementById('goalAmountCount').textContent = '₹' + Math.floor(goalCounter.val).toLocaleString('en-IN');
       document.getElementById('goalPercentCount').textContent = Math.floor(goalCounter.percent) + '%';
     }
-  }, '-=2.8')
-  .to('#world', { z: -40, rotationX: 6, duration: 3.5, ease: 'power1.inOut' }, '-=2.0')
-  
-  // Transition Act 3 -> Act 4
-  .to('#act3', { autoAlpha: 0, z: 500, rotationX: 20, duration: 1.1, ease: 'power2.in' })
-  .to('#act4', { autoAlpha: 1, z: 0, rotationY: 0, duration: 1.3, ease: 'power3.out' }, '-=0.5');
-
-// === SCENE 4 (18.5s - 24.5s): Intelligent Spending Limits ===
-master
-  .fromTo('#act4 .limit-container', { scale: 0.9, y: 30 }, { scale: 1, y: 0, duration: 1.1, ease: 'power3.out' })
-  .fromTo('#paceFillBar', { width: '0%' }, { width: '62%', duration: 1.8, ease: 'power2.out' }, '-=0.6')
-  .to('#world', { rotationY: -5, z: 10, duration: 3.5, ease: 'power1.inOut' }, '-=1.2')
+  }, '-=2.0')
+  .fromTo('#paceFillBar', { width: '0%' }, { width: '62%', duration: 1.6, ease: 'power2.out' }, '-=1.8')
+  .to('#world', { rotationX: 4, z: 10, duration: 2.8, ease: 'power1.inOut' }, '-=1.5')
   
   // Transition Act 4 -> Act 5
-  .to('#act4', { autoAlpha: 0, z: 500, duration: 1.1, ease: 'power2.in' })
-  .to('#act5', { autoAlpha: 1, z: 0, duration: 1.4, ease: 'power3.out' }, '-=0.5');
+  .to('#act4', { autoAlpha: 0, z: 450, duration: 0.8, ease: 'power2.in' })
+  .to('#act5', { autoAlpha: 1, z: 0, duration: 0.9, ease: 'power3.out' }, '-=0.4');
 
-// === SCENE 5 (24.5s - 30.0s): Grand Finale & CTA ===
+// === ACT 5 (21.5s - 26.5s): Grand Finale & CTA ===
 master
-  .fromTo('.brand-logo-large', { scale: 0.5, rotation: -15, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 1.2, ease: 'back.out(1.6)' })
-  .fromTo('#act5 h1', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, '-=0.6')
-  .fromTo('.pill', { y: 25, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: 'power2.out' }, '-=0.5')
-  .fromTo('.cta-button', { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9, ease: 'back.out(1.8)' }, '-=0.4')
-  .to('#world', { z: -100, duration: 3.2, ease: 'power1.inOut' }, '-=1.5')
-  .to('#act5', { autoAlpha: 0, duration: 0.8, ease: 'power2.in' });
+  .fromTo('.brand-logo-large', { scale: 0.6, rotation: -12, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.8, ease: 'back.out(1.5)' })
+  .fromTo('#act5 h1', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+  .fromTo('.pill', { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+  .fromTo('.cta-button', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.6)' }, '-=0.2')
+  .to('#world', { z: -80, duration: 2.8, ease: 'power1.inOut' }, '-=1.5')
+  .to('#act5', { autoAlpha: 0, duration: 0.7, ease: 'power2.in' });
 
-// 5. SCRUB & KEYBOARD CONTROLS
+// 5. HUD TIMER & KEYBOARD SHORTCUTS
 const timeDisplay = document.getElementById('time-display');
 master.eventCallback('onUpdate', () => {
   const current = master.time();
   const mins = Math.floor(current / 60);
   const secs = Math.floor(current % 60);
-  timeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} / 00:30`;
+  timeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} / 00:26`;
 });
 
 window.addEventListener('keydown', (e) => {

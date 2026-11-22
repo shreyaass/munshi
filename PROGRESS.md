@@ -17,23 +17,12 @@ pick up without re-deriving anything.
 
 ## Snapshot
 
-- **Now:** Session F complete — History has a filter sheet (range presets,
-  custom dates, type, amount comparisons, single category, four sorts),
-  removable active chips, and per-entry **Edit** / **Add again**. Next: palette
-  pass (deferred by the user), then PWA polish and the Android shell. Still
-  pending on the user's side: re-upload the refreshed template and redeploy
-  `AppsScript.gs` so the sheet has zero accounts and the `kind` column that
-  budgets rely on.
-- **Phase:** Phase 1 gate cleared by the user (real sheet uploaded, two scopes
-  granted, connected). Browser CORS against the real Web App is still
-  unconfirmed; the mock is the tested path.
-- **App state:** PWA runs fully against the dev mock. Munshi rebrand, onboarding,
-  budgets (total + daily), goals (water cards + manager), History filters and
-  edit/repeat, and the Dashboard/History/Accounts/Settings footer nav are all
-  built. Add is still the landing route.
+- **Now:** Production deployment live on Cloudflare Workers (`munshi.shreyaas.workers.dev`). Repository clean and audited for secrets; README updated with badges, quick navigation, and architecture documentation. Bang-Motion cinematic promo video (v2) implemented in `promo/index.html` featuring animated App-to-Sheet architecture diagram, real dashboard mockup, fluid goals, and dual-theme showcase.
+- **Phase:** Production web deployment live. Android / PWA ready.
+- **App state:** Munshi is hosted and accessible at `https://munshi.shreyaas.workers.dev/#/connect`. Client-side IndexedDB with direct Google Apps Script peer sync ensures zero middleman server. Dual theme (Dark Obsidian Brass + Warm Sand Copper), stacked fluid goal cards, and safe-to-spend limit guardrails fully operational.
 - **Schema:** v2 (`Categories.pinned`, `Categories.sort_order`), additive
   migration, header matching by name. Unchanged since Session B.
-- **Session F (done):** see the Session F section for the live log.
+- **Session G (done):** see Session G section below.
 
 ---
 
@@ -336,6 +325,22 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
    goal water recolour, app icon. See the decisions log.
 4. Session G: PWA polish (offline banner, install prompt), then Phase 5
    Android shell.
+
+---
+
+## Session G — Production Hosting & Bang-Motion Cinematic Promo Video (live log)
+
+- [x] 1. **Secret Audit & GitHub Sanitization**: Scanned entire codebase and markdown files. Verified zero API keys, personal sheet IDs, or bearer tokens are tracked in git. Added security notice and safe template instructions in README.
+- [x] 2. **Cloudflare Production Deployment**: Solved Wrangler monorepo targeting and Vite TypeScript build configuration. Deployed live static assets to Cloudflare Workers at `https://munshi.shreyaas.workers.dev`.
+- [x] 3. **Per-User Sheet Partitioning**: Architecture design documented. Each user connects their own Apps Script deployment URL and token stored in local IndexedDB (`localStorage` / Dexie), ensuring complete multi-tenant privacy with zero central server.
+- [x] 4. **README Enhancements**: Added live Shields.io total downloads badge, clickable relative links to `sheet/SETUP.md` and template files, and beginner-friendly quick-start guide.
+- [x] 5. **Bang-Motion Promo Video Revamp (`promo/index.html`)**:
+  - Removed "Kaala Bahi" branding, replaced with intuitive "Munshi — Your Sovereign Private Ledger".
+  - Replaced Samsung S25 Ultra phone goal with theme-matching "Himalayan Expedition & Travel Reserve" and custom brass compass SVG glyph.
+  - Implemented the animated **App -> Google Sheet architecture diagram** (Client PWA/Android <-> Apps Script API <-> Personal Google Sheet) with zero intermediary servers.
+  - Embedded real app dashboard screenshot (`promo/assets/dashboard-screen.png`) in 3D mobile mockup.
+  - Added dual-theme showcase highlighting both Dark Obsidian Brass and Warm Sand Copper daylight mode.
+  - Accelerated GSAP timeline transitions into a snappy ~26.5s loop with Three.js particle depth and anti-PPT camera flow.
 
 ---
 
