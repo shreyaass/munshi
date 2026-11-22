@@ -4,9 +4,9 @@
 > Zero subscriptions · Zero server costs · 100% Data Ownership · Offline-First PWA & Android App.
 
 [![Download APK](https://img.shields.io/badge/Download%20APK-Android-brightgreen?style=for-the-badge&logo=android)](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk)
-[![Launch Web App](https://img.shields.io/badge/Launch%20App-Web%20%2F%20PWA-C8A45C?style=for-the-badge&logo=googlechrome)](https://munshi.shreyaas.workers.dev)
-[![Watch Promo](https://img.shields.io/badge/Watch%20Promo-Interactive%203D-99732B?style=for-the-badge&logo=youtube)](https://shreyaass.github.io/munshi/)
-[![Explore Landing](https://img.shields.io/badge/Landing%20Page-Explore%20Munshi-161A21?style=for-the-badge)](https://munshi.shreyaas.workers.dev/#/landing)
+[![Launch Web App](https://img.shields.io/badge/Launch%20App-Web%20%2F%20PWA-C8A45C?style=for-the-badge&logo=googlechrome)](https://shreyaass.github.io/munshi/)
+[![Explore Landing](https://img.shields.io/badge/Landing%20Page-Explore%20Munshi-161A21?style=for-the-badge)](https://shreyaass.github.io/munshi/#/landing)
+[![Watch Promo](https://img.shields.io/badge/Watch%20Promo-Interactive%203D-99732B?style=for-the-badge&logo=youtube)](https://shreyaass.github.io/munshi/promo/)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
@@ -22,12 +22,12 @@
 | Resource | Link | Description |
 |---|---|---|
 | **Android App** | [**Download Munshi APK (`munshi-app-debug.apk`)**](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk) | Native Android APK with offline IndexedDB cache, timid haptic clicks, and instant startup. |
-| **Web App / PWA** | [**Launch Live Web App (munshi.shreyaas.workers.dev)**](https://munshi.shreyaas.workers.dev) | Instant in Chrome, Safari, Edge. Installable as PWA on desktop & iOS. |
-| **Landing Page** | [**View Landing Showcase (`#/landing`)**](https://munshi.shreyaas.workers.dev/#/landing) | Editorial showcase with phone preview, value cards, and setup triggers. |
-| **Interactive Tour** | [**5-Step Guided Setup Tour (`#/tour`)**](https://munshi.shreyaas.workers.dev/#/tour) | Walkthrough with direct GitHub template and script links. |
+| **Web App / PWA** | [**Launch Live Web App (shreyaass.github.io/munshi)**](https://shreyaass.github.io/munshi/) | Instant in Chrome, Safari, Edge. Installable as PWA on desktop & iOS. |
+| **Landing Page** | [**View Landing Showcase (`#/landing`)**](https://shreyaass.github.io/munshi/#/landing) | Editorial showcase with phone preview, value cards, and setup triggers. |
+| **Interactive Tour** | [**5-Step Guided Setup Tour (`#/tour`)**](https://shreyaass.github.io/munshi/#/tour) | Walkthrough with direct GitHub template and script links. |
 | **Excel Template** | [**Download `ExpenseManager-template.xlsx`**](https://github.com/shreyaass/munshi/raw/main/sheet/ExpenseManager-template.xlsx) | Ready-to-use spreadsheet template with all schemas and columns pre-built. |
 | **Apps Script Code** | [**View `sheet/AppsScript.gs`**](https://github.com/shreyaass/munshi/blob/main/sheet/AppsScript.gs) | Bundled backend code that runs privately inside your Google Sheet. |
-| **Cinematic Promo** | [**Watch Interactive Promo Video**](https://shreyaass.github.io/munshi/) | 26-second 3D promotional ad trailer running GSAP 3 and Web Audio engine. |
+| **Cinematic Promo** | [**Watch Interactive Promo Video**](https://shreyaass.github.io/munshi/promo/) | 26-second 3D promotional ad trailer running GSAP 3 and Web Audio engine. |
 | **Releases & Checksums** | [**All GitHub Releases**](https://github.com/shreyaass/munshi/releases/latest) | View changelogs, build artifacts, and release notes. |
 
 ---
@@ -84,7 +84,7 @@ Connecting your private Google Sheet takes less than two minutes:
    - Click menu **Munshi → Show Connection Info**.
    - Copy the **Web App URL** and the **Access Token**.
 5. **Paste and Track**:
-   - Open [Munshi Web App](https://munshi.shreyaas.workers.dev) or the [Android APK](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk).
+   - Open [Munshi Web App](https://shreyaass.github.io/munshi/) or the [Android APK](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk).
    - Paste both values into the Connect screen. You're done!
 
 ---

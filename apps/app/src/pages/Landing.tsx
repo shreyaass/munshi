@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icon';
 import { sound } from '../lib/sound';
 
@@ -11,22 +11,13 @@ export function Landing() {
           TOP NAVIGATION BAR
           ========================================================================= */}
       <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 md:px-12">
-        {/* Brand Logo */}
-        <Link
-          to="/"
-          onClick={() => sound.play('click')}
-          className="flex items-center gap-3 transition-opacity hover:opacity-90"
-        >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-accent/40 bg-accent/10 shadow-sm">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-            </svg>
-          </div>
+        {/* Brand Logo - Official Logo, Non-clickable */}
+        <div className="flex items-center gap-3 select-none">
+          <img src="./icons/logo.svg" alt="Munshi" className="h-9 w-9 rounded-xl shadow-sm" />
           <span className="font-display text-xl font-semibold tracking-tight text-text">
             Munshi
           </span>
-        </Link>
+        </div>
 
         {/* Right Navigation Controls */}
         <div className="flex items-center gap-3">

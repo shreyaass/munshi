@@ -203,13 +203,8 @@ export function Tour() {
       <aside className="hidden md:flex w-72 lg:w-80 shrink-0 flex-col justify-between border-r border-line bg-surface/40 p-8 select-none">
         <div>
           {/* Brand Logo & Name */}
-          <div className="flex items-center gap-3 pb-10">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-accent/40 bg-accent/10 shadow-sm">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-              </svg>
-            </div>
+          <div className="flex items-center gap-3 pb-10 select-none">
+            <img src="./icons/logo.svg" alt="Munshi" className="h-9 w-9 rounded-xl shadow-sm" />
             <span className="font-display text-xl font-semibold tracking-tight text-text">
               Munshi
             </span>
