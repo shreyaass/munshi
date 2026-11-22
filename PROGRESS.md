@@ -341,6 +341,11 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
   - Embedded real app dashboard screenshot (`promo/assets/dashboard-screen.png`) in 3D mobile mockup.
   - Added dual-theme showcase highlighting both Dark Obsidian Brass and Warm Sand Copper daylight mode.
   - Accelerated GSAP timeline transitions into a snappy ~26.5s loop with Three.js particle depth and anti-PPT camera flow.
+- [x] 6. **Motion Ad v3.0 Polish**:
+  - Eliminated all emojis across the ad; replaced with 100% sharp vector SVGs (multi-device laptop+phone, spreadsheet grid, mountain summit, sparkles, sun, and security shields).
+  - Redesigned Act 3 to use a fully native, animated vector phone dashboard simulation (live net balance counter up to ₹2,48,500, animated bar chart, and recent transaction ticker) instead of cropped screenshots.
+  - Made the motion ad 100% full-width and responsive across mobile, tablet, and widescreen desktop displays (using CSS viewport units, clamp(), and dynamic WebGL aspect ratio updating).
+  - Replaced "sovereign" with clear, direct value: "The 100% Private Expense & Wealth Tracker You Truly Own".
 
 ---
 
