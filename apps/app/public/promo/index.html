@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en">
+<!--
+  Munshi (मुंशी) — Cinematic Promotional Motion Ad (v3.3)
+  Story: Logo Emergence -> Ledger Falls Through Portal -> Camera Dives In ->
+         Impact Ripples -> Ledger Opens -> Fluid Wave Bucket ->
+         External Toggle Flips -> Entire Screen & Cards Morph to Light Theme ->
+         Direct Architecture (Confined Beam) -> Grand Finale CTA.
+  Rule: 100% Theme Vector SVGs. Zero Emojis. Full Fluid Responsiveness.
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Munshi — The 100% Private Expense & Wealth Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"
+}}
+</script>
+<style>
+:root {
+  /* Munshi Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  /* Dark Obsidian Palette */
+  --bg-dark: #0D0F12;
+  --surface-dark: #15181D;
+  --surface-raised: #1C2027;
+  --line-dark: #2B313C;
+  --text-dark: #EAE6DF;
+  --muted-dark: #9AA1AB;
+  --brass: #C8A45C;
+  --brass-light: #E5C07B;
+  --brass-glow: rgba(200, 164, 92, 0.4);
+
+  /* Light Warm Sand Palette */
+  --bg-light: #EFEDE8;
+  --surface-light: #FFFFFF;
+  --raised-light: #F7F5F0;
+  --line-light: #DDD9CF;
+  --text-light: #14171B;
+  --muted-light: #5F6670;
+  --copper: #A95F32;
+
+  /* Semantic */
+  --income: #4EAD7B;
+  --expense: #E87A5D;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; height:100%; background:#07080A; overflow:hidden;
+  font-family: var(--font-sans); color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Master Stage (Fluid 100vw x 100vh / 100dvh) */
+#stage {
+  position: relative; width: 100vw; height: 100vh; height: 100dvh;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 45%, #161A22 0%, #0D0F12 55%, #050608 100%);
+  transition: background 0.8s ease;
+}
+
+/* Dynamic Three.js Canvas */
+#gl-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 1; opacity: 0.8;
+}
+
+/* Ambient Grain & Vignette */
+.vignette {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(4,5,7,0.85) 100%);
+}
+.grid-lines {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2; opacity: 0.035;
+  background-image: linear-gradient(var(--line-dark) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--line-dark) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* 3D World Camera Container */
+#world {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  perspective: 1200px; transform-style: preserve-3d; z-index: 3;
+}
+
+/* Acts Container */
+.act {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transform-style: preserve-3d; will-change: transform, opacity;
+  padding: clamp(16px, 4vw, 50px);
+  max-width: 1400px; margin: 0 auto;
+}
+
+/* Typography Classes */
+.font-fraunces {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: 'SOFT' 0, 'WONK' 0;
+}
+.font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF0CF 0%, #C8A45C 50%, #94712A 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* Category Badge */
+.category-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 18px; border-radius: 999px;
+  font-size: clamp(12px, 1.4vw, 14px); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 2px; margin-bottom: clamp(10px, 2vh, 18px);
+}
+.badge-gold {
+  background: rgba(200, 164, 92, 0.12); border: 1px solid rgba(200, 164, 92, 0.4);
+  color: var(--brass-light);
+}
+
+/* ==================== ACT 1: LOGO SHOWS & LEDGER FALLS THROUGH HOLE ==================== */
+#act1 .logo-portal-stage {
+  position: relative; width: 340px; height: 340px;
+  display: flex; align-items: center; justify-content: center;
+  transform-style: preserve-3d;
+}
+.logo-outer-frame {
+  width: 140px; height: 140px; border-radius: 32px;
+  background: #0D0F12; border: 2px solid #C8A45C;
+  box-shadow: 0 0 60px rgba(200, 164, 92, 0.5);
+  position: relative; display: flex; align-items: center; justify-content: center;
+  transform-style: preserve-3d;
+}
+/* The Hole Created in Logo */
+.logo-portal-hole {
+  position: absolute; width: 72px; height: 84px; border-radius: 12px;
+  background: radial-gradient(circle, #050608 20%, #15181E 100%);
+  border: 1.5px dashed rgba(200, 164, 92, 0.4);
+  box-shadow: inset 0 0 25px rgba(0,0,0,0.9), 0 0 30px rgba(200, 164, 92, 0.2);
+}
+/* The Detached Ledger That Falls */
+.logo-falling-ledger {
+  position: absolute; width: 72px; height: 84px; border-radius: 12px;
+  background: linear-gradient(145deg, #1A1F26 0%, #A95F32 100%);
+  border: 1.5px solid #C8A45C;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(200, 164, 92, 0.4);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transform-style: preserve-3d; z-index: 10;
+}
+.falling-spine {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 12px;
+  background: #C8A45C; border-top-left-radius: 12px; border-bottom-left-radius: 12px;
+}
+
+/* ==================== ACT 2: LANDING IMPACT RIPPLES & LEDGER OPENS ==================== */
+#act2 .impact-ripple-wrap {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 400px; height: 400px; pointer-events: none;
+  display: flex; align-items: center; justify-content: center; z-index: 1;
+}
+.impact-ripple {
+  position: absolute; border-radius: 50%;
+  border: 2px solid rgba(200, 164, 92, 0.8);
+  pointer-events: none;
+}
+#act2 .book-stage {
+  perspective: 1400px; width: min(92vw, 840px); height: min(58vh, 460px);
+  position: relative; transform-style: preserve-3d; z-index: 5;
+}
+.book-cover {
+  position: absolute; inset: 0; border-radius: 24px;
+  background: linear-gradient(145deg, #1A1F26 0%, #101317 100%);
+  border: 1.5px solid rgba(200, 164, 92, 0.45);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.9), 0 0 40px var(--brass-glow);
+  transform-origin: left center; transform-style: preserve-3d; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.book-spine-gold {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 34px;
+  background: linear-gradient(180deg, #D4AF37 0%, #7A5816 100%);
+  border-top-left-radius: 24px; border-bottom-left-radius: 24px;
+  border-right: 2px solid rgba(0,0,0,0.4);
+}
+.book-pages-spread {
+  position: absolute; inset: 0; border-radius: 22px;
+  background: #15181E; border: 1.5px solid rgba(200, 164, 92, 0.35);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.85);
+  display: flex; overflow: hidden; z-index: 2;
+}
+.book-page {
+  flex: 1; padding: clamp(18px, 3vw, 36px); display: flex; flex-direction: column;
+  justify-content: space-between; position: relative;
+}
+.book-page-left {
+  border-right: 1px dashed rgba(200, 164, 92, 0.25);
+  background: linear-gradient(90deg, rgba(20,24,30,0.9) 0%, rgba(17,20,25,0.7) 100%);
+}
+.book-page-right {
+  background: linear-gradient(90deg, rgba(17,20,25,0.7) 0%, rgba(20,24,30,0.9) 100%);
+}
+.page-entry-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px;
+}
+.surplus-stamp {
+  align-self: center; padding: 8px 24px; border-radius: 999px;
+  background: rgba(78, 173, 123, 0.15); border: 1.5px solid var(--income);
+  color: var(--income); font-weight: 700; font-size: clamp(12px, 1.4vw, 15px);
+  box-shadow: 0 0 20px rgba(78, 173, 123, 0.3);
+}
+
+/* ==================== ACT 3: FLUID GOALS & SCENE-WIDE LIGHT/DARK MORPH ==================== */
+#act3 {
+  transition: background 0.7s ease, color 0.7s ease;
+}
+/* Scene-Wide Light Theme Transformation */
+#act3.light-theme-active {
+  background: radial-gradient(circle at 50% 45%, #FFFFFF 0%, #F5F3ED 65%, #E9E5DC 100%) !important;
+  color: #14171B !important;
+}
+#act3.light-theme-active .font-fraunces {
+  color: #14171B !important;
+}
+#act3.light-theme-active .sub-desc-text {
+  color: #5F6670 !important;
+}
+#act3.light-theme-active .goal-water-card {
+  background: #FFFFFF !important;
+  border-color: #DDD9CF !important;
+  color: #14171B !important;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.12), 0 0 40px rgba(169, 95, 50, 0.15) !important;
+}
+#act3.light-theme-active .guardrail-card {
+  background: #FFFFFF !important;
+  border-color: #DDD9CF !important;
+  color: #14171B !important;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.12) !important;
+}
+#act3.light-theme-active .scene-theme-control {
+  background: #FFFFFF !important;
+  border-color: #DDD9CF !important;
+  color: #14171B !important;
+}
+#act3.light-theme-active .scene-toggle-track {
+  background: #A95F32 !important;
+}
+#act3.light-theme-active #safeDailyText {
+  color: #A95F32 !important;
+}
+#act3.light-theme-active .pace-track {
+  background: #E8E5DC !important;
+}
+#act3.light-theme-active .pace-fill {
+  background: linear-gradient(90deg, #2F7A57 0%, #A95F32 85%) !important;
+}
+#act3.light-theme-active .pace-needle {
+  background: #14171B !important; box-shadow: 0 0 8px rgba(0,0,0,0.4) !important;
+}
+#act3.light-theme-active .guardrail-stat-chip {
+  background: #F7F5F0 !important; border-color: #DDD9CF !important; color: #14171B !important;
+}
+
+/* External Master Theme Toggle (Placed outside of all cards!) */
+.scene-theme-control {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 20px; border-radius: 999px;
+  background: rgba(22, 26, 33, 0.9); border: 1.5px solid rgba(200, 164, 92, 0.35);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  margin-bottom: clamp(14px, 2.5vh, 24px); transition: all 0.6s ease;
+}
+.scene-toggle-track {
+  width: 44px; height: 24px; border-radius: 999px; background: #28303C;
+  position: relative; display: flex; align-items: center; padding: 2px;
+  transition: background 0.4s ease;
+}
+.scene-toggle-thumb {
+  width: 20px; height: 20px; border-radius: 50%; background: #FFF;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  position: absolute; left: 2px;
+}
+
+#act3 .cards-showcase-stage {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(18px, 3.5vw, 44px); width: 100%; max-width: 1250px; flex-wrap: wrap;
+}
+/* The "Card with Bucket" Fluid Goals Wave */
+.goal-water-card {
+  flex: 1 1 340px; max-width: 560px; height: clamp(320px, 42vh, 400px);
+  border-radius: 28px; background: #161A21; border: 1.5px solid rgba(200, 164, 92, 0.45);
+  position: relative; overflow: hidden; padding: clamp(20px, 3vh, 32px);
+  display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(200, 164, 92, 0.15);
+  transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease;
+}
+.wave-container {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 65%;
+  pointer-events: none; overflow: hidden;
+}
+.wave-svg {
+  position: absolute; left: -100%; width: 300%; height: 100%;
+}
+.goal-badge-icon {
+  width: clamp(44px, 5.5vw, 56px); height: clamp(44px, 5.5vw, 56px);
+  border-radius: 16px; background: rgba(200,164,92,0.18);
+  border: 1.5px solid rgba(200,164,92,0.5);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Guardrail Card */
+.guardrail-card {
+  flex: 1 1 340px; max-width: 560px; border-radius: 28px;
+  background: #15181E; border: 1.5px solid rgba(78, 173, 123, 0.4);
+  padding: clamp(22px, 3.2vh, 36px); box-shadow: 0 25px 70px rgba(0,0,0,0.8);
+  transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease;
+}
+.pace-track {
+  width: 100%; height: 14px; border-radius: 999px; background: #252B35;
+  position: relative; margin: 20px 0; overflow: visible;
+  transition: background 0.6s ease;
+}
+.pace-fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #4EAD7B 0%, #C8A45C 85%);
+  width: 62%; box-shadow: 0 0 16px rgba(200, 164, 92, 0.45);
+}
+.pace-needle {
+  position: absolute; top: -7px; bottom: -7px; width: 4px; border-radius: 2px;
+  background: #FFF; box-shadow: 0 0 12px #FFF; left: 68%;
+}
+.guardrail-stats-row {
+  display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;
+}
+.guardrail-stat-chip {
+  flex: 1; padding: 10px 14px; border-radius: 14px;
+  background: rgba(25, 30, 38, 0.7); border: 1px solid rgba(44, 50, 59, 0.7);
+  display: flex; align-items: center; gap: 8px; font-size: 12px;
+  transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease;
+}
+
+/* ==================== ACT 4: DIRECT ARCHITECTURE (APP -> SHEET) ==================== */
+#act4 .diagram-container {
+  display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1200px;
+}
+.nodes-row {
+  display: flex; align-items: center; justify-content: center; gap: clamp(16px, 3vw, 44px);
+  width: 100%; position: relative; flex-wrap: wrap;
+}
+.arch-card {
+  flex: 1 1 290px; max-width: 440px; border-radius: 24px;
+  padding: clamp(20px, 3vh, 30px) clamp(18px, 2.5vw, 26px);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.85); transform-style: preserve-3d;
+}
+.arch-card-app {
+  background: linear-gradient(145deg, #181C23 0%, #111419 100%);
+  border: 1.5px solid rgba(200, 164, 92, 0.45);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px var(--brass-glow);
+}
+.arch-card-sheet {
+  background: linear-gradient(145deg, #121A15 0%, #0B120E 100%);
+  border: 1.5px solid rgba(78, 173, 123, 0.45);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(78, 173, 123, 0.25);
+}
+.arch-card-icon {
+  width: clamp(48px, 6vw, 62px); height: clamp(48px, 6vw, 62px);
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+.sync-connector {
+  flex: 0 1 240px; display: flex; flex-direction: column; align-items: center;
+  min-width: 180px; position: relative; margin: 10px 0;
+}
+/* Strict Overflow Hidden on Pipe so Loader Stays Confined */
+.sync-pipe {
+  width: 100%; height: 8px; border-radius: 999px; background: #222832;
+  position: relative; overflow: hidden !important;
+  border: 1px solid rgba(200, 164, 92, 0.25);
+}
+.sync-beam {
+  position: absolute; top: 0; left: 0; width: 35%; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, transparent 0%, #C8A45C 50%, #FFF 100%);
+  box-shadow: 0 0 12px #C8A45C;
+}
+.sync-badge-center {
+  margin-top: 14px; padding: 6px 16px; border-radius: 999px;
+  background: rgba(28, 34, 43, 0.95); border: 1px solid rgba(200, 164, 92, 0.4);
+  color: var(--brass-light); font-size: clamp(11px, 1.2vw, 13px); font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.trust-banner {
+  display: flex; gap: clamp(10px, 2vw, 18px); margin-top: clamp(18px, 3vh, 32px);
+  flex-wrap: wrap; justify-content: center;
+}
+.trust-pill {
+  padding: 8px 18px; border-radius: 12px; font-size: clamp(12px, 1.3vw, 14px); font-weight: 600;
+  background: rgba(22, 26, 33, 0.85); border: 1px solid rgba(44, 50, 59, 0.8);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ==================== ACT 5: GRAND FINALE ==================== */
+#act5 .brand-logo-large {
+  width: clamp(90px, 11vw, 130px); height: clamp(90px, 11vw, 130px);
+  border-radius: 30px; box-shadow: 0 20px 60px rgba(200, 164, 92, 0.4);
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+.feature-pills {
+  display: flex; gap: clamp(8px, 1.4vw, 14px);
+  margin: clamp(16px, 2.5vh, 28px) 0 clamp(18px, 3vh, 32px) 0;
+  flex-wrap: wrap; justify-content: center; max-width: 900px;
+}
+.pill {
+  padding: 8px 18px; border-radius: 999px; font-size: clamp(12px, 1.3vw, 15px);
+  font-weight: 600; background: rgba(28, 33, 41, 0.85);
+  border: 1px solid rgba(200, 164, 92, 0.35); color: var(--text-dark);
+  display: flex; align-items: center; gap: 8px;
+}
+.cta-button {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: clamp(14px, 2vh, 18px) clamp(30px, 4vw, 48px); border-radius: 18px;
+  background: linear-gradient(135deg, #F0D597 0%, #C8A45C 60%, #99732B 100%);
+  color: #0A0C0E; font-size: clamp(18px, 2vw, 23px); font-weight: 800;
+  box-shadow: 0 14px 40px rgba(200, 164, 92, 0.45);
+  text-decoration: none; cursor: pointer;
+}
+
+/* HUD Controller */
+#hud-indicator {
+  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; z-index: 10;
+  padding: 6px 18px; border-radius: 999px;
+  background: rgba(13, 15, 18, 0.75); backdrop-filter: blur(8px);
+  border: 1px solid rgba(44, 50, 59, 0.6); font-size: 12px; color: var(--muted-dark);
+}
+.hud-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brass); }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nodes-row { flex-direction: column; gap: 14px; }
+  .sync-connector { transform: rotate(90deg); margin: 20px 0; }
+  .book-pages-spread { flex-direction: column; }
+  .book-page-left { border-right: none; border-bottom: 1px dashed rgba(200,164,92,0.25); }
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <!-- Dynamic 3D WebGL Canvas -->
+  <canvas id="gl-canvas"></canvas>
+  <div class="vignette"></div>
+  <div class="grid-lines"></div>
+
+  <!-- 3D World Camera Container -->
+  <div id="world">
+
+    <!-- =========================================================================
+         ACT 1: LOGO SHOWS & LEDGER FALLS THROUGH HOLE (0:00 - 0:03.2)
+         Camera dives right through the hole left in the logo!
+         ========================================================================= -->
+    <div class="act" id="act1">
+      <div class="logo-portal-stage" id="act1PortalStage">
+        
+        <!-- Logo Frame with Hole Aperture -->
+        <div class="logo-outer-frame" id="act1LogoFrame">
+          <div class="logo-portal-hole"></div>
+
+          <!-- The Detached Ledger That Drops Downward -->
+          <div class="logo-falling-ledger" id="logoFallingLedger">
+            <div class="falling-spine"></div>
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+              <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" stroke="#FFF" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+      <div class="font-mono" id="act1Tagline" style="margin-top:20px; font-size:14px; color:var(--brass-light); letter-spacing:2px; text-transform:uppercase;">
+        MUNSHI · THE PRIVATE LEDGER
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 2: IMPACT RIPPLE & 3D LEDGER SWINGS OPEN (0:03.2 - 0:08.5)
+         Landing creates concentric ripples; the ledger cover opens into pages
+         ========================================================================= -->
+    <div class="act" id="act2">
+      <!-- Concentric Ripples Triggered by Fall Impact -->
+      <div class="impact-ripple-wrap" id="impactRippleWrap">
+        <div class="impact-ripple" id="impRipple1" style="width:120px; height:120px;"></div>
+        <div class="impact-ripple" id="impRipple2" style="width:220px; height:220px;"></div>
+        <div class="impact-ripple" id="impRipple3" style="width:320px; height:320px;"></div>
+      </div>
+
+      <div class="category-badge badge-gold">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/>
+          <line x1="16" y1="8" x2="2" y2="22"/>
+          <line x1="17.5" y1="15" x2="9" y2="15"/>
+        </svg>
+        <span>The Digital Bahi Khata</span>
+      </div>
+
+      <div class="book-stage" id="bookStage">
+        <!-- Rotating Front Cover with Munshi Gold Seal -->
+        <div class="book-cover" id="bookCover">
+          <div class="book-spine-gold"></div>
+          <svg width="74" height="74" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="44" stroke="#C8A45C" stroke-width="2"/>
+            <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" stroke="#C8A45C" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <div class="font-fraunces" style="font-size:clamp(22px, 3vw, 32px); color:#FFF; margin-top:16px;">
+            MUNSHI
+          </div>
+          <div class="font-mono" style="font-size:12px; color:var(--brass-light); letter-spacing:2px; margin-top:4px;">
+            100% PRIVATE LEDGER
+          </div>
+        </div>
+
+        <!-- Interior Parchment Pages Spread -->
+        <div class="book-pages-spread" id="bookSpread">
+          
+          <!-- Left Page: Income Column (आवक) -->
+          <div class="book-page book-page-left">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="font-mono" style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--income);">
+                  CREDIT · आवक
+                </span>
+                <span class="font-mono" style="font-size:12px; color:var(--muted-dark);">MARCH 2026</span>
+              </div>
+              <div class="font-fraunces" id="incomeSum" style="font-size:clamp(24px, 3vw, 34px); font-weight:700; color:var(--income); margin-top:6px;">
+                +₹85,000
+              </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+              <div class="page-entry-row">
+                <span style="color:#FFF;">Consulting & Retainer</span>
+                <span class="font-mono" style="color:var(--income);">+₹65,000</span>
+              </div>
+              <div class="page-entry-row">
+                <span style="color:#FFF;">Dividends & Yield</span>
+                <span class="font-mono" style="color:var(--income);">+₹20,000</span>
+              </div>
+            </div>
+
+            <div class="font-mono" style="font-size:11px; color:var(--muted-dark);">
+              Verified in personal Google Sheet
+            </div>
+          </div>
+
+          <!-- Right Page: Expense Column (जावक) -->
+          <div class="book-page book-page-right">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="font-mono" style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--expense);">
+                  DEBIT · जावक
+                </span>
+                <span class="font-mono" style="font-size:12px; color:var(--muted-dark);">19 TRANSACTIONS</span>
+              </div>
+              <div class="font-fraunces" id="expenseSum" style="font-size:clamp(24px, 3vw, 34px); font-weight:700; color:var(--expense); margin-top:6px;">
+                -₹32,450
+              </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+              <div class="page-entry-row">
+                <span style="color:#FFF;">Studio & Workspace</span>
+                <span class="font-mono" style="color:var(--expense);">-₹18,000</span>
+              </div>
+              <div class="page-entry-row">
+                <span style="color:#FFF;">Groceries & Pantry</span>
+                <span class="font-mono" style="color:var(--expense);">-₹14,450</span>
+              </div>
+            </div>
+
+            <!-- Surplus Stamp -->
+            <div class="surplus-stamp font-mono">
+              NET SURPLUS: +₹52,550
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 3: FLUID WAVE BUCKET & EXTERNAL THEME TOGGLE (0:08.5 - 0:15.0)
+         Wave bucket fills up -> External Master Toggle clicks ->
+         Entire screen and cards morph smoothly to white daylight theme!
+         ========================================================================= -->
+    <div class="act" id="act3">
+      <div class="category-badge badge-gold">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+        </svg>
+        <span>Disciplined Wealth Control</span>
+      </div>
+
+      <h2 class="font-fraunces" style="font-size:clamp(26px, 4vw, 48px); text-align:center; margin-bottom:6px;">
+        Living Goals. <span class="gold-gradient-text">Zero Guesswork.</span>
+      </h2>
+      <p class="sub-desc-text" style="font-size:clamp(14px, 1.8vw, 19px); color:var(--muted-dark); text-align:center; max-width:850px; margin-bottom: 16px;">
+        Watch your savings targets rise like water, while daily guardrails keep every rupee protected.
+      </p>
+
+      <!-- External Master Theme Switch (Placed outside all cards!) -->
+      <div class="scene-theme-control" id="sceneThemeControl">
+        <span class="font-mono" style="font-size:12px; font-weight:700;">THEME:</span>
+        <div class="scene-toggle-track">
+          <div class="scene-toggle-thumb" id="sceneToggleThumb"></div>
+        </div>
+        <span class="font-mono" id="sceneThemeLabel" style="font-size:12px; font-weight:700; letter-spacing:1px;">DARK OBSIDIAN</span>
+      </div>
+
+      <div class="cards-showcase-stage">
+        
+        <!-- The "Bucket Card" with Fluid Waves -->
+        <div class="goal-water-card" id="fluidGoalCard">
+          <div class="wave-container">
+            <svg class="wave-svg" viewBox="0 0 1200 400" preserveAspectRatio="none">
+              <path id="waveBack" fill="rgba(200, 164, 92, 0.22)" d="M0,80 C300,140 600,20 900,80 C1200,140 1500,20 1800,80 L1800,400 L0,400 Z"/>
+              <path id="waveFront" fill="rgba(200, 164, 92, 0.4)" stroke="rgba(200, 164, 92, 0.95)" stroke-width="2.5" d="M0,60 C300,10 600,110 900,60 C1200,10 1500,110 1800,60 L1800,400 L0,400 Z"/>
+            </svg>
+          </div>
+
+          <!-- Goal Info with Mountain SVG -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:2;">
+            <div style="display:flex; gap:16px; align-items:center;">
+              <div class="goal-badge-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="font-fraunces" style="font-size:clamp(20px, 2.4vw, 26px); font-weight:700;">
+                  Himalayan Expedition
+                </div>
+                <div class="font-mono" style="font-size:clamp(12px, 1.3vw, 14px); opacity:0.75; margin-top:2px;">
+                  Target: ₹1,50,000 · Main Savings
+                </div>
+              </div>
+            </div>
+            <div class="font-mono" style="background:rgba(200, 164, 92, 0.2); border:1px solid rgba(200, 164, 92, 0.5); padding:4px 12px; border-radius:999px; color:var(--brass-light); font-weight:700; font-size:12px;">
+              #1 PRIORITY
+            </div>
+          </div>
+
+          <!-- Animated Counters -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; position:relative; z-index:2;">
+            <div>
+              <div style="font-size:12px; opacity:0.75; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Current Progress</div>
+              <div class="font-fraunces" id="goalAmountCount" style="font-size:clamp(30px, 3.8vw, 44px); font-weight:700;">₹0</div>
+            </div>
+            <div class="font-mono" id="goalPercentCount" style="font-size:clamp(34px, 4.2vw, 50px); font-weight:800; color:var(--brass-light);">0%</div>
+          </div>
+        </div>
+
+        <!-- Guardrail Card -->
+        <div class="guardrail-card" id="guardrailCard">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div style="width:10px; height:10px; border-radius:50%; background:var(--income); box-shadow:0 0 10px var(--income);"></div>
+              <span class="font-mono" style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;">
+                Monthly Limit Guardrail
+              </span>
+            </div>
+            <span class="font-mono" style="color:var(--income); font-size:12px; font-weight:700; background:rgba(78,173,123,0.15); padding:3px 9px; border-radius:6px;">
+              ON TRACK (62%)
+            </span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:20px;">
+            <div>
+              <div class="font-mono" style="font-size:11px; opacity:0.75;">SAFE TO SPEND TODAY</div>
+              <div class="font-fraunces" id="safeDailyText" style="font-size:clamp(32px, 4vw, 44px); font-weight:700; color:var(--brass-light); margin-top:2px;">
+                ₹1,450<span style="font-size:18px; font-weight:400; opacity:0.6;">/day</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div class="font-mono" style="font-size:11px; opacity:0.75;">REMAINING BUDGET</div>
+              <div class="font-fraunces" id="remainingBudgetText" style="font-size:clamp(22px, 2.8vw, 30px); font-weight:700; margin-top:2px;">
+                ₹18,850 <span style="font-size:14px; opacity:0.6;">/ ₹50,000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pace Progress Bar -->
+          <div class="pace-track">
+            <div class="pace-fill" id="paceFillBar"></div>
+            <div class="pace-needle" title="Current Day"></div>
+          </div>
+
+          <!-- Bottom Stat Chips -->
+          <div class="guardrail-stats-row font-mono">
+            <div class="guardrail-stat-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Zero Overspending</span>
+            </div>
+            <div class="guardrail-stat-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>11 Days Remaining</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 4: ARCHITECTURE DIAGRAM (APP -> SHEET) (0:15.0 - 0:20.5)
+         Multi-Device Client <-> Contained Laser Beam <-> Personal Google Sheet
+         ========================================================================= -->
+    <div class="act" id="act4">
+      <div class="category-badge badge-gold">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>Peer-to-Cloud Architecture</span>
+      </div>
+
+      <h2 class="font-fraunces" style="font-size:clamp(26px, 4vw, 48px); text-align:center; margin-bottom:8px;">
+        Your Devices. <span class="gold-gradient-text">Your Private Google Sheet.</span>
+      </h2>
+      <p style="font-size:clamp(14px, 1.8vw, 19px); color:var(--muted-dark); text-align:center; max-width:850px; line-height:1.5; margin-bottom: clamp(16px, 2.5vh, 28px);">
+        Zero company servers in between. You own every formula and every row.
+      </p>
+
+      <div class="diagram-container">
+        <div class="nodes-row">
+          
+          <!-- Node 1: Multi-Device Client (Laptop + Phone SVG) -->
+          <div class="arch-card arch-card-app">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div class="arch-card-icon" style="background:rgba(200, 164, 92, 0.15); border:1.5px solid rgba(200, 164, 92, 0.45);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="14" height="10" rx="2"/>
+                  <line x1="2" y1="17" x2="16" y2="17"/>
+                  <rect x="15" y="8" width="7" height="12" rx="1.5"/>
+                  <line x1="18.5" y1="17.5" x2="18.5" y2="17.51"/>
+                </svg>
+              </div>
+              <div class="font-mono" style="font-size:11px; color:var(--brass-light); background:rgba(200,164,92,0.15); padding:3px 9px; border-radius:6px; font-weight:700;">
+                LOCAL-FIRST
+              </div>
+            </div>
+            <div class="font-fraunces" style="font-size:clamp(20px, 2.2vw, 24px); font-weight:700; color:#FFF; margin-bottom:6px;">
+              Munshi Client
+            </div>
+            <div style="font-size:clamp(13px, 1.3vw, 14px); color:var(--muted-dark); line-height:1.5;">
+              Offline PWA & Android app. Fast, encrypted IndexedDB database on your own device.
+            </div>
+          </div>
+
+          <!-- Laser Beam Sync Channel (Confined strictly inside the pipe capsule) -->
+          <div class="sync-connector">
+            <div class="sync-pipe">
+              <div class="sync-beam" id="syncPulseBeam"></div>
+            </div>
+            <div class="sync-badge-center font-mono">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Direct Apps Script API</span>
+            </div>
+          </div>
+
+          <!-- Node 2: Personal Google Sheet (Spreadsheet Grid SVG) -->
+          <div class="arch-card arch-card-sheet">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div class="arch-card-icon" style="background:rgba(78, 173, 123, 0.15); border:1.5px solid rgba(78, 173, 123, 0.45);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4EAD7B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <line x1="3" y1="9" x2="21" y2="9"/>
+                  <line x1="3" y1="15" x2="21" y2="15"/>
+                  <line x1="9" y1="3" x2="9" y2="21"/>
+                  <line x1="15" y1="3" x2="15" y2="21"/>
+                </svg>
+              </div>
+              <div class="font-mono" style="font-size:11px; color:#4EAD7B; background:rgba(78,173,123,0.15); padding:3px 9px; border-radius:6px; font-weight:700;">
+                YOUR DRIVE
+              </div>
+            </div>
+            <div class="font-fraunces" style="font-size:clamp(20px, 2.2vw, 24px); font-weight:700; color:#FFF; margin-bottom:6px;">
+              Personal Google Sheet
+            </div>
+            <div style="font-size:clamp(13px, 1.3vw, 14px); color:var(--muted-dark); line-height:1.5;">
+              Stored in your private Google Drive. You can inspect, modify, or export anytime.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Trust Badges with Pure SVGs -->
+        <div class="trust-banner font-mono">
+          <div class="trust-pill" style="border-color:rgba(232,122,93,0.4); color:var(--expense);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <span>Zero Third-Party Databases</span>
+          </div>
+          <div class="trust-pill" style="border-color:rgba(78,173,123,0.4); color:var(--income);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Direct Google OAuth</span>
+          </div>
+          <div class="trust-pill" style="border-color:rgba(200,164,92,0.4); color:var(--brass-light);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>100% Free & Open Source</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 5: GRAND FINALE & CTA (0:20.5 - 0:26.0)
+         Emblem Corona, Tagline, Feature Badges, Live App Link
+         ========================================================================= -->
+    <div class="act" id="act5">
+      <svg class="brand-logo-large" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="23" fill="#0D0F12"/>
+        <rect x=".5" y=".5" width="99" height="99" rx="22.5" stroke="#C8A45C" stroke-width="1.5"/>
+        <rect x="24" y="20" width="52" height="60" rx="5" fill="#A95F32"/>
+        <path d="M29 20H35V80H29A5 5 0 0 1 24 75V25A5 5 0 0 1 29 20Z" fill="#C8A45C"/>
+        <g transform="translate(57 52) scale(.5) translate(-50 -47)">
+          <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/>
+      </svg>
+
+      <h1 class="font-fraunces" style="font-size:clamp(36px, 5.5vw, 68px); font-weight:800; margin-bottom:8px; text-align:center;">
+        MUNSHI <span style="font-weight:400; color:var(--brass);">(मुंशी)</span>
+      </h1>
+      
+      <p style="font-size:clamp(15px, 2vw, 22px); color:var(--muted-dark); letter-spacing:0.5px; text-align:center; max-width:850px;">
+        The 100% Private Expense & Wealth Tracker You Truly Own
+      </p>
+
+      <div class="feature-pills">
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Peer-to-Sheet Sync</span>
+        </div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4EAD7B" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          <span>Private Google Drive</span>
+        </div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2"><rect x="2" y="4" width="14" height="10" rx="2"/><line x1="2" y1="17" x2="16" y2="17"/><rect x="15" y="8" width="7" height="12" rx="1.5"/></svg>
+          <span>Offline PWA & Android</span>
+        </div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A95F32" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/></svg>
+          <span>Obsidian & Warm Sand Themes</span>
+        </div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4EAD7B" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Zero Subscriptions Ever</span>
+        </div>
+      </div>
+
+      <a href="https://munshi.shreyaas.workers.dev" target="_blank" class="cta-button">
+        <span>Launch Munshi</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+
+      <div class="font-mono" style="margin-top:16px; font-size:clamp(12px, 1.4vw, 15px); color:var(--brass-light); letter-spacing:1px;">
+        munshi.shreyaas.workers.dev
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HUD Player Status / Controls -->
+  <div id="hud-indicator">
+    <div class="hud-dot"></div>
+    <span id="time-display">00:00 / 00:26</span>
+    <span style="opacity:0.4;">|</span>
+    <span>Space to pause · R to restart</span>
+  </div>
+</div>
+
+<!-- ==================== THREE.JS PARTICLES & RESPONSIVE GSAP MASTER TIMELINE ==================== -->
+<script type="module">
+import * as THREE from 'three';
+
+// 1. DYNAMIC FLUID THREE.JS CANVAS
+const canvas = document.getElementById('gl-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 250;
+
+function resizeGL() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resizeGL);
+resizeGL();
+
+// Ambient Gold Dust Particles
+const particleCount = 220;
+const geometry = new THREE.BufferGeometry();
+const positions = new Float32Array(particleCount * 3);
+
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3] = (Math.random() - 0.5) * 800;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 500;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 400;
+}
+
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const material = new THREE.PointsMaterial({
+  color: 0xC8A45C,
+  size: 3.2,
+  transparent: true,
+  opacity: 0.5,
+  blending: THREE.AdditiveBlending
+});
+
+const particles = new THREE.Points(geometry, material);
+scene.add(particles);
+
+function renderGL() {
+  particles.rotation.y += 0.0008;
+  particles.rotation.x += 0.0004;
+  renderer.render(scene, camera);
+  requestAnimationFrame(renderGL);
+}
+renderGL();
+
+// 2. CONTINUOUS WAVE UNDULATION
+gsap.to('#waveFront', {
+  x: -600,
+  duration: 4,
+  repeat: -1,
+  ease: 'none'
+});
+gsap.to('#waveBack', {
+  x: -600,
+  duration: 6,
+  repeat: -1,
+  ease: 'none'
+});
+
+// 3. MASTER CINEMATIC TIMELINE (Responsive 3D Depth)
+const master = gsap.timeline({ repeat: -1 });
+
+// Initial 3D Act Setup
+gsap.set('#act1', { zIndex: 5, autoAlpha: 1 });
+gsap.set('#act2', { zIndex: 4, autoAlpha: 0, z: -150, scale: 0.85 });
+gsap.set('#act3', { zIndex: 3, autoAlpha: 0, z: -350, rotationX: -12 });
+gsap.set('#act4', { zIndex: 2, autoAlpha: 0, z: -400, rotationY: -15 });
+gsap.set('#act5', { zIndex: 1, autoAlpha: 0, z: -450 });
+
+// === ACT 1 (0.0s - 3.2s): Logo Shows -> Ledger Drops -> Camera Dives In ===
+master
+  .fromTo('#act1LogoFrame', { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: 'back.out(1.4)' }, 0)
+  .fromTo('#act1Tagline', { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+  
+  // Ledger drops down from logo into depth
+  .to('#logoFallingLedger', { y: 350, z: -280, rotationX: 40, duration: 1.0, ease: 'power2.in' }, '+=0.3')
+  
+  // Camera dives right through the hole in the logo frame
+  .to('#act1LogoFrame', { scale: 5.5, opacity: 0, duration: 0.9, ease: 'power2.in' }, '-=0.5')
+  .to('#act1Tagline', { opacity: 0, duration: 0.4 }, '-=0.7')
+  .to('#act1', { autoAlpha: 0, duration: 0.2 }, '-=0.1')
+  
+  // === ACT 2 (3.2s - 8.5s): Impact Ripples & Ledger Swings Open ===
+  // Ledger lands in place in Act 2
+  .to('#act2', { autoAlpha: 1, z: 0, scale: 1, duration: 0.5, ease: 'power2.out' }, '-=0.1')
+  .fromTo('#bookStage', { y: -180, scale: 0.75 }, { y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.4)' }, '-=0.4')
+  
+  // Impact concentric ripples expand outward from the landed ledger
+  .fromTo('#impRipple1', { scale: 0.2, opacity: 1 }, { scale: 2.2, opacity: 0, duration: 1.4, ease: 'power2.out' }, '-=0.4')
+  .fromTo('#impRipple2', { scale: 0.2, opacity: 1 }, { scale: 2.7, opacity: 0, duration: 1.6, delay: 0.2, ease: 'power2.out' }, '-=0.4')
+  .fromTo('#impRipple3', { scale: 0.2, opacity: 1 }, { scale: 3.2, opacity: 0, duration: 1.8, delay: 0.4, ease: 'power2.out' }, '-=0.4')
+  
+  // Ledger cover rotates open along left spine
+  .to('#bookCover', { rotationY: -115, duration: 1.5, ease: 'power2.inOut' }, '+=0.1')
+  .fromTo('.page-entry-row', { opacity: 0, x: -10 }, { opacity: 1, x: 0, stagger: 0.12, duration: 0.5, ease: 'power2.out' }, '-=0.6')
+  .fromTo('.surplus-stamp', { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.8)' }, '-=0.2')
+  .to('#world', { rotationY: 3, z: 15, duration: 2.5, ease: 'power1.inOut' }, '-=1.8')
+  
+  // Transition Act 2 -> Act 3
+  .to('#act2', { autoAlpha: 0, z: 350, rotationY: 15, duration: 0.7, ease: 'power2.in' })
+  .to('#act3', { autoAlpha: 1, z: 0, rotationX: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
+
+// === ACT 3 (8.5s - 15.0s): Fluid Bucket Card & External Toggle Screen Morph ===
+const goalCounter = { val: 0, percent: 0 };
+master
+  .fromTo('#fluidGoalCard', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+  .fromTo('.guardrail-card', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+  .fromTo('#sceneThemeControl', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.5')
+  
+  // The Bucket Fills Up with Liquid Waves
+  .fromTo('.wave-container', { height: '0%' }, { height: '75%', duration: 2.0, ease: 'power2.out' }, '-=0.2')
+  .to(goalCounter, {
+    val: 112500,
+    percent: 75,
+    duration: 2.0,
+    ease: 'power2.out',
+    onUpdate: () => {
+      document.getElementById('goalAmountCount').textContent = '₹' + Math.floor(goalCounter.val).toLocaleString('en-IN');
+      document.getElementById('goalPercentCount').textContent = Math.floor(goalCounter.percent) + '%';
+    }
+  }, '-=2.0')
+  .fromTo('#paceFillBar', { width: '0%' }, { width: '62%', duration: 1.6, ease: 'power2.out' }, '-=1.8')
+  
+  // EXTERNAL THEME TOGGLE CLICKS & SCREEN-WIDE LIGHT THEME MORPH!
+  .to('#sceneToggleThumb', { x: 20, duration: 0.4, ease: 'power2.out' }, '+=0.2')
+  .call(() => {
+    const act3 = document.getElementById('act3');
+    const label = document.getElementById('sceneThemeLabel');
+    if (act3) act3.classList.add('light-theme-active');
+    if (label) label.textContent = 'WARM SAND LIGHT';
+  })
+  .to('#world', { rotationX: 4, z: -15, duration: 2.6, ease: 'power1.inOut' }, '-=0.2')
+  
+  // Transition Act 3 -> Act 4 (Reset light theme class before leaving)
+  .call(() => {
+    const act3 = document.getElementById('act3');
+    const label = document.getElementById('sceneThemeLabel');
+    if (act3) act3.classList.remove('light-theme-active');
+    if (label) label.textContent = 'DARK OBSIDIAN';
+    gsap.set('#sceneToggleThumb', { x: 0 });
+  })
+  .to('#act3', { autoAlpha: 0, z: 350, rotationX: 12, duration: 0.7, ease: 'power2.in' })
+  .to('#act4', { autoAlpha: 1, z: 0, rotationY: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
+
+// === ACT 4 (15.0s - 20.5s): Architecture Diagram (Strict Confined Loader) ===
+master
+  .fromTo('#act4 .arch-card-app', { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' })
+  .fromTo('#act4 .arch-card-sheet', { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+  // Confined pulse beam inside pipe
+  .fromTo('#syncPulseBeam', { x: '-100%', opacity: 0 }, { x: '320%', opacity: 1, repeat: 2, duration: 1.1, ease: 'power1.inOut' }, '-=0.4')
+  .fromTo('.trust-pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.5, ease: 'power2.out' }, '-=0.7')
+  .to('#world', { rotationY: -4, z: 15, duration: 2.8, ease: 'power1.inOut' }, '-=1.8')
+  
+  // Transition Act 4 -> Act 5
+  .to('#act4', { autoAlpha: 0, z: 350, duration: 0.7, ease: 'power2.in' })
+  .to('#act5', { autoAlpha: 1, z: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
+
+// === ACT 5 (20.5s - 26.0s): Grand Finale & CTA ===
+master
+  .fromTo('.brand-logo-large', { scale: 0.65, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: 'back.out(1.5)' })
+  .fromTo('#act5 h1', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, '-=0.3')
+  .fromTo('.pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+  .fromTo('.cta-button', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.6)' }, '-=0.2')
+  .to('#world', { z: -70, duration: 2.5, ease: 'power1.inOut' }, '-=1.2')
+  .to('#act5', { autoAlpha: 0, duration: 0.6, ease: 'power2.in' });
+
+// 4. HUD TIMER & CONTROLS
+const timeDisplay = document.getElementById('time-display');
+master.eventCallback('onUpdate', () => {
+  const current = master.time();
+  const mins = Math.floor(current / 60);
+  const secs = Math.floor(current % 60);
+  timeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} / 00:26`;
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    master.paused() ? master.play() : master.pause();
+  } else if (e.code === 'KeyR') {
+    master.restart();
+  }
+});
+</script>
+</body>
+</html>
