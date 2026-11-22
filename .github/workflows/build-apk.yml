@@ -66,8 +66,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create latest munshi-app-debug.apk \
-            --title "Munshi Android App (Latest Build)" \
+          gh release upload v1.0.0 munshi-app-debug.apk --clobber || \
+          gh release create v1.0.0 munshi-app-debug.apk \
+            --title "Munshi Android App v1.0.0" \
             --notes "Automated build of Munshi Android App from main branch (${{ github.sha }})." \
-            --clobber || \
-          gh release upload latest munshi-app-debug.apk --clobber
+            --latest
