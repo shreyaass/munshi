@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK & Deploy Promo
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build-apk:
@@ -71,3 +73,35 @@ jobs:
             --title "Munshi Android App v1.0.0" \
             --notes "Automated build of Munshi Android App from main branch (${{ github.sha }})." \
             --latest
+
+  deploy-promo:
+    name: Deploy Promo to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare Pages directory
+        run: |
+          mkdir -p pages-site/promo
+          cp promo/index.html pages-site/index.html
+          cp promo/index.html pages-site/promo/index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages-site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

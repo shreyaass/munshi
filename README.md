@@ -5,7 +5,7 @@
 
 [![Download APK](https://img.shields.io/badge/Download%20APK-Android-brightgreen?style=for-the-badge&logo=android)](https://github.com/shreyaass/munshi/releases/download/latest/munshi-app-debug.apk)
 [![Launch Web App](https://img.shields.io/badge/Launch%20App-Web%20%2F%20PWA-C8A45C?style=for-the-badge&logo=googlechrome)](https://munshi.shreyaas.workers.dev)
-[![Watch Promo](https://img.shields.io/badge/Watch%20Promo-Interactive%203D-99732B?style=for-the-badge&logo=youtube)](https://munshi.shreyaas.workers.dev/promo/)
+[![Watch Promo](https://img.shields.io/badge/Watch%20Promo-Interactive%203D-99732B?style=for-the-badge&logo=youtube)](https://shreyaass.github.io/munshi/)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
@@ -22,7 +22,7 @@
 |---|---|---|
 | **Android App** | [**⬇️ Download Munshi APK (`munshi-app-debug.apk`)**](https://github.com/shreyaass/munshi/releases/download/latest/munshi-app-debug.apk) | Native Android application with offline IndexedDB cache and fast launch. |
 | **Web App / PWA** | [**🌐 Launch Live Web App (munshi.shreyaas.workers.dev)**](https://munshi.shreyaas.workers.dev) | Runs instantly in Chrome, Safari, or Edge. Can be installed directly to home screen as a PWA. |
-| **Cinematic Promo** | [**🎬 Watch Interactive Promo Video**](https://munshi.shreyaas.workers.dev/promo/) | 26-second 3D promotional ad trailer running GSAP 3 and Three.js 3D WebGL. |
+| **Cinematic Promo** | [**🎬 Watch Interactive Promo Video**](https://shreyaass.github.io/munshi/) | 26-second 3D promotional ad trailer running GSAP 3 and Three.js 3D WebGL. |
 | **Latest Releases** | [**📦 All GitHub Releases & Checksums**](https://github.com/shreyaass/munshi/releases/latest) | View changelogs, build artifacts, and release notes. |
 
 ---
@@ -31,9 +31,9 @@
 
 Watch Munshi's features in action through our 26-second interactive promotional motion experience built with GSAP 3 and Three.js:
 
-[![Watch Interactive Promo](https://img.shields.io/badge/▶_Launch_Interactive_Promo-1080p_60fps-C8A45C?style=for-the-badge)](https://munshi.shreyaas.workers.dev/promo/)
+[![Watch Interactive Promo](https://img.shields.io/badge/▶_Launch_Interactive_Promo-1080p_60fps-C8A45C?style=for-the-badge)](https://shreyaass.github.io/munshi/)
 
-> 🍿 **[Open Promo Video Player (munshi.shreyaas.workers.dev/promo)](https://munshi.shreyaas.workers.dev/promo/)**  
+> 🍿 **[Open Promo Video Player (shreyaass.github.io/munshi)](https://shreyaass.github.io/munshi/)**  
 > *Live in browser · Space to pause / resume · R to restart.*
 
 ### Video Scenes:
