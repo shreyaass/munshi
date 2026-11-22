@@ -74,19 +74,10 @@ jobs:
             --notes "Automated build of Munshi Android App from main branch (${{ github.sha }})." \
             --latest
 
-  deploy-site:
-    name: Deploy Munshi Web App & Promo to GitHub Pages
+  build-site:
+    name: Build Web App & Promo Site
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    concurrency:
-      group: "pages"
-      cancel-in-progress: false
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -110,14 +101,26 @@ jobs:
           cp promo/index.html pages-site/promo/index.html
           cp apps/app/dist/index.html pages-site/404.html
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: pages-site
 
+  deploy-site:
+    name: Deploy to GitHub Pages
+    needs: build-site
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
