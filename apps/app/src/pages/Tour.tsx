@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '../components/Icon';
+import { Logo } from '../components/Logo';
 import { sound } from '../lib/sound';
 
 interface StepData {
@@ -204,7 +205,7 @@ export function Tour() {
         <div>
           {/* Brand Logo & Name */}
           <div className="flex items-center gap-3 pb-10 select-none">
-            <img src="./icons/logo.svg" alt="Munshi" className="h-9 w-9 object-contain shrink-0" />
+            <Logo className="h-9 w-9 shrink-0" />
             <span className="font-display text-xl font-semibold tracking-tight text-text">
               Munshi
             </span>

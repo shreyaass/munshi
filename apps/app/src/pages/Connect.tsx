@@ -4,6 +4,7 @@ import { SheetClient, SheetError, type Connection } from '@em/core';
 import { db } from '../lib/db';
 import { loadConnection, useConnectionState } from '../lib/connection';
 import { Icon } from '../components/Icon';
+import { Logo } from '../components/Logo';
 import { sound } from '../lib/sound';
 
 const EXEC_RE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec/;
@@ -93,7 +94,7 @@ export function Connect() {
       </div>
 
       <div className="mb-7 flex items-center gap-3">
-        <img src="./icons/logo.svg" alt="" className="h-11 w-11 object-contain shrink-0" />
+        <Logo className="h-10 w-10 shrink-0" />
         <div>
           <p className="text-[15px] font-semibold tracking-tight">Munshi</p>
           <h1 className="text-[22px] font-semibold leading-tight tracking-tight">Connect your sheet</h1>

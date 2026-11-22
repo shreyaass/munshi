@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icon';
+import { Logo } from '../components/Logo';
 import { sound } from '../lib/sound';
 
 export function Landing() {
@@ -13,7 +14,7 @@ export function Landing() {
       <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 md:px-12">
         {/* Brand Logo - Official Logo, Non-clickable */}
         <div className="flex items-center gap-3 select-none">
-          <img src="./icons/logo.svg" alt="Munshi" className="h-9 w-9 object-contain shrink-0" />
+          <Logo className="h-9 w-9 shrink-0" />
           <span className="font-display text-xl font-semibold tracking-tight text-text">
             Munshi
           </span>
