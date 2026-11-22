@@ -3,6 +3,7 @@ import { formatPaise, goalProgress, resolveBudgets } from '@em/core';
 import { Sheet } from './Sheet';
 import { Icon } from './Icon';
 import { GoalSheet } from './GoalSheet';
+import { resolveGoalIcon } from './GoalCard';
 import { asNumber, asString, categoriesFor, rowMonth } from '../lib/analytics';
 import { useMetaValue, useTabRows, useTransactions } from '../lib/repo';
 
@@ -143,8 +144,12 @@ export function GoalsSheet({ open, onClose, month }: GoalsSheetProps) {
                         onClick={() => pick(goal.categoryId)}
                         className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition active:bg-raised/60"
                       >
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-raised text-base">
-                          {goal.emoji}
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-raised text-accent">
+                          {resolveGoalIcon(goal.name, goal.emoji).isMaterial ? (
+                            <Icon name={resolveGoalIcon(goal.name, goal.emoji).icon} size={20} />
+                          ) : (
+                            <span className="text-base">{resolveGoalIcon(goal.name, goal.emoji).icon}</span>
+                          )}
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[13px] font-medium">

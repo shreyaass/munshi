@@ -346,6 +346,14 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done.
   - Redesigned Act 3 to use a fully native, animated vector phone dashboard simulation (live net balance counter up to ₹2,48,500, animated bar chart, and recent transaction ticker) instead of cropped screenshots.
   - Made the motion ad 100% full-width and responsive across mobile, tablet, and widescreen desktop displays (using CSS viewport units, clamp(), and dynamic WebGL aspect ratio updating).
   - Replaced "sovereign" with clear, direct value: "The 100% Private Expense & Wealth Tracker You Truly Own".
+- [x] 7. **Vector Goal Icons & Promo v3.2 Polish**:
+  - Replaced emoji picker in `NewGoalModal` and `GoalDetailModal` with a curated palette of theme Material Symbol vector SVGs (`flag`, `flight`, `smartphone`, `laptop`, `two_wheeler`, `directions_car`, `home`, `shield`, `savings`, `diamond`, `school`, `beach_access`, `watch`, `sports_esports`).
+  - Updated `GoalCard`, `GoalSheet`, `GoalsSheet` to render theme vector icons.
+  - In `promo/index.html`:
+    - Fixed sync loader pipe overflow (`overflow: hidden`) so the animated beam is strictly confined inside the pill capsule.
+    - Accelerated Act 1 with continuous camera dolly into the 3D ledger cover, seamlessly opening into accounting pages.
+    - Added live animated Theme Switcher in Act 3 morphing the Guardrail card from Dark Obsidian to Crisp Warm Sand Light Mode in real-time.
+    - Synchronized typography strictly with Munshi design tokens (`Fraunces`, `Inter`, `IBM Plex Mono`).
 
 ---
 

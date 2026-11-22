@@ -10,6 +10,7 @@ import {
 } from '@em/core';
 import { Sheet } from './Sheet';
 import { Icon } from './Icon';
+import { resolveGoalIcon } from './GoalCard';
 import { asNumber, asString, rowMonth } from '../lib/analytics';
 import { saveBudget, softDelete, useMetaValue, useTabRows, useTransactions } from '../lib/repo';
 import { useSync } from '../lib/SyncProvider';
@@ -170,8 +171,12 @@ export function GoalSheet({ open, onClose, categoryId, month }: GoalSheetProps) 
     >
       <div className="space-y-4 pt-1">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-raised text-xl">
-            {emoji}
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-raised text-accent">
+            {resolveGoalIcon(name, emoji).isMaterial ? (
+              <Icon name={resolveGoalIcon(name, emoji).icon} size={22} />
+            ) : (
+              <span className="text-xl">{resolveGoalIcon(name, emoji).icon}</span>
+            )}
           </span>
           <div className="min-w-0">
             <p className="text-[13px] font-medium">{name}</p>

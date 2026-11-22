@@ -36,59 +36,69 @@ export function isEmoji(str?: string): boolean {
   return true;
 }
 
+export const EMOJI_TO_MATERIAL: Record<string, string> = {
+  '📱': 'smartphone',
+  '💻': 'laptop',
+  '🏍️': 'two_wheeler',
+  '🚗': 'directions_car',
+  '✈️': 'flight',
+  '🏖️': 'beach_access',
+  '🏠': 'home',
+  '🛡️': 'shield',
+  '🪙': 'savings',
+  '🎯': 'flag',
+  '🎮': 'sports_esports',
+  '💍': 'diamond',
+  '🎓': 'school',
+  '⌚': 'watch',
+  '🏥': 'local_hospital',
+};
+
 /** Map goal/category name to an appropriate icon or emoji */
 export function resolveGoalIcon(name: string, emoji?: string): { isMaterial: boolean; icon: string } {
   const n = (name || '').toLowerCase();
 
-  // High-confidence auto-detection based on the goal name
+  // High-confidence auto-detection based on the goal name -> returns clean Material Symbol SVG icons
   let autoIcon: string | null = null;
   if (n.includes('phone') || n.includes('samsung') || n.includes('iphone') || n.includes('pixel') || n.includes('mobile') || n.includes('galaxy') || n.includes('s25')) {
-    autoIcon = '📱';
+    autoIcon = 'smartphone';
   } else if (n.includes('laptop') || n.includes('macbook') || n.includes('computer') || n.includes('pc') || n.includes('ipad')) {
-    autoIcon = '💻';
+    autoIcon = 'laptop';
   } else if (n.includes('bike') || n.includes('motorcycle') || n.includes('scooter') || n.includes('activa') || n.includes('cycle') || n.includes('bullet') || n.includes('pulsar')) {
-    autoIcon = '🏍️';
+    autoIcon = 'two_wheeler';
   } else if (n.includes('car') || n.includes('auto') || n.includes('vehicle') || n.includes('thar') || n.includes('suv') || n.includes('drive')) {
-    autoIcon = '🚗';
+    autoIcon = 'directions_car';
   } else if (n.includes('flight') || n.includes('travel') || n.includes('trip') || n.includes('goa') || n.includes('vacation') || n.includes('paris')) {
-    autoIcon = '✈️';
+    autoIcon = 'flight';
   } else if (n.includes('beach') || n.includes('resort') || n.includes('island')) {
-    autoIcon = '🏖️';
+    autoIcon = 'beach_access';
   } else if (n.includes('home') || n.includes('house') || n.includes('flat') || n.includes('rent')) {
-    autoIcon = '🏠';
+    autoIcon = 'home';
   } else if (n.includes('safe') || n.includes('fund') || n.includes('emerg') || n.includes('shield')) {
-    autoIcon = '🛡️';
+    autoIcon = 'shield';
   } else if (n.includes('gold') || n.includes('invest') || n.includes('sip') || n.includes('wealth')) {
-    autoIcon = '🪙';
+    autoIcon = 'savings';
   } else if (n.includes('game') || n.includes('ps5') || n.includes('playstation') || n.includes('xbox')) {
-    autoIcon = '🎮';
+    autoIcon = 'sports_esports';
   }
 
-  // If user provided a specific custom emoji
+  // If user provided a specific custom icon or emoji
   if (emoji && emoji !== '•' && emoji !== '🎯' && emoji !== 'savings') {
-    // If it's a real emoji (e.g. 📱, 🏍️, 🏖️, or any keyboard emoji)
-    if (isEmoji(emoji)) {
-      // Discard stale mismatched default like flight ✈️ on a phone or bike
-      if (autoIcon && emoji === '✈️' && (n.includes('phone') || n.includes('laptop') || n.includes('bike') || n.includes('car') || n.includes('s25') || n.includes('samsung'))) {
-        return { isMaterial: false, icon: autoIcon };
-      }
-      return { isMaterial: false, icon: emoji };
+    // If it's a known emoji, map to clean material symbol
+    if (EMOJI_TO_MATERIAL[emoji]) {
+      return { isMaterial: true, icon: EMOJI_TO_MATERIAL[emoji] };
     }
-    // If it's a material icon name (e.g. 'flight', 'smartphone')
-    if (MATERIAL_NAMES.has(emoji)) {
-      // If auto-detect has a better emoji match for this named item, prefer the emoji
-      if (autoIcon) {
-        return { isMaterial: false, icon: autoIcon };
-      }
+    // If it's a Material symbol name
+    if (MATERIAL_NAMES.has(emoji) || /^[a-z_]{3,}$/i.test(emoji)) {
       return { isMaterial: true, icon: emoji };
     }
   }
 
   if (autoIcon) {
-    return { isMaterial: false, icon: autoIcon };
+    return { isMaterial: true, icon: autoIcon };
   }
 
-  return { isMaterial: false, icon: '🎯' };
+  return { isMaterial: true, icon: 'flag' };
 }
 
 /**

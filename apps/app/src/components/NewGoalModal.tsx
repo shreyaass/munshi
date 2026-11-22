@@ -15,23 +15,27 @@ interface NewGoalModalProps {
   defaultTab?: 'save' | 'cap';
 }
 
-const PRESET_EMOJIS = ['🎯', '📱', '💻', '🏍️', '🚗', '✈️', '🏖️', '🏠', '🛡️', '💍', '🎓', '⌚'];
+const PRESET_GOAL_ICONS = [
+  { name: 'flag', label: 'Goal' },
+  { name: 'flight', label: 'Travel' },
+  { name: 'smartphone', label: 'Phone' },
+  { name: 'laptop', label: 'Laptop' },
+  { name: 'two_wheeler', label: 'Bike' },
+  { name: 'directions_car', label: 'Car' },
+  { name: 'home', label: 'Home' },
+  { name: 'shield', label: 'Fund' },
+  { name: 'savings', label: 'Wealth' },
+  { name: 'diamond', label: 'Jewelry' },
+  { name: 'school', label: 'Education' },
+  { name: 'beach_access', label: 'Vacation' },
+  { name: 'watch', label: 'Watch' },
+  { name: 'sports_esports', label: 'Gaming' },
+];
 const CAP_PRESETS = [15000, 20000, 25000, 30000, 50000];
 
-function detectGoalEmoji(name: string): string | null {
-  const n = name.toLowerCase();
-  if (n.includes('samsung') || n.includes('phone') || n.includes('iphone') || n.includes('pixel') || n.includes('mobile') || n.includes('galaxy') || n.includes('android')) return '📱';
-  if (n.includes('laptop') || n.includes('macbook') || n.includes('computer') || n.includes('pc') || n.includes('ipad') || n.includes('tech')) return '💻';
-  if (n.includes('bike') || n.includes('motorcycle') || n.includes('scooter') || n.includes('activa') || n.includes('bullet') || n.includes('pulsar') || n.includes('cycle')) return '🏍️';
-  if (n.includes('car') || n.includes('auto') || n.includes('vehicle') || n.includes('thar') || n.includes('suv') || n.includes('sedan') || n.includes('drive')) return '🚗';
-  if (n.includes('goa') || n.includes('trip') || n.includes('travel') || n.includes('flight') || n.includes('vacation') || n.includes('tour') || n.includes('holiday')) return '✈️';
-  if (n.includes('safe') || n.includes('fund') || n.includes('emerg') || n.includes('security')) return '🛡️';
-  if (n.includes('home') || n.includes('house') || n.includes('flat') || n.includes('rent') || n.includes('property')) return '🏠';
-  if (n.includes('watch') || n.includes('apple watch') || n.includes('garmin')) return '⌚';
-  if (n.includes('ring') || n.includes('gold') || n.includes('diamond') || n.includes('jewel')) return '💍';
-  if (n.includes('study') || n.includes('exam') || n.includes('college') || n.includes('course') || n.includes('tuition')) return '🎓';
-  if (n.includes('beach') || n.includes('resort')) return '🏖️';
-  return null;
+function detectGoalIcon(name: string): string {
+  const resolved = resolveGoalIcon(name);
+  return resolved.icon;
 }
 
 export function NewGoalModal({ open, onClose, defaultTab = 'save' }: NewGoalModalProps) {
@@ -81,7 +85,7 @@ export function NewGoalModal({ open, onClose, defaultTab = 'save' }: NewGoalModa
       nextYear.setMonth(nextYear.getMonth() + 2);
       setDeadline(nextYear.toISOString().slice(0, 10));
       setPriority(liveGoals.length + 1);
-      setIcon('🎯');
+      setIcon('flag');
       if (savingsAccounts.length > 0) {
         setLinkedAccountId(asString(savingsAccounts[0].id));
       } else if (accountRows && accountRows.length > 0) {
@@ -226,53 +230,46 @@ export function NewGoalModal({ open, onClose, defaultTab = 'save' }: NewGoalModa
                     onChange={(e) => {
                       const newName = e.target.value;
                       setName(newName);
-                      const detected = detectGoalEmoji(newName);
-                      if (detected) {
+                      const detected = detectGoalIcon(newName);
+                      if (detected && detected !== 'flag') {
                         setIcon(detected);
                       }
                     }}
-                    placeholder="e.g. Samsung S25, Goa trip"
+                    placeholder="e.g. Travel fund, Tech upgrade"
                     className="mt-1 w-full rounded-xl border border-line bg-raised px-4 py-2.5 text-sm text-text placeholder:text-muted outline-none focus:border-accent"
                   />
                 </div>
 
-                {/* Emoji Selection (Keyboard input + presets) */}
+                {/* Vector SVG Icon Selection */}
                 <div>
                   <div className="flex items-center justify-between">
                     <label className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-                      Goal Icon / Emoji
+                      Goal Icon
                     </label>
-                    <span className="text-[10px] text-muted">Type or pick emoji</span>
+                    <span className="text-[10px] text-muted">Pick a theme vector icon</span>
                   </div>
-                  <div className="mt-1.5 flex items-center gap-2.5">
-                    <div className="flex h-11 w-12 shrink-0 items-center justify-center rounded-xl border border-accent/40 bg-accent/15 text-2xl shadow-sm">
-                      {icon}
+                  <div className="mt-1.5 flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-accent/40 bg-accent/15 text-accent shadow-sm">
+                      <Icon name={icon} size={24} />
                     </div>
-                    <input
-                      type="text"
-                      value={icon}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const detected = resolveGoalIcon(val, val);
-                        setIcon(detected.icon || val);
-                      }}
-                      placeholder="Type or paste emoji from keyboard"
-                      className="flex-1 rounded-xl bg-raised border border-line px-3.5 py-2.5 text-sm text-text outline-none focus:border-accent"
-                    />
+                    <div className="flex-1 text-xs text-muted">
+                      Clean vector symbol matching the app's brass theme
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {PRESET_EMOJIS.map((em) => (
+                  <div className="flex flex-wrap gap-1.5 mt-2.5">
+                    {PRESET_GOAL_ICONS.map((item) => (
                       <button
-                        key={em}
+                        key={item.name}
                         type="button"
-                        onClick={() => setIcon(em)}
-                        className={`h-8 w-8 rounded-lg flex items-center justify-center text-lg transition ${
-                          icon === em
-                            ? 'bg-accent/20 border border-accent ring-1 ring-accent'
-                            : 'bg-raised hover:bg-line/50'
+                        onClick={() => setIcon(item.name)}
+                        title={item.label}
+                        className={`h-9 w-9 rounded-xl flex items-center justify-center transition ${
+                          icon === item.name
+                            ? 'bg-accent/25 border border-accent text-accent ring-1 ring-accent'
+                            : 'bg-raised border border-line/60 text-muted hover:text-text hover:bg-line/40'
                         }`}
                       >
-                        {em}
+                        <Icon name={item.name} size={18} />
                       </button>
                     ))}
                   </div>

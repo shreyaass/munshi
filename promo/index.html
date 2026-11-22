@@ -1,9 +1,10 @@
 <!doctype html>
 <html lang="en">
 <!--
-  Munshi (मुंशी) — Cinematic Promotional Motion Ad (v3.1)
-  Tech: GSAP 3 + Three.js Dynamic WebGL Canvas + SVG Fluid Waves + CSS 3D Flip Book
+  Munshi (मुंशी) — Cinematic Promotional Motion Ad (v3.2)
+  Tech: GSAP 3 + Three.js Dynamic WebGL Canvas + SVG Fluid Waves + 3D Opening Ledger + Animated Theme Morph
   Theme: Dark Obsidian Brass (#0D0F12, #C8A45C) + Warm Sand Copper (#EFEDE8, #A95F32)
+  Fonts: Exact Munshi Tokens (Fraunces display, Inter sans, IBM Plex Mono tabular)
   Rule: 100% Theme Vector SVGs. Zero Emojis. Full Fluid Responsiveness.
 -->
 <head>
@@ -12,7 +13,7 @@
 <title>Munshi — The 100% Private Expense & Wealth Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script type="importmap">
 {"imports":{
@@ -21,6 +22,11 @@
 </script>
 <style>
 :root {
+  /* Munshi Design Tokens (Exact App Match) */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
   /* Dark Obsidian Palette */
   --bg-dark: #0D0F12;
   --surface-dark: #15181D;
@@ -40,7 +46,6 @@
   --text-light: #14171B;
   --muted-light: #5F6670;
   --copper: #A95F32;
-  --copper-glow: rgba(169, 95, 50, 0.35);
 
   /* Semantic */
   --income: #4EAD7B;
@@ -50,8 +55,8 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body {
   width:100%; height:100%; background:#07080A; overflow:hidden;
-  font-family:'Inter', system-ui, -apple-system, sans-serif;
-  color:var(--text-dark); -webkit-font-smoothing:antialiased;
+  font-family: var(--font-sans); color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Master Stage (Fluid 100vw x 100vh / 100dvh) */
@@ -94,16 +99,24 @@ html, body {
   max-width: 1400px; margin: 0 auto;
 }
 
-/* Typography Helpers */
-.font-fraunces { font-family: 'Fraunces', Georgia, serif; }
-.font-mono { font-family: 'IBM Plex Mono', monospace; }
+/* Typography Classes */
+.font-fraunces {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: 'SOFT' 0, 'WONK' 0;
+}
+.font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
 
 .gold-gradient-text {
   background: linear-gradient(135deg, #FFF0CF 0%, #C8A45C 50%, #94712A 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-/* Category Badge with Theme Vector SVG */
+/* Category Badge */
 .category-badge {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 18px; border-radius: 999px;
@@ -115,30 +128,30 @@ html, body {
   color: var(--brass-light);
 }
 
-/* ==================== ACT 1: RIPPLE & LOGO EMERGENCE ==================== */
+/* ==================== ACT 1 & ACT 2: CONTINUOUS RIPPLE -> 3D LEDGER ==================== */
 #act1 .ripple-wrap {
-  position: relative; width: 360px; height: 360px;
+  position: relative; width: 340px; height: 340px;
   display: flex; align-items: center; justify-content: center;
 }
 .ripple-circle {
   position: absolute; border-radius: 50%;
-  border: 1.5px solid rgba(200, 164, 92, 0.6);
+  border: 1.5px solid rgba(200, 164, 92, 0.7);
   pointer-events: none;
 }
 .act1-emblem-wrap {
   position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center;
 }
 .act1-logo {
-  width: clamp(110px, 14vw, 150px); height: clamp(110px, 14vw, 150px);
-  border-radius: 34px; box-shadow: 0 0 60px rgba(200, 164, 92, 0.5);
+  width: clamp(100px, 13vw, 140px); height: clamp(100px, 13vw, 140px);
+  border-radius: 32px; box-shadow: 0 0 50px rgba(200, 164, 92, 0.55);
   transform-style: preserve-3d;
 }
 .act1-tagline {
-  margin-top: 24px; font-size: clamp(14px, 1.8vw, 18px); color: var(--brass-light);
+  margin-top: 18px; font-size: clamp(13px, 1.6vw, 16px); color: var(--brass-light);
   letter-spacing: 3px; text-transform: uppercase; font-weight: 600; text-align: center;
 }
 
-/* ==================== ACT 2: 3D OPENING LEDGER BOOK ==================== */
+/* 3D Ledger Book Container */
 #act2 .book-stage {
   perspective: 1400px; width: min(92vw, 840px); height: min(58vh, 460px);
   position: relative; transform-style: preserve-3d;
@@ -146,7 +159,7 @@ html, body {
 .book-cover {
   position: absolute; inset: 0; border-radius: 24px;
   background: linear-gradient(145deg, #1A1F26 0%, #101317 100%);
-  border: 1.5px solid rgba(200, 164, 92, 0.4);
+  border: 1.5px solid rgba(200, 164, 92, 0.45);
   box-shadow: 0 30px 80px rgba(0,0,0,0.9), 0 0 40px var(--brass-glow);
   transform-origin: left center; transform-style: preserve-3d; z-index: 5;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -185,7 +198,7 @@ html, body {
   box-shadow: 0 0 20px rgba(78, 173, 123, 0.3);
 }
 
-/* ==================== ACT 3: FLUID CARDS & REDESIGNED GUARDRAIL ==================== */
+/* ==================== ACT 3: FLUID GOALS & ANIMATED DUAL-THEME GUARDRAIL ==================== */
 #act3 .cards-showcase-stage {
   display: flex; align-items: center; justify-content: center;
   gap: clamp(18px, 3.5vw, 44px); width: 100%; max-width: 1250px; flex-wrap: wrap;
@@ -211,29 +224,77 @@ html, body {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Redesigned Daily Guardrail Card */
+/* Redesigned Guardrail Card with Dynamic Theme Morphing */
 .guardrail-card {
   flex: 1 1 340px; max-width: 560px; border-radius: 28px;
   background: #15181E; border: 1.5px solid rgba(78, 173, 123, 0.4);
   padding: clamp(22px, 3.2vh, 36px); box-shadow: 0 25px 70px rgba(0,0,0,0.8);
+  transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease;
 }
+.guardrail-card.light-mode {
+  background: #FFFFFF !important;
+  border-color: #DDD9CF !important;
+  color: #14171B !important;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.35) !important;
+}
+
+/* Animated Theme Switcher Pill */
+.theme-switch-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px; border-radius: 999px;
+  background: rgba(30, 36, 45, 0.85); border: 1px solid rgba(200, 164, 92, 0.35);
+  cursor: pointer;
+}
+.guardrail-card.light-mode .theme-switch-pill {
+  background: #F0EDE6; border-color: #DDD9CF;
+}
+.theme-switch-track {
+  width: 32px; height: 18px; border-radius: 999px; background: #28303C;
+  position: relative; display: flex; align-items: center; padding: 2px;
+}
+.guardrail-card.light-mode .theme-switch-track {
+  background: #A95F32;
+}
+.theme-switch-thumb {
+  width: 14px; height: 14px; border-radius: 50%; background: #FFF;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  position: absolute; left: 2px;
+}
+
 .pace-track {
   width: 100%; height: 14px; border-radius: 999px; background: #252B35;
   position: relative; margin: 20px 0; overflow: visible;
+}
+.guardrail-card.light-mode .pace-track {
+  background: #E8E5DD;
 }
 .pace-fill {
   height: 100%; border-radius: 999px;
   background: linear-gradient(90deg, #4EAD7B 0%, #C8A45C 85%);
   width: 62%; box-shadow: 0 0 16px rgba(200, 164, 92, 0.45);
 }
+.guardrail-card.light-mode .pace-fill {
+  background: linear-gradient(90deg, #2F7A57 0%, #A95F32 85%);
+  box-shadow: 0 0 12px rgba(169, 95, 50, 0.35);
+}
 .pace-needle {
   position: absolute; top: -7px; bottom: -7px; width: 4px; border-radius: 2px;
   background: #FFF; box-shadow: 0 0 12px #FFF; left: 68%;
 }
-.daylight-theme-chip {
-  margin-top: 18px; border-radius: 16px; background: #EFEDE8; color: #14171B;
-  padding: 16px 20px; border: 1.5px solid #DDD9CF;
-  display: flex; justify-content: space-between; align-items: center;
+.guardrail-card.light-mode .pace-needle {
+  background: #14171B; box-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+
+.guardrail-stats-row {
+  display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;
+}
+.guardrail-stat-chip {
+  flex: 1; padding: 10px 14px; border-radius: 14px;
+  background: rgba(25, 30, 38, 0.7); border: 1px solid rgba(44, 50, 59, 0.7);
+  display: flex; align-items: center; gap: 8px; font-size: 12px;
+}
+.guardrail-card.light-mode .guardrail-stat-chip {
+  background: #F7F5F0; border-color: #E2DED4; color: #14171B;
 }
 
 /* ==================== ACT 4: DIRECT ARCHITECTURE (APP -> SHEET) ==================== */
@@ -265,17 +326,19 @@ html, body {
   margin-bottom: 14px;
 }
 .sync-connector {
-  flex: 0 1 220px; display: flex; flex-direction: column; align-items: center;
-  min-width: 170px; position: relative; margin: 10px 0;
+  flex: 0 1 240px; display: flex; flex-direction: column; align-items: center;
+  min-width: 180px; position: relative; margin: 10px 0;
 }
+/* Fixed: Strict Overflow Hidden on Pipe so Loader Stays Inside */
 .sync-pipe {
-  width: 100%; height: 6px; border-radius: 999px; background: #252C36;
-  position: relative; overflow: visible;
+  width: 100%; height: 8px; border-radius: 999px; background: #222832;
+  position: relative; overflow: hidden !important;
+  border: 1px solid rgba(200, 164, 92, 0.25);
 }
 .sync-beam {
-  position: absolute; top: 0; left: 0; width: 45%; height: 100%; border-radius: 999px;
+  position: absolute; top: 0; left: 0; width: 35%; height: 100%; border-radius: 999px;
   background: linear-gradient(90deg, transparent 0%, #C8A45C 50%, #FFF 100%);
-  box-shadow: 0 0 18px #C8A45C, 0 0 30px #C8A45C;
+  box-shadow: 0 0 12px #C8A45C;
 }
 .sync-badge-center {
   margin-top: 14px; padding: 6px 16px; border-radius: 999px;
@@ -350,12 +413,11 @@ html, body {
   <div id="world">
 
     <!-- =========================================================================
-         ACT 1: THE RIPPLE & EMBLEM MATERIALIZATION (0:00 - 0:04)
-         Concentric gold ripples pulse, revealing the Munshi logo & 3D leather book
+         ACT 1: THE RIPPLE & EMBLEM MATERIALIZATION (0:00 - 0:02.5)
+         Fast, energetic concentric ripples revealing the Munshi logo
          ========================================================================= -->
     <div class="act" id="act1">
       <div class="ripple-wrap">
-        <!-- Concentric Ripples -->
         <div class="ripple-circle" id="ripple1" style="width:100px; height:100px;"></div>
         <div class="ripple-circle" id="ripple2" style="width:180px; height:180px;"></div>
         <div class="ripple-circle" id="ripple3" style="width:260px; height:260px;"></div>
@@ -380,8 +442,8 @@ html, body {
     </div>
 
     <!-- =========================================================================
-         ACT 2: 3D LEDGER BOOK OPENS (0:04 - 0:09)
-         Cover swings open in 3D perspective to reveal Income vs. Expense pages
+         ACT 2: 3D LEDGER BOOK OPENS (0:02.5 - 0:08)
+         Continuous camera move: Logo locks onto cover -> Cover swings open smoothly
          ========================================================================= -->
     <div class="act" id="act2">
       <div class="category-badge badge-gold">
@@ -395,7 +457,7 @@ html, body {
       </div>
 
       <div class="book-stage" id="bookStage">
-        <!-- Rotating Front Cover -->
+        <!-- Rotating Front Cover with Munshi Gold Seal -->
         <div class="book-cover" id="bookCover">
           <div class="book-spine-gold"></div>
           <svg width="74" height="74" viewBox="0 0 100 100" fill="none">
@@ -422,7 +484,7 @@ html, body {
                 </span>
                 <span class="font-mono" style="font-size:12px; color:var(--muted-dark);">MARCH 2026</span>
               </div>
-              <div class="font-mono" id="incomeSum" style="font-size:clamp(24px, 3vw, 34px); font-weight:800; color:var(--income); margin-top:6px;">
+              <div class="font-fraunces" id="incomeSum" style="font-size:clamp(24px, 3vw, 34px); font-weight:700; color:var(--income); margin-top:6px;">
                 +₹85,000
               </div>
             </div>
@@ -452,7 +514,7 @@ html, body {
                 </span>
                 <span class="font-mono" style="font-size:12px; color:var(--muted-dark);">19 TRANSACTIONS</span>
               </div>
-              <div class="font-mono" id="expenseSum" style="font-size:clamp(24px, 3vw, 34px); font-weight:800; color:var(--expense); margin-top:6px;">
+              <div class="font-fraunces" id="expenseSum" style="font-size:clamp(24px, 3vw, 34px); font-weight:700; color:var(--expense); margin-top:6px;">
                 -₹32,450
               </div>
             </div>
@@ -479,8 +541,8 @@ html, body {
     </div>
 
     <!-- =========================================================================
-         ACT 3: FLUID CARDS & REDESIGNED GUARDRAIL (0:09 - 0:15)
-         Fluid Wave Goal Card + Safe-to-Spend Daily Pace Meter
+         ACT 3: FLUID GOALS & ANIMATED DUAL-THEME GUARDRAIL (0:08 - 0:14.5)
+         Fluid Wave Goal Card + Guardrail Card with Dynamic Theme Morph
          ========================================================================= -->
     <div class="act" id="act3">
       <div class="category-badge badge-gold">
@@ -537,37 +599,42 @@ html, body {
           <div style="display:flex; justify-content:space-between; align-items:flex-end; position:relative; z-index:2;">
             <div>
               <div style="font-size:12px; color:var(--muted-dark); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Current Progress</div>
-              <div class="font-mono" id="goalAmountCount" style="font-size:clamp(30px, 3.8vw, 44px); font-weight:800; color:#FFF;">₹0</div>
+              <div class="font-fraunces" id="goalAmountCount" style="font-size:clamp(30px, 3.8vw, 44px); font-weight:700; color:#FFF;">₹0</div>
             </div>
             <div class="font-mono" id="goalPercentCount" style="font-size:clamp(34px, 4.2vw, 50px); font-weight:800; color:var(--brass-light);">0%</div>
           </div>
         </div>
 
-        <!-- Redesigned Daily Guardrail Card -->
-        <div class="guardrail-card">
+        <!-- Guardrail Card with Dynamic Theme Morph -->
+        <div class="guardrail-card" id="guardrailCard">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div style="width:10px; height:10px; border-radius:50%; background:var(--income); box-shadow:0 0 10px var(--income);"></div>
-              <span class="font-mono" style="font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted-dark);">
-                Monthly Spending Guardrail
+              <span class="font-mono" style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;">
+                Monthly Limit Guardrail
               </span>
             </div>
-            <span class="font-mono" style="color:var(--income); font-size:12px; font-weight:700; background:rgba(78,173,123,0.15); padding:3px 9px; border-radius:6px;">
-              ON TRACK (62%)
-            </span>
+
+            <!-- Animated Theme Toggle Pill -->
+            <div class="theme-switch-pill" id="themeSwitchPill">
+              <div class="theme-switch-track">
+                <div class="theme-switch-thumb" id="themeSwitchThumb"></div>
+              </div>
+              <span class="font-mono" id="themePillLabel" style="font-size:11px; font-weight:700; letter-spacing:0.5px;">OBSIDIAN</span>
+            </div>
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:20px;">
             <div>
-              <div class="font-mono" style="font-size:11px; color:var(--muted-dark);">SAFE TO SPEND TODAY</div>
-              <div class="font-mono" style="font-size:clamp(30px, 3.8vw, 42px); font-weight:800; color:var(--brass-light); margin-top:2px;">
-                ₹1,450<span style="font-size:18px; color:var(--muted-dark); font-weight:400;">/day</span>
+              <div class="font-mono" style="font-size:11px; opacity:0.75;">SAFE TO SPEND TODAY</div>
+              <div class="font-fraunces" id="safeDailyText" style="font-size:clamp(32px, 4vw, 44px); font-weight:700; color:var(--brass-light); margin-top:2px;">
+                ₹1,450<span style="font-size:18px; font-weight:400; opacity:0.6;">/day</span>
               </div>
             </div>
             <div style="text-align:right;">
-              <div class="font-mono" style="font-size:11px; color:var(--muted-dark);">REMAINING BUDGET</div>
-              <div class="font-mono" style="font-size:clamp(20px, 2.5vw, 28px); font-weight:700; color:#FFF; margin-top:2px;">
-                ₹18,850 <span style="font-size:14px; color:var(--muted-dark);">/ ₹50,000</span>
+              <div class="font-mono" style="font-size:11px; opacity:0.75;">REMAINING BUDGET</div>
+              <div class="font-fraunces" id="remainingBudgetText" style="font-size:clamp(22px, 2.8vw, 30px); font-weight:700; margin-top:2px;">
+                ₹18,850 <span style="font-size:14px; opacity:0.6;">/ ₹50,000</span>
               </div>
             </div>
           </div>
@@ -578,29 +645,16 @@ html, body {
             <div class="pace-needle" title="Current Day"></div>
           </div>
 
-          <!-- Dual Theme Daylight Chip -->
-          <div class="daylight-theme-chip">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <!-- SVG Sun -->
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A95F32" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3"/>
-                <line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/>
-                <line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-              </svg>
-              <div>
-                <div style="font-weight:700; font-size:14px; color:#14171B;">Warm Sand Daylight Mode</div>
-                <div style="font-size:12px; color:#5F6670;">Tactile copper parchment with 1 tap</div>
-              </div>
+          <!-- Bottom Stat Chips (Replacing static chip) -->
+          <div class="guardrail-stats-row font-mono">
+            <div class="guardrail-stat-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Zero Overspending</span>
             </div>
-            <span class="font-mono" style="font-size:11px; background:#A95F32; color:#FFF; padding:2px 8px; border-radius:4px; font-weight:700;">
-              THEME
-            </span>
+            <div class="guardrail-stat-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>11 Days Remaining</span>
+            </div>
           </div>
         </div>
 
@@ -608,8 +662,8 @@ html, body {
     </div>
 
     <!-- =========================================================================
-         ACT 4: ARCHITECTURE DIAGRAM (APP -> SHEET) (0:15 - 0:21)
-         Multi-Device Client <-> Direct API <-> Personal Google Sheet
+         ACT 4: ARCHITECTURE DIAGRAM (APP -> SHEET) (0:14.5 - 0:20.5)
+         Multi-Device Client <-> Contained Laser Beam <-> Personal Google Sheet
          ========================================================================= -->
     <div class="act" id="act4">
       <div class="category-badge badge-gold">
@@ -653,7 +707,7 @@ html, body {
             </div>
           </div>
 
-          <!-- Laser Beam Sync Channel -->
+          <!-- Laser Beam Sync Channel (Confined strictly inside the pipe capsule) -->
           <div class="sync-connector">
             <div class="sync-pipe">
               <div class="sync-beam" id="syncPulseBeam"></div>
@@ -712,7 +766,7 @@ html, body {
     </div>
 
     <!-- =========================================================================
-         ACT 5: GRAND FINALE & CTA (0:21 - 0:26)
+         ACT 5: GRAND FINALE & CTA (0:20.5 - 0:26)
          Emblem Corona, Tagline, Feature Badges, Live App Link
          ========================================================================= -->
     <div class="act" id="act5">
@@ -855,81 +909,100 @@ const master = gsap.timeline({ repeat: -1 });
 
 // Initial 3D Act Setup
 gsap.set('#act1', { zIndex: 5, autoAlpha: 1 });
-gsap.set('#act2', { zIndex: 4, autoAlpha: 0, z: -350, rotationY: 20 });
+gsap.set('#act2', { zIndex: 4, autoAlpha: 0, z: -180, scale: 0.85 });
 gsap.set('#act3', { zIndex: 3, autoAlpha: 0, z: -350, rotationX: -12 });
 gsap.set('#act4', { zIndex: 2, autoAlpha: 0, z: -400, rotationY: -15 });
 gsap.set('#act5', { zIndex: 1, autoAlpha: 0, z: -450 });
 
-// === ACT 1 (0.0s - 4.2s): Ripple Wave & Emblem Emergence ===
+// === ACT 1 (0.0s - 2.2s): Fast Ripple & Logo Emergence ===
 master
-  .fromTo('#ripple1', { scale: 0.2, opacity: 1 }, { scale: 2.2, opacity: 0, duration: 2.2, repeat: 1, ease: 'power2.out' }, 0)
-  .fromTo('#ripple2', { scale: 0.2, opacity: 1 }, { scale: 2.6, opacity: 0, duration: 2.5, delay: 0.4, repeat: 1, ease: 'power2.out' }, 0)
-  .fromTo('#ripple3', { scale: 0.2, opacity: 1 }, { scale: 3.0, opacity: 0, duration: 2.8, delay: 0.8, repeat: 1, ease: 'power2.out' }, 0)
-  .fromTo('#act1LogoWrap', { scale: 0.4, opacity: 0, rotationY: -20 }, { scale: 1, opacity: 1, rotationY: 0, duration: 1.4, ease: 'back.out(1.4)' }, 0.2)
-  .fromTo('.act1-tagline', { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-  .to('#world', { z: -40, duration: 2.5, ease: 'power1.inOut' }, '-=1.2')
+  .fromTo('#ripple1', { scale: 0.2, opacity: 1 }, { scale: 2.2, opacity: 0, duration: 1.4, ease: 'power2.out' }, 0)
+  .fromTo('#ripple2', { scale: 0.2, opacity: 1 }, { scale: 2.6, opacity: 0, duration: 1.6, delay: 0.2, ease: 'power2.out' }, 0)
+  .fromTo('#act1LogoWrap', { scale: 0.35, opacity: 0, rotationY: -15 }, { scale: 1, opacity: 1, rotationY: 0, duration: 1.0, ease: 'back.out(1.5)' }, 0.1)
+  .fromTo('.act1-tagline', { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.4')
   
-  // Transition Act 1 -> Act 2 (Push into the ledger book)
-  .to('#act1', { autoAlpha: 0, z: 300, duration: 0.8, ease: 'power2.in' })
-  .to('#act2', { autoAlpha: 1, z: 0, rotationY: 0, duration: 0.9, ease: 'power3.out' }, '-=0.4');
+  // Fluent Zoom into Ledger Cover (Continuous shot seamlessly locking Logo into Book)
+  .to('#act1LogoWrap', { scale: 1.25, z: 80, duration: 0.8, ease: 'power2.in' }, '+=0.2')
+  .to('#act1', { autoAlpha: 0, duration: 0.4 }, '-=0.3')
+  .to('#act2', { autoAlpha: 1, z: 0, scale: 1, duration: 0.7, ease: 'power2.out' }, '-=0.4');
 
-// === ACT 2 (4.2s - 9.5s): 3D Opening Ledger Book ===
+// === ACT 2 (2.2s - 7.5s): 3D Opening Ledger Book ===
 master
-  .fromTo('#bookStage', { scale: 0.85, rotationY: -25 }, { scale: 1, rotationY: 0, duration: 1.0, ease: 'power3.out' })
   // Front cover swings open along left spine
-  .to('#bookCover', { rotationY: -115, duration: 1.8, ease: 'power2.inOut' }, '-=0.4')
-  .fromTo('.page-entry-row', { opacity: 0, x: -10 }, { opacity: 1, x: 0, stagger: 0.15, duration: 0.6, ease: 'power2.out' }, '-=0.8')
-  .fromTo('.surplus-stamp', { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.8)' }, '-=0.3')
-  .to('#world', { rotationY: 3, z: 15, duration: 3.0, ease: 'power1.inOut' }, '-=2.0')
+  .to('#bookCover', { rotationY: -115, duration: 1.6, ease: 'power2.inOut' }, '-=0.2')
+  .fromTo('.page-entry-row', { opacity: 0, x: -10 }, { opacity: 1, x: 0, stagger: 0.12, duration: 0.5, ease: 'power2.out' }, '-=0.7')
+  .fromTo('.surplus-stamp', { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.8)' }, '-=0.2')
+  .to('#world', { rotationY: 3, z: 15, duration: 2.5, ease: 'power1.inOut' }, '-=1.8')
   
   // Transition Act 2 -> Act 3
-  .to('#act2', { autoAlpha: 0, z: 350, rotationY: 15, duration: 0.8, ease: 'power2.in' })
-  .to('#act3', { autoAlpha: 1, z: 0, rotationX: 0, duration: 0.9, ease: 'power3.out' }, '-=0.4');
+  .to('#act2', { autoAlpha: 0, z: 350, rotationY: 15, duration: 0.7, ease: 'power2.in' })
+  .to('#act3', { autoAlpha: 1, z: 0, rotationX: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
 
-// === ACT 3 (9.5s - 15.5s): Fluid Goals & Redesigned Guardrail ===
+// === ACT 3 (7.5s - 14.5s): Fluid Goals & Animated Dual-Theme Guardrail ===
 const goalCounter = { val: 0, percent: 0 };
 master
-  .fromTo('#fluidGoalCard', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.8, ease: 'power3.out' })
-  .fromTo('.guardrail-card', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.6')
-  .fromTo('.wave-container', { height: '0%' }, { height: '75%', duration: 2.2, ease: 'power2.out' }, '-=0.4')
+  .fromTo('#fluidGoalCard', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+  .fromTo('.guardrail-card', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+  .fromTo('.wave-container', { height: '0%' }, { height: '75%', duration: 2.0, ease: 'power2.out' }, '-=0.3')
   .to(goalCounter, {
     val: 112500,
     percent: 75,
-    duration: 2.2,
+    duration: 2.0,
     ease: 'power2.out',
     onUpdate: () => {
       document.getElementById('goalAmountCount').textContent = '₹' + Math.floor(goalCounter.val).toLocaleString('en-IN');
       document.getElementById('goalPercentCount').textContent = Math.floor(goalCounter.percent) + '%';
     }
-  }, '-=2.2')
-  .fromTo('#paceFillBar', { width: '0%' }, { width: '62%', duration: 1.8, ease: 'power2.out' }, '-=2.0')
-  .fromTo('.daylight-theme-chip', { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.8')
-  .to('#world', { rotationX: 4, z: -20, duration: 3.2, ease: 'power1.inOut' }, '-=1.8')
+  }, '-=2.0')
+  .fromTo('#paceFillBar', { width: '0%' }, { width: '62%', duration: 1.6, ease: 'power2.out' }, '-=1.8')
   
-  // Transition Act 3 -> Act 4
-  .to('#act3', { autoAlpha: 0, z: 350, rotationX: 12, duration: 0.8, ease: 'power2.in' })
-  .to('#act4', { autoAlpha: 1, z: 0, rotationY: 0, duration: 0.9, ease: 'power3.out' }, '-=0.4');
+  // ANIMATED DUAL-THEME SWITCH (Morph to Warm Sand Light Mode!)
+  .to('#themeSwitchThumb', { x: 14, duration: 0.4, ease: 'power2.out' }, '+=0.3')
+  .call(() => {
+    const card = document.getElementById('guardrailCard');
+    const label = document.getElementById('themePillLabel');
+    const daily = document.getElementById('safeDailyText');
+    if (card) card.classList.add('light-mode');
+    if (label) label.textContent = 'WARM SAND';
+    if (daily) daily.style.color = '#A95F32';
+  })
+  .to('#guardrailCard', { scale: 1.02, duration: 0.3, yoyo: true, repeat: 1, ease: 'power1.inOut' }, '-=0.3')
+  .to('#world', { rotationX: 4, z: -15, duration: 2.2, ease: 'power1.inOut' }, '-=1.5')
+  
+  // Transition Act 3 -> Act 4 (Reset light mode class before leaving)
+  .call(() => {
+    const card = document.getElementById('guardrailCard');
+    const label = document.getElementById('themePillLabel');
+    const daily = document.getElementById('safeDailyText');
+    if (card) card.classList.remove('light-mode');
+    if (label) label.textContent = 'OBSIDIAN';
+    if (daily) daily.style.color = 'var(--brass-light)';
+    gsap.set('#themeSwitchThumb', { x: 0 });
+  })
+  .to('#act3', { autoAlpha: 0, z: 350, rotationX: 12, duration: 0.7, ease: 'power2.in' })
+  .to('#act4', { autoAlpha: 1, z: 0, rotationY: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
 
-// === ACT 4 (15.5s - 21.0s): Architecture Diagram (App -> Sheet) ===
+// === ACT 4 (14.5s - 20.5s): Architecture Diagram (Strict Contained Loader) ===
 master
-  .fromTo('#act4 .arch-card-app', { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' })
-  .fromTo('#act4 .arch-card-sheet', { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.6')
-  .fromTo('#syncPulseBeam', { left: '-40%', opacity: 0 }, { left: '100%', opacity: 1, repeat: 2, duration: 1.1, ease: 'power1.inOut' }, '-=0.5')
-  .fromTo('.trust-pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.09, duration: 0.6, ease: 'power2.out' }, '-=0.8')
-  .to('#world', { rotationY: -4, z: 15, duration: 3.0, ease: 'power1.inOut' }, '-=2.0')
+  .fromTo('#act4 .arch-card-app', { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' })
+  .fromTo('#act4 .arch-card-sheet', { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+  // Confined pulse beam inside pipe
+  .fromTo('#syncPulseBeam', { x: '-100%', opacity: 0 }, { x: '320%', opacity: 1, repeat: 2, duration: 1.1, ease: 'power1.inOut' }, '-=0.4')
+  .fromTo('.trust-pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.5, ease: 'power2.out' }, '-=0.7')
+  .to('#world', { rotationY: -4, z: 15, duration: 2.8, ease: 'power1.inOut' }, '-=1.8')
   
   // Transition Act 4 -> Act 5
-  .to('#act4', { autoAlpha: 0, z: 350, duration: 0.8, ease: 'power2.in' })
-  .to('#act5', { autoAlpha: 1, z: 0, duration: 0.9, ease: 'power3.out' }, '-=0.4');
+  .to('#act4', { autoAlpha: 0, z: 350, duration: 0.7, ease: 'power2.in' })
+  .to('#act5', { autoAlpha: 1, z: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
 
-// === ACT 5 (21.0s - 26.0s): Grand Finale & CTA ===
+// === ACT 5 (20.5s - 26.0s): Grand Finale & CTA ===
 master
-  .fromTo('.brand-logo-large', { scale: 0.65, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.8, ease: 'back.out(1.5)' })
-  .fromTo('#act5 h1', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.4')
-  .fromTo('.pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.07, duration: 0.5, ease: 'power2.out' }, '-=0.3')
-  .fromTo('.cta-button', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.6)' }, '-=0.2')
-  .to('#world', { z: -70, duration: 2.8, ease: 'power1.inOut' }, '-=1.5')
-  .to('#act5', { autoAlpha: 0, duration: 0.7, ease: 'power2.in' });
+  .fromTo('.brand-logo-large', { scale: 0.65, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: 'back.out(1.5)' })
+  .fromTo('#act5 h1', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, '-=0.3')
+  .fromTo('.pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+  .fromTo('.cta-button', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.6)' }, '-=0.2')
+  .to('#world', { z: -70, duration: 2.5, ease: 'power1.inOut' }, '-=1.2')
+  .to('#act5', { autoAlpha: 0, duration: 0.6, ease: 'power2.in' });
 
 // 4. HUD TIMER & CONTROLS
 const timeDisplay = document.getElementById('time-display');

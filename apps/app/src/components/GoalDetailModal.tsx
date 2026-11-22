@@ -22,7 +22,22 @@ interface GoalDetailModalProps {
   onClose: () => void;
 }
 
-const PRESET_EMOJIS = ['🎯', '✈️', '📱', '💻', '🏍️', '🚗', '🏖️', '🏠', '🛡️', '🪙', '🎮', '💍', '🎓', '🏥'];
+const PRESET_GOAL_ICONS = [
+  { name: 'flag', label: 'Goal' },
+  { name: 'flight', label: 'Travel' },
+  { name: 'smartphone', label: 'Phone' },
+  { name: 'laptop', label: 'Laptop' },
+  { name: 'two_wheeler', label: 'Bike' },
+  { name: 'directions_car', label: 'Car' },
+  { name: 'home', label: 'Home' },
+  { name: 'shield', label: 'Fund' },
+  { name: 'savings', label: 'Wealth' },
+  { name: 'diamond', label: 'Jewelry' },
+  { name: 'school', label: 'Education' },
+  { name: 'beach_access', label: 'Vacation' },
+  { name: 'watch', label: 'Watch' },
+  { name: 'sports_esports', label: 'Gaming' },
+];
 
 export function GoalDetailModal({ goalId, open, onClose }: GoalDetailModalProps) {
   const { syncNow } = useSync();
@@ -428,35 +443,28 @@ export function GoalDetailModal({ goalId, open, onClose }: GoalDetailModalProps)
                 <label className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
                   Icon / Emoji
                 </label>
-                <div className="flex items-center gap-2.5 mt-1.5">
-                  <div className="flex h-11 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/15 border border-accent/40 text-2xl shadow-sm">
-                    {editEmoji}
+                <div className="flex items-center gap-3 mt-1.5">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/15 border border-accent/40 text-accent shadow-sm">
+                    <Icon name={editEmoji || 'flag'} size={24} />
                   </div>
-                  <input
-                    type="text"
-                    value={editEmoji}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      const detected = resolveGoalIcon(val, val);
-                      setEditEmoji(detected.icon || val);
-                    }}
-                    placeholder="Type or paste emoji from keyboard"
-                    className="flex-1 rounded-xl bg-raised border border-line px-3.5 py-2.5 text-sm text-text outline-none focus:border-accent"
-                  />
+                  <div className="flex-1 text-xs text-muted">
+                    Clean theme vector icon
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {PRESET_EMOJIS.map((emoji) => (
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                  {PRESET_GOAL_ICONS.map((item) => (
                     <button
-                      key={emoji}
+                      key={item.name}
                       type="button"
-                      onClick={() => setEditEmoji(emoji)}
-                      className={`h-8 w-8 rounded-lg flex items-center justify-center text-lg transition ${
-                        editEmoji === emoji
-                          ? 'bg-accent/20 border border-accent ring-1 ring-accent'
-                          : 'bg-raised hover:bg-line/50'
+                      onClick={() => setEditEmoji(item.name)}
+                      title={item.label}
+                      className={`h-9 w-9 rounded-xl flex items-center justify-center transition ${
+                        editEmoji === item.name
+                          ? 'bg-accent/25 border border-accent text-accent ring-1 ring-accent'
+                          : 'bg-raised border border-line/60 text-muted hover:text-text hover:bg-line/40'
                       }`}
                     >
-                      {emoji}
+                      <Icon name={item.name} size={18} />
                     </button>
                   ))}
                 </div>
