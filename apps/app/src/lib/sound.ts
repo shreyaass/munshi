@@ -81,18 +81,19 @@ class SoundEngine {
 
     switch (type) {
       case 'click': {
-        this.haptic(8);
+        this.haptic(3);
+        // Ultra-refined, timid tactile tick (soft high-frequency micropulse)
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(1100, now);
-        osc.frequency.exponentialRampToValueAtTime(180, now + 0.022);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1400, now);
+        osc.frequency.exponentialRampToValueAtTime(700, now + 0.009);
+        gain.gain.setValueAtTime(0.035, now);
+        gain.gain.exponentialRampToValueAtTime(0.0005, now + 0.009);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.025);
+        osc.stop(now + 0.012);
         break;
       }
 

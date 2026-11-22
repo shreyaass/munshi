@@ -4,6 +4,7 @@ import { SheetClient, SheetError, type Connection } from '@em/core';
 import { db } from '../lib/db';
 import { loadConnection, useConnectionState } from '../lib/connection';
 import { Icon } from '../components/Icon';
+import { sound } from '../lib/sound';
 
 const EXEC_RE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec/;
 // Dev-only: the local mock at /__mock, so the app can be exercised without Google.
@@ -74,7 +75,23 @@ export function Connect() {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-bg px-5 py-8 text-text">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-bg px-5 py-6 md:py-8 text-text">
+      {/* Top Header with Back to Tour Button */}
+      <div className="mb-5 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => {
+            sound.play('click');
+            navigate('/tour');
+          }}
+          className="inline-flex items-center gap-1.5 rounded-lg py-1 px-2.5 text-xs font-mono uppercase tracking-[0.12em] text-muted hover:text-text hover:bg-raised transition-colors"
+        >
+          <Icon name="arrow_back" size={15} />
+          <span>Setup Tour</span>
+        </button>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent/80 font-medium">Step 5/5</span>
+      </div>
+
       <div className="mb-7 flex items-center gap-3">
         <img src="/icons/icon-192.png" alt="" className="h-12 w-12 rounded-2xl" />
         <div>
