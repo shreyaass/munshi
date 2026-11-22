@@ -35,10 +35,10 @@ You only need a Google account and 3 minutes to set up.
 > Check out the **[Complete Google Sheet Setup & Connection Guide (sheet/SETUP.md)](sheet/SETUP.md)** for detailed step-by-step instructions with troubleshooting tips.
 
 1. **Make a Copy of the Ledger Sheet**
-   - Upload the provided `sheet/ExpenseManager-template.xlsx` to your [Google Drive](https://drive.google.com) and click **File → Save as Google Sheets**.
+   - Download the template **[sheet/ExpenseManager-template.xlsx](sheet/ExpenseManager-template.xlsx)** and upload it to your [Google Drive](https://drive.google.com), then click **File → Save as Google Sheets**.
 2. **Deploy the Private Script**
    - In your Google Sheet, go to **Extensions → Apps Script**.
-   - Paste the code from `sheet/AppsScript.gs`, click **Deploy → New deployment → Web app**.
+   - Copy the ready-to-paste backend code from **[sheet/AppsScript.gs](sheet/AppsScript.gs)**, click **Deploy → New deployment → Web app**.
    - Select **Execute as: Me** and **Who has access: Anyone**.
 3. **Connect & Track**
    - Open the **Expense Tracker** menu in your Sheet → **Show connection info**.
@@ -154,4 +154,4 @@ The output APK will be generated at `apps/app/android/app/build/outputs/apk/debu
 
 Distributed under the **MIT License**. See [LICENSE](LICENSE) for more details.
 
-Crafted with care by [shreyaass](https://github.com/shreyaass).
+Crafted by [shreyaass](https://github.com/shreyaass).

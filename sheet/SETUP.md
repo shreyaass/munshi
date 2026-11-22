@@ -4,9 +4,9 @@ You need three things in this folder:
 
 | File | What it is |
 |---|---|
-| `ExpenseManager-template.xlsx` | The database. Upload this to Drive. |
-| `AppsScript.gs` | The whole backend as one paste-ready file. |
-| `SETUP.md` | This guide. |
+| [`ExpenseManager-template.xlsx`](ExpenseManager-template.xlsx) | The database. Upload this to Drive. |
+| [`AppsScript.gs`](AppsScript.gs) | The whole backend as one paste-ready file. |
+| [`SETUP.md`](SETUP.md) | This guide. |
 
 `AppsScript.gs` is generated from `apps/script/*.gs` by `node sheet/bundle.mjs`.
 Edit the sources, not the generated copy.
