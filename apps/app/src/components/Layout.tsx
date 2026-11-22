@@ -7,6 +7,7 @@ import { useConnectionState } from '../lib/connection';
 import { useSync } from '../lib/SyncProvider';
 import { setLocalMeta, useDirtyCount, useMetaValue, useSyncMeta, useTabRows } from '../lib/repo';
 import { sound } from '../lib/sound';
+import { useAppUpdate } from '../lib/updater';
 
 type NavItem = { to: string; label: string; icon: IconName };
 
@@ -129,18 +130,20 @@ function SidebarLink({
   icon,
   label,
   title,
+  hasBadge = false,
 }: {
   to: string;
   icon: IconName;
   label: string;
   title: string;
+  hasBadge?: boolean;
 }) {
   return (
     <NavLink
       to={to}
       title={title}
       className={({ isActive }) =>
-        `flex items-center gap-3.5 rounded-xl px-3.5 py-2.5 transition text-sm font-medium ${
+        `relative flex items-center gap-3.5 rounded-xl px-3.5 py-2.5 transition text-sm font-medium ${
           isActive
             ? 'bg-raised text-accent shadow-sm border border-line/40'
             : 'text-muted hover:text-text hover:bg-raised/50'
@@ -149,8 +152,18 @@ function SidebarLink({
     >
       {({ isActive }) => (
         <>
-          <Icon name={icon} size={22} filled={isActive} className={isActive ? 'text-accent' : 'text-muted'} />
+          <div className="relative flex items-center justify-center">
+            <Icon name={icon} size={22} filled={isActive} className={isActive ? 'text-accent' : 'text-muted'} />
+            {hasBadge && (
+              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent animate-pulse" />
+            )}
+          </div>
           <span className="hidden lg:inline">{label}</span>
+          {hasBadge && (
+            <span className="hidden lg:inline-flex ml-auto text-[10px] font-mono uppercase tracking-wider bg-accent/20 text-accent font-bold px-1.5 py-0.5 rounded-full">
+              New
+            </span>
+          )}
         </>
       )}
     </NavLink>
@@ -164,6 +177,7 @@ export function Layout() {
   const onboarded = useMetaValue('onboarded', '');
   const { lastSync } = useSyncMeta();
   const accounts = useTabRows('Accounts');
+  const { hasUpdate } = useAppUpdate();
 
   const ready = accounts !== undefined && lastSync !== null;
   const noAccounts = (accounts?.length ?? 0) === 0;
@@ -197,7 +211,7 @@ export function Layout() {
             <SidebarLink to="/history" icon="history" label="History" title="History" />
             <SidebarLink to="/accounts" icon="account_balance_wallet" label="Accounts" title="Accounts" />
             <SidebarLink to="/goals" icon="savings" label="Goals" title="Goals" />
-            <SidebarLink to="/settings" icon="settings" label="Settings" title="Settings" />
+            <SidebarLink to="/settings" icon="settings" label="Settings" title="Settings" hasBadge={hasUpdate} />
           </nav>
         </div>
 
@@ -240,10 +254,13 @@ export function Layout() {
             {location.pathname === '/dashboard' && (
               <NavLink
                 to="/settings"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-muted hover:text-text transition active:scale-95"
+                className="relative flex h-8 w-8 items-center justify-center rounded-full text-muted hover:text-text transition active:scale-95"
                 aria-label="Settings"
               >
                 <Icon name="settings" size={20} />
+                {hasUpdate && (
+                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-accent animate-pulse" />
+                )}
               </NavLink>
             )}
           </div>

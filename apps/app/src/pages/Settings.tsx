@@ -8,6 +8,7 @@ import { useSound } from '../hooks/useSound';
 import { sound } from '../lib/sound';
 import { db } from '../lib/db';
 import { Icon, type IconName } from '../components/Icon';
+import { useAppUpdate } from '../lib/updater';
 
 const THEMES: { value: ThemeMode; label: string; icon: IconName }[] = [
   { value: 'system', label: 'System', icon: 'computer' },
@@ -96,6 +97,17 @@ export function Settings() {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const {
+    currentVersion,
+    updateInfo,
+    hasUpdate,
+    checking,
+    installing,
+    error: updateError,
+    statusMessage,
+    checkForUpdates,
+    triggerInstall,
+  } = useAppUpdate();
 
   const shortUrl = conn ? conn.url.replace(/^https:\/\/script\.google\.com\/macros\/s\//, '…/') : '—';
 
@@ -249,12 +261,90 @@ export function Settings() {
             </section>
           </div>
 
+          {/* App Updates */}
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-muted font-semibold mb-2">Updates</p>
+            <section className="bg-surface border border-line rounded-[16px] overflow-hidden p-3.5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-text flex items-center gap-2">
+                    <span>Munshi App</span>
+                    {hasUpdate ? (
+                      <span className="text-[10px] font-mono uppercase tracking-wider bg-accent/20 text-accent font-bold px-2 py-0.5 rounded-full">
+                        Update available
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-mono uppercase tracking-wider bg-income/15 text-income font-bold px-2 py-0.5 rounded-full">
+                        Up to date
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-muted mt-0.5">
+                    Installed: <span className="font-mono text-text">{currentVersion}</span>
+                    {updateInfo?.tagName && (
+                      <> · Latest: <span className="font-mono text-text">{updateInfo.tagName}</span></>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {hasUpdate && updateInfo && (
+                <div className="rounded-xl bg-raised border border-line p-3 text-xs space-y-1">
+                  <p className="font-semibold text-text">{updateInfo.name}</p>
+                  {updateInfo.notes && (
+                    <p className="text-muted leading-relaxed line-clamp-3 whitespace-pre-line text-[11px]">
+                      {updateInfo.notes}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {statusMessage && (
+                <p className="text-xs text-muted flex items-center gap-1.5">
+                  <Icon name="info" size={14} className="text-accent shrink-0" />
+                  <span>{statusMessage}</span>
+                </p>
+              )}
+
+              {updateError && (
+                <p className="text-xs text-expense flex items-center gap-1.5">
+                  <Icon name="warning" size={14} className="shrink-0" />
+                  <span>{updateError}</span>
+                </p>
+              )}
+
+              <div className="pt-1">
+                {hasUpdate ? (
+                  <button
+                    type="button"
+                    onClick={triggerInstall}
+                    disabled={installing}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-accent text-on-accent py-2.5 text-xs font-semibold hover:brightness-105 active:scale-[0.99] transition disabled:opacity-60 shadow-sm"
+                  >
+                    <Icon name={installing ? 'cloud_sync' : 'arrow_forward'} size={15} />
+                    <span>{installing ? 'Starting installation…' : 'Install update'}</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => checkForUpdates(true)}
+                    disabled={checking}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-line bg-raised py-2.5 text-xs font-semibold text-text hover:bg-line active:scale-[0.99] transition disabled:opacity-60"
+                  >
+                    <Icon name={checking ? 'sync' : 'replay'} size={15} className={checking ? 'animate-spin' : ''} />
+                    <span>{checking ? 'Checking for updates…' : 'Check for updates'}</span>
+                  </button>
+                )}
+              </div>
+            </section>
+          </div>
+
           {message && (
             <p className="rounded-xl bg-raised border border-line px-4 py-3 text-xs text-text">{message}</p>
           )}
 
           <p className="pt-2 text-center text-[10px] leading-relaxed text-muted">
-            Munshi v0.1 · schema v2
+            Munshi {currentVersion} · schema v2
             <br />
             Your entries live in your Google Sheet. This app holds only a local cache.
           </p>
