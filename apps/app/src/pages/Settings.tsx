@@ -4,6 +4,8 @@ import { useConnectionState } from '../lib/connection';
 import { exportCsv, useSyncMeta } from '../lib/repo';
 import { useSync } from '../lib/SyncProvider';
 import { useTheme, type ThemeMode } from '../lib/theme';
+import { useSound } from '../hooks/useSound';
+import { sound } from '../lib/sound';
 import { db } from '../lib/db';
 import { Icon, type IconName } from '../components/Icon';
 
@@ -49,6 +51,44 @@ function ThemeControl() {
   );
 }
 
+function SoundControl() {
+  const { soundEnabled, setSoundEnabled, play } = useSound();
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2.5">
+        <Icon
+          name={soundEnabled ? 'volume_up' : 'volume_off'}
+          size={18}
+          className={soundEnabled ? 'text-accent' : 'text-muted'}
+        />
+        <div>
+          <p className="text-sm font-medium text-text">Sound & Haptics</p>
+          <p className="text-[11px] text-muted">Tactile audio and vibration feedback</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={soundEnabled}
+        onClick={() => {
+          const next = !soundEnabled;
+          setSoundEnabled(next);
+          if (next) play('click');
+        }}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+          soundEnabled ? 'bg-accent' : 'bg-raised border border-line'
+        }`}
+      >
+        <span
+          className={`inline-block h-4 w-4 transform rounded-full bg-surface transition-transform ${
+            soundEnabled ? 'translate-x-6 bg-on-accent' : 'translate-x-1'
+          }`}
+        />
+      </button>
+    </div>
+  );
+}
+
 export function Settings() {
   const { conn, disconnect } = useConnectionState();
   const { status, syncNow, pending } = useSync();
@@ -63,6 +103,9 @@ export function Settings() {
     setBusy(true);
     try {
       const result = await syncNow();
+      if (result.ok) {
+        sound.play('sync');
+      }
       setMessage(
         result.ok
           ? `Synced · pushed ${result.pushed}, pulled ${result.pulled}`
@@ -123,6 +166,14 @@ export function Settings() {
             <p className="text-[11px] uppercase tracking-[0.12em] text-muted font-semibold mb-2">Appearance</p>
             <section className="bg-surface border border-line rounded-[16px] overflow-hidden p-3.5">
               <ThemeControl />
+            </section>
+          </div>
+
+          {/* Audio & Haptics */}
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-muted font-semibold mb-2">Feedback</p>
+            <section className="bg-surface border border-line rounded-[16px] overflow-hidden p-3.5">
+              <SoundControl />
             </section>
           </div>
 

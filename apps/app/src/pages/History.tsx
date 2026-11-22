@@ -24,6 +24,7 @@ import {
   type HistoryFilters,
 } from '../lib/historyFilters';
 import { useSync } from '../lib/SyncProvider';
+import { sound } from '../lib/sound';
 
 type Tab = 'Expenses' | 'Income';
 
@@ -260,6 +261,7 @@ export function History() {
   async function handleDelete() {
     if (!selected) return;
     await softDelete(selected.tab, selected.id);
+    sound.play('delete');
     setSelected(null);
     void syncNow();
   }

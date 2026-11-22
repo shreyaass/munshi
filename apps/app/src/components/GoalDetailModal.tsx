@@ -15,6 +15,7 @@ import { CustomDatePicker } from './CustomDatePicker';
 import { addContribution, deleteGoal, updateGoal, useMetaValue, useTabRows } from '../lib/repo';
 import { asBool, asNumber, asString } from '../lib/analytics';
 import { useSync } from '../lib/SyncProvider';
+import { sound } from '../lib/sound';
 
 interface GoalDetailModalProps {
   goalId: string | null;
@@ -180,6 +181,7 @@ export function GoalDetailModal({ goalId, open, onClose }: GoalDetailModalProps)
         date: todayISO(),
         notes: `Manual contribution to ${asString(goal?.name)}`,
       });
+      sound.play('goal');
       setContributeAmount('');
       setContributeOpen(false);
       void syncNow();

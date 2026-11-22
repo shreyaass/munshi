@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { sound } from './sound';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
@@ -43,6 +44,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(KEY, next);
     setResolved(applyTheme(next));
     setModeState(next);
+    sound.play('theme');
   }, []);
 
   useEffect(() => {

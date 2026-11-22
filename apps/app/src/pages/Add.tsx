@@ -32,6 +32,7 @@ import {
 } from '../lib/repo';
 import { asBool, asNumber, asString, categoriesFor, rowDate } from '../lib/analytics';
 import { useSync } from '../lib/SyncProvider';
+import { sound } from '../lib/sound';
 
 type Direction = 'expense' | 'income';
 type Tab = 'Expenses' | 'Income';
@@ -281,7 +282,7 @@ export function Add() {
           payee: payee.trim(),
           notes: notes.trim(),
         });
-        navigator.vibrate?.(12);
+        sound.play('click');
         void syncNow();
         navigate('/history');
         return;
@@ -296,6 +297,7 @@ export function Add() {
         payee: payee.trim(),
         notes: notes.trim(),
       });
+      sound.play(direction);
 
       // Write contributions if allocated to goals
       if (direction === 'income' && putTowardsGoal && totalAllocatedPaise > 0) {

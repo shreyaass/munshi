@@ -5,6 +5,7 @@ import { Icon, type IconName } from './Icon';
 import { useConnectionState } from '../lib/connection';
 import { useSync } from '../lib/SyncProvider';
 import { setLocalMeta, useDirtyCount, useMetaValue, useSyncMeta, useTabRows } from '../lib/repo';
+import { sound } from '../lib/sound';
 
 type NavItem = { to: string; label: string; icon: IconName };
 
@@ -85,6 +86,7 @@ function NavButton({ item }: { item: NavItem }) {
   return (
     <NavLink
       to={item.to}
+      onClick={() => sound.play('click')}
       className="flex flex-1 flex-col items-center gap-[3px] py-2 outline-none group select-none"
     >
       {({ isActive }) => (
@@ -273,7 +275,10 @@ export function Layout() {
             {/* Floating action button — centred, raised above nav */}
             <motion.button
               type="button"
-              onClick={() => window.location.assign('#/')}
+              onClick={() => {
+                sound.play('click');
+                window.location.assign('#/');
+              }}
               aria-label="Add entry"
               className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 top-0 rounded-full"
               whileTap={{ scale: 0.9 }}

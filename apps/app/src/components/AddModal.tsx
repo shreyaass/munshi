@@ -18,6 +18,7 @@ import { CustomDatePicker } from './CustomDatePicker';
 import { addContribution, addTransaction, useTabRows, useTransactions } from '../lib/repo';
 import { asBool, asNumber, asString, categoriesFor } from '../lib/analytics';
 import { useSync } from '../lib/SyncProvider';
+import { sound } from '../lib/sound';
 
 interface AddModalProps {
   open: boolean;
@@ -181,6 +182,7 @@ export function AddModal({ open, onClose, defaultDirection = 'expense' }: AddMod
         date,
         notes: note.trim(),
       });
+      sound.play(direction);
 
       // Write contributions if allocated to goals
       if (direction === 'income' && putTowardsGoal && totalAllocatedPaise > 0) {
