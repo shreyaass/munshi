@@ -7,6 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.0-646CFF.svg)](https://vitejs.dev/)
 [![Capacitor](https://img.shields.io/badge/Capacitor-Android-119EFF.svg)](https://capacitorjs.com/)
+[![Downloads](https://img.shields.io/github/downloads/shreyaass/munshi/total.svg)](https://github.com/shreyaass/munshi/releases)
 
 ---
 
@@ -28,7 +29,10 @@ Most expense tracker apps force you to store your private bank details, transact
 
 ## 🚀 Getting Started in 3 Steps
 
-You only need a Google account and 3 minutes to set up:
+You only need a Google account and 3 minutes to set up.
+
+> 📖 **Need a complete walkthrough?**  
+> Check out the **[Complete Google Sheet Setup & Connection Guide (sheet/SETUP.md)](sheet/SETUP.md)** for detailed step-by-step instructions with troubleshooting tips.
 
 1. **Make a Copy of the Ledger Sheet**
    - Upload the provided `sheet/ExpenseManager-template.xlsx` to your [Google Drive](https://drive.google.com) and click **File → Save as Google Sheets**.
