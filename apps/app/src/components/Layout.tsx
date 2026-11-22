@@ -186,7 +186,7 @@ export function Layout() {
         <div className="flex flex-col items-center lg:items-stretch py-6 px-2 lg:px-4">
           {/* Logo */}
           <div className="mb-8 px-2 flex items-center justify-center lg:justify-start gap-2.5">
-            <img src="/icons/logo.svg" alt="Munshi" className="h-8 w-8 rounded-[9px] shadow-sm shrink-0" />
+            <img src="./icons/logo.svg" alt="Munshi" className="h-8 w-8 object-contain shrink-0" />
             <span className="hidden lg:inline font-display text-2xl font-medium text-text tracking-tight">Munshi</span>
           </div>
 
@@ -217,7 +217,7 @@ export function Layout() {
         <header className="md:hidden flex shrink-0 items-center justify-between px-4 pb-1 pt-4">
           <div className="flex items-center gap-2.5">
             {location.pathname === '/dashboard' && (
-              <img src="/icons/logo.svg" alt="" className="h-7 w-7 rounded-[8px] shadow-sm shrink-0" />
+              <img src="./icons/logo.svg" alt="" className="h-7 w-7 object-contain shrink-0" />
             )}
             <h1 className="font-display text-[26px] leading-none text-text">
               {title}

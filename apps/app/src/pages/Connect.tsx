@@ -93,7 +93,7 @@ export function Connect() {
       </div>
 
       <div className="mb-7 flex items-center gap-3">
-        <img src="/icons/icon-192.png" alt="" className="h-12 w-12 rounded-2xl" />
+        <img src="./icons/logo.svg" alt="" className="h-11 w-11 object-contain shrink-0" />
         <div>
           <p className="text-[15px] font-semibold tracking-tight">Munshi</p>
           <h1 className="text-[22px] font-semibold leading-tight tracking-tight">Connect your sheet</h1>
