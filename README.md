@@ -3,7 +3,7 @@
 > **Your money. Your rules. Your private Google Sheet as the database.**  
 > Zero subscriptions · Zero server costs · 100% Data Ownership · Offline-First PWA & Android App.
 
-[![Download APK](https://img.shields.io/badge/Download%20APK-Android-brightgreen?style=for-the-badge&logo=android)](https://github.com/shreyaass/munshi/releases/download/latest/munshi-app-debug.apk)
+[![Download APK](https://img.shields.io/badge/Download%20APK-Android-brightgreen?style=for-the-badge&logo=android)](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk)
 [![Launch Web App](https://img.shields.io/badge/Launch%20App-Web%20%2F%20PWA-C8A45C?style=for-the-badge&logo=googlechrome)](https://munshi.shreyaas.workers.dev)
 [![Watch Promo](https://img.shields.io/badge/Watch%20Promo-Interactive%203D-99732B?style=for-the-badge&logo=youtube)](https://shreyaass.github.io/munshi/)
 
@@ -20,7 +20,7 @@
 
 | Platform | Link | Description |
 |---|---|---|
-| **Android App** | [**⬇️ Download Munshi APK (`munshi-app-debug.apk`)**](https://github.com/shreyaass/munshi/releases/download/latest/munshi-app-debug.apk) | Native Android application with offline IndexedDB cache and fast launch. |
+| **Android App** | [**⬇️ Download Munshi APK (`munshi-app-debug.apk`)**](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk) | Native Android application with offline IndexedDB cache and fast launch. |
 | **Web App / PWA** | [**🌐 Launch Live Web App (munshi.shreyaas.workers.dev)**](https://munshi.shreyaas.workers.dev) | Runs instantly in Chrome, Safari, or Edge. Can be installed directly to home screen as a PWA. |
 | **Cinematic Promo** | [**🎬 Watch Interactive Promo Video**](https://shreyaass.github.io/munshi/) | 26-second 3D promotional ad trailer running GSAP 3 and Three.js 3D WebGL. |
 | **Latest Releases** | [**📦 All GitHub Releases & Checksums**](https://github.com/shreyaass/munshi/releases/latest) | View changelogs, build artifacts, and release notes. |
@@ -63,7 +63,7 @@ Most expense tracker apps force you to store your private bank details, transact
 
 ### 📱 Installing the Android APK
 
-1. Tap **[Download Munshi APK](https://github.com/shreyaass/munshi/releases/download/latest/munshi-app-debug.apk)** on your Android phone.
+1. Tap **[Download Munshi APK](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk)** on your Android phone (or download from the [v1.0.0 Release page](https://github.com/shreyaass/munshi/releases/tag/v1.0.0)).
 2. Open the downloaded file (`munshi-app-debug.apk`).
 3. If prompted by Android, tap **Settings** and enable **Allow from this source** (standard for APKs installed outside Google Play).
 4. If Google Play Protect shows an "Unrecognized app" prompt, tap **Install anyway**.
