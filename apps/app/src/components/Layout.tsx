@@ -228,8 +228,8 @@ export function Layout() {
 
       {/* Main Content Area */}
       <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
-        {/* Mobile Header (< md) */}
-        <header className="md:hidden flex shrink-0 items-center justify-between px-4 pb-1 pt-4">
+        {/* Mobile Header (< md) with safe-area top and side insets */}
+        <header className="md:hidden flex shrink-0 items-center justify-between px-4 pb-1 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] pl-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem))] pr-[max(1rem,calc(env(safe-area-inset-right,0px)+1rem))]">
           <div className="flex items-center gap-2.5">
             {location.pathname === '/dashboard' && (
               <Logo className="h-7 w-7 shrink-0" />

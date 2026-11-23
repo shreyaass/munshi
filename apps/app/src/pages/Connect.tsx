@@ -76,7 +76,7 @@ export function Connect() {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-bg px-5 py-6 md:py-8 text-text">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-bg px-5 pt-[calc(env(safe-area-inset-top,0px)+1.25rem)] pb-[calc(env(safe-area-inset-bottom,0px)+1.5rem)] text-text">
       {/* Top Header with Back to Tour Button */}
       <div className="mb-5 flex items-center justify-between">
         <button

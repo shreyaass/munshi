@@ -9,9 +9,9 @@ export function Landing() {
   return (
     <div className="min-h-screen bg-bg text-text flex flex-col justify-between selection:bg-accent/20">
       {/* =========================================================================
-          TOP NAVIGATION BAR
+          TOP NAVIGATION BAR (With camera notch & safe area clearance)
           ========================================================================= */}
-      <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 md:px-12">
+      <header className="mx-auto flex w-full max-w-7xl items-center justify-between pt-[calc(env(safe-area-inset-top,0px)+1.25rem)] pl-[max(1.5rem,calc(env(safe-area-inset-left,0px)+1.5rem))] pr-[max(1.5rem,calc(env(safe-area-inset-right,0px)+1.5rem))] pb-4 md:py-6 md:px-12">
         {/* Brand Logo - Official Logo, Non-clickable */}
         <div className="flex items-center gap-3 select-none">
           <Logo className="h-9 w-9 shrink-0" />
@@ -21,7 +21,7 @@ export function Landing() {
         </div>
 
         {/* Right Navigation Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           {/* GitHub Link */}
           <a
             href="https://github.com/shreyaass/munshi"
@@ -36,16 +36,16 @@ export function Landing() {
             <span>GitHub</span>
           </a>
 
-          {/* Start Tour */}
+          {/* Start Tour (Header CTA) */}
           <button
             type="button"
             onClick={() => {
               sound.play('click');
               navigate('/tour');
             }}
-            className="hidden sm:inline-flex rounded-xl border border-line bg-surface/60 px-4 py-2 text-xs font-semibold text-text hover:bg-raised transition-colors"
+            className="inline-flex rounded-xl border border-line bg-surface/60 px-3.5 py-2 text-xs font-semibold text-text hover:bg-raised transition-colors active:scale-95"
           >
-            Start the tour
+            Tour
           </button>
 
           {/* Connect / Get Started */}
@@ -63,38 +63,38 @@ export function Landing() {
       </header>
 
       {/* =========================================================================
-          HERO & MOCKUP SECTION
+          HERO & CONTENT SECTION
           ========================================================================= */}
-      <main className="mx-auto my-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6 py-8 md:px-12 lg:py-16">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
+      <main className="mx-auto my-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6 py-6 md:px-12 lg:py-16">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16">
           {/* Left Column: Headline, Value Props & CTAs */}
-          <div className="space-y-8 lg:col-span-7">
+          <div className="space-y-6 sm:space-y-8 lg:col-span-7">
             {/* Tagline Badge */}
-            <div className="inline-flex items-center gap-2 font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-accent/90">
+            <div className="inline-flex items-center gap-2 font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-accent/90 bg-accent/10 px-3 py-1 rounded-full border border-accent/20 w-fit">
               <span>&lt;/&gt;</span>
               <span>Open Source · MIT Licensed</span>
             </div>
 
             {/* Headline */}
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-text leading-[1.08]">
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-text leading-[1.1]">
               Your money, kept <br className="hidden sm:inline" />
               like a <span className="font-serif italic text-accent font-normal">ledger.</span>
             </h1>
 
             {/* Subtitle */}
             <p className="max-w-xl text-base sm:text-lg leading-relaxed text-muted">
-              Track spending, stay under a monthly limit and fill your goals. Every entry lives in your own Google Sheet.
+              Track spending, stay under a monthly limit, and fill your goals. Every entry lives in your own Google Sheet — private, offline-first, and zero subscriptions.
             </p>
 
             {/* Primary Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
               <button
                 type="button"
                 onClick={() => {
                   sound.play('click');
                   navigate('/connect');
                 }}
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-on-accent shadow-md hover:brightness-105 transition-all active:scale-[0.99]"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-on-accent shadow-md hover:brightness-105 transition-all active:scale-[0.99]"
               >
                 <span>Get started</span>
                 <Icon name="arrow_forward" size={16} />
@@ -106,49 +106,49 @@ export function Landing() {
                   sound.play('click');
                   navigate('/tour');
                 }}
-                className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface/60 px-6 py-3.5 text-sm font-semibold text-text hover:bg-raised transition-colors active:scale-[0.99]"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-surface/70 px-6 py-3.5 text-sm font-semibold text-text hover:bg-raised transition-colors active:scale-[0.99]"
               >
                 <Icon name="play_arrow" size={17} className="text-accent" />
                 <span>Start the tour</span>
               </button>
             </div>
 
-            {/* 3 Core Value Props in Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-line/50">
-              <div className="space-y-1">
+            {/* Minimal Mobile & Desktop Core Feature Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-6 pt-5 border-t border-line/50">
+              <div className="rounded-xl border border-line/60 bg-surface/40 p-3.5 sm:p-0 sm:border-0 sm:bg-transparent space-y-1">
                 <div className="flex items-center gap-2 text-text font-semibold text-sm">
-                  <Icon name="speed" size={18} className="text-accent" />
+                  <Icon name="speed" size={18} className="text-accent shrink-0" />
                   <span>Monthly limit</span>
                 </div>
                 <p className="text-xs text-muted leading-snug">
-                  See what is left, every day
+                  Real-time daily safe pace so you never overspend.
                 </p>
               </div>
 
-              <div className="space-y-1">
+              <div className="rounded-xl border border-line/60 bg-surface/40 p-3.5 sm:p-0 sm:border-0 sm:bg-transparent space-y-1">
                 <div className="flex items-center gap-2 text-text font-semibold text-sm">
-                  <Icon name="water_drop" size={18} className="text-accent" />
+                  <Icon name="water_drop" size={18} className="text-accent shrink-0" />
                   <span>Goals that fill up</span>
                 </div>
                 <p className="text-xs text-muted leading-snug">
-                  Watch the water rise
+                  Watch visual water reservoirs rise as you save.
                 </p>
               </div>
 
-              <div className="space-y-1">
+              <div className="rounded-xl border border-line/60 bg-surface/40 p-3.5 sm:p-0 sm:border-0 sm:bg-transparent space-y-1">
                 <div className="flex items-center gap-2 text-text font-semibold text-sm">
-                  <Icon name="grid_view" size={18} className="text-accent" />
+                  <Icon name="grid_view" size={18} className="text-accent shrink-0" />
                   <span>Your Google Sheet</span>
                 </div>
                 <p className="text-xs text-muted leading-snug">
-                  Every entry stays yours
+                  Direct connection to your Drive. No servers, no tracking.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Smartphone Chassis Mockup */}
-          <div className="flex justify-center lg:col-span-5 lg:justify-end">
+          {/* Right Column: Smartphone Chassis Mockup (Desktop/Tablet only: hidden lg:flex) */}
+          <div className="hidden lg:flex justify-end lg:col-span-5 select-none">
             <div className="relative w-full max-w-[340px] rounded-[42px] border-[5px] border-[#222731] bg-[#0E1116] p-4 shadow-[0_30px_90px_rgba(0,0,0,0.8),0_0_40px_rgba(200,164,92,0.12)]">
               {/* Phone Speaker Notch */}
               <div className="mx-auto mb-4 h-4 w-28 rounded-full bg-[#181C24] flex items-center justify-center">
@@ -212,7 +212,6 @@ export function Landing() {
                   <p className="font-mono text-[11px] text-muted">
                     ₹12,000 saved of ₹30,000
                   </p>
-                  {/* Subtle Wave Animation Mock */}
                   <div className="mt-2 h-1.5 w-full rounded-full bg-line overflow-hidden">
                     <div className="h-full w-[40%] bg-accent rounded-full" />
                   </div>
@@ -261,13 +260,13 @@ export function Landing() {
       </main>
 
       {/* =========================================================================
-          FOOTER BAR
+          FOOTER BAR (With safe area bottom inset)
           ========================================================================= */}
-      <footer className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 border-t border-line/40 px-6 py-6 font-sans text-xs text-muted sm:flex-row md:px-12">
-        <p>
+      <footer className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 border-t border-line/40 px-6 pt-5 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] font-sans text-xs text-muted sm:flex-row md:px-12">
+        <p className="text-center sm:text-left">
           Your entries live in your Google Sheet. Munshi keeps only a local cache.
         </p>
-        <p>
+        <p className="text-center sm:text-right">
           MIT License · <a href="https://github.com/shreyaass/munshi" target="_blank" rel="noopener noreferrer" className="hover:text-text underline">github.com/shreyaass/munshi</a>
         </p>
       </footer>

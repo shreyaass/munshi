@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Capacitor, registerPlugin } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 
-export const CURRENT_APP_VERSION = 'v1.0.0';
+export const CURRENT_APP_VERSION = 'v1.1.0';
 const GITHUB_REPO = 'shreyaass/munshi';
 const CACHE_KEY = 'munshi_update_info';
 const LAST_CHECK_KEY = 'munshi_update_last_checked';
@@ -15,12 +15,6 @@ export interface UpdateInfo {
   apkUrl: string;
   isNewer: boolean;
 }
-
-interface AppUpdaterPlugin {
-  installApk(options: { url: string }): Promise<{ success: boolean; downloadId?: number }>;
-}
-
-const AppUpdater = registerPlugin<AppUpdaterPlugin>('AppUpdater');
 
 /**
  * Compare two semantic version strings (e.g. "v1.0.1" vs "v1.0.0").
@@ -93,13 +87,11 @@ export function getCachedUpdate(): UpdateInfo | null {
 }
 
 export async function installApk(apkUrl: string): Promise<void> {
+  // Opening the direct APK release download via system browser
+  // This lets Chrome or the system browser download the APK and prompt the user to install cleanly,
+  // without needing dangerous REQUEST_INSTALL_PACKAGES permissions that trigger Play Protect flags.
   if (Capacitor.isNativePlatform()) {
-    try {
-      await AppUpdater.installApk({ url: apkUrl });
-    } catch (err) {
-      console.warn('Native installer call failed, opening download link in browser', err);
-      window.open(apkUrl, '_system');
-    }
+    window.open(apkUrl, '_system');
   } else {
     // Web / PWA browser environment: trigger direct APK file download
     const link = document.createElement('a');

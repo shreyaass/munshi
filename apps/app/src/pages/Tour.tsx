@@ -275,7 +275,7 @@ export function Tour() {
       {/* =========================================================================
           MAIN CONTENT AREA (Responsive Desktop, Tablet & Mobile)
           ========================================================================= */}
-      <div className="flex flex-1 flex-col justify-between p-6 md:p-10 lg:p-14">
+      <div className="flex flex-1 flex-col justify-between pt-[calc(env(safe-area-inset-top,0px)+1.25rem)] pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pl-[max(1.25rem,calc(env(safe-area-inset-left,0px)+1rem))] pr-[max(1.25rem,calc(env(safe-area-inset-right,0px)+1rem))] md:p-10 lg:p-14">
         {/* Top Header: Step Counter & Skip */}
         <header className="flex items-center justify-between pb-4">
           {/* Mobile-only Skip button */}
