@@ -1,0 +1,1723 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Munshi — Promo Video (Bang Motion)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;500;600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    /* =========================================================================
+       GLOBAL RESET & VIEWPORT FITTING
+       ========================================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #050607;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Stage: Responsive 16:9 Landscape or 9:16 Portrait Scaled via CSS Variable */
+    #stage {
+      position: fixed;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(var(--fit, 1));
+      transform-origin: center center;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--tx);
+      transition: background-color 0.4s ease;
+    }
+
+    #stage.is-landscape {
+      width: 1920px;
+      height: 1080px;
+    }
+
+    #stage.is-portrait {
+      width: 1080px;
+      height: 1920px;
+    }
+
+    #world {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      transform-origin: 0 0;
+    }
+
+    /* Ambient atmospheric glow */
+    .glow {
+      position: absolute;
+      width: 1200px; height: 1200px;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(80px);
+      opacity: 0.28;
+    }
+    #g1 { left: -250px; top: -350px; background: radial-gradient(circle, var(--ac), transparent 65%); }
+    #g2 { right: -300px; bottom: -300px; background: radial-gradient(circle, var(--ac), transparent 65%); }
+
+    /* Film grain overlay */
+    .grain {
+      position: absolute;
+      inset: 0;
+      z-index: 90;
+      pointer-events: none;
+      opacity: 0.04;
+      background: repeating-radial-gradient(circle at 30% 40%, #ffffff 0 1px, transparent 1px 3px);
+    }
+
+    /* Common typography classes */
+    .h { font-family: Fraunces, serif; font-weight: 500; }
+    .mono { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+    .r { display: flex; justify-content: space-between; align-items: center; }
+
+    /* =========================================================================
+       SCENE 1: TRADITIONAL CLOTH-BOUND LEDGER (KAALA BAHI)
+       ========================================================================= */
+    #s-ledger {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      background: #090B0E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 2600px;
+      overflow: hidden;
+    }
+    #ledger-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, #2A170C, #090B0E 75%);
+    }
+
+    #book-rig {
+      position: relative;
+      width: 1240px; height: 740px;
+      transform-style: preserve-3d;
+    }
+    .is-portrait #book-rig {
+      width: 960px; height: 1280px;
+      transform: scale(0.85);
+    }
+
+    /* Right page (stationary book block) */
+    #page-right {
+      position: absolute;
+      left: 50%; top: 0;
+      width: 50%; height: 100%;
+      background: #F6EFDE;
+      color: #241916;
+      border-radius: 4px 24px 24px 4px;
+      box-shadow: inset 35px 0 45px -30px rgba(0,0,0,0.3), 0 30px 80px rgba(0,0,0,0.6);
+      padding: 50px 48px;
+    }
+
+    /* Cover (swings open to left) */
+    #book-cover {
+      position: absolute;
+      left: 50%; top: 0;
+      width: 50%; height: 100%;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+    }
+    .cover-front {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      background: linear-gradient(135deg, #A95F32, #733D1C);
+      border-radius: 4px 24px 24px 4px;
+      border: 8px solid #C8A45C;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+    }
+    .cover-back {
+      position: absolute;
+      inset: 0;
+      transform: rotateY(180deg);
+      backface-visibility: hidden;
+      background: #F6EFDE;
+      color: #241916;
+      border-radius: 24px 4px 4px 24px;
+      box-shadow: inset -35px 0 45px -30px rgba(0,0,0,0.3);
+      padding: 50px 48px;
+    }
+    #book-spine {
+      position: absolute;
+      left: calc(50% - 8px); top: 0;
+      width: 16px; height: 100%;
+      background: #5E3216;
+      z-index: 10;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    /* Ruled paper lines */
+    .ledger-title {
+      font-size: 46px;
+      font-weight: 500;
+      border-bottom: 2px solid #D8C39A;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    .ledger-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 64px;
+      border-bottom: 1.5px solid #E4D6B5;
+      font-size: 27px;
+      opacity: 0;
+    }
+    .ledger-row span i {
+      font-style: normal;
+      font-size: 19px;
+      color: #8C7B5D;
+      margin-left: 12px;
+    }
+
+    /* =========================================================================
+       SCENE 2: APP DASHBOARD & DYNAMIC INTERFACE
+       ========================================================================= */
+    #app-container {
+      position: absolute;
+      left: 180px; top: 90px;
+      width: 1560px; height: 900px;
+      border-radius: 32px;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--ln);
+      box-shadow: 0 40px 110px rgba(0,0,0,0.3);
+    }
+    .is-portrait #app-container {
+      left: 50px; top: 120px;
+      width: 980px; height: 1680px;
+      border-radius: 44px;
+    }
+
+    /* Sidebar / Navigation Rail */
+    #nav-rail {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100px; height: 100%;
+      background: var(--sf);
+      border-right: 1px solid var(--ln);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 24px;
+      z-index: 10;
+    }
+    .is-portrait #nav-rail {
+      left: 0; bottom: 0; top: auto;
+      width: 100%; height: 110px;
+      border-right: none;
+      border-top: 1px solid var(--ln);
+      flex-direction: row;
+      justify-content: space-around;
+      padding-top: 0;
+    }
+
+    .rail-logo {
+      width: 56px; height: 56px;
+      margin-bottom: 40px;
+    }
+    .is-portrait .rail-logo { display: none; }
+
+    .nav-btn {
+      width: 60px; height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--mu);
+      margin-bottom: 18px;
+      transition: all 0.3s;
+    }
+    .nav-btn.active {
+      background: var(--sf2);
+      color: var(--ac);
+      border: 1px solid var(--ac);
+    }
+
+    /* App Main Canvas */
+    #app-main {
+      position: absolute;
+      left: 100px; top: 0;
+      right: 0; bottom: 0;
+      padding: 30px 40px;
+      overflow: hidden;
+    }
+    .is-portrait #app-main {
+      left: 0; top: 0; right: 0; bottom: 110px;
+      padding: 40px 32px;
+    }
+
+    /* Top App Header */
+    #app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60px;
+      margin-bottom: 24px;
+    }
+    .app-headline {
+      font-size: 40px;
+      color: var(--tx);
+    }
+
+    /* Header Theme Switch Pill */
+    #theme-toggle {
+      width: 120px; height: 46px;
+      border-radius: 99px;
+      border: 1px solid var(--ln);
+      background: var(--sf);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      position: relative;
+    }
+    #theme-knob {
+      position: absolute;
+      left: 4px; top: 4px;
+      width: 52px; height: 36px;
+      border-radius: 99px;
+      background: var(--ac);
+      opacity: 0.25;
+    }
+
+    /* App Cards Common Style */
+    .card {
+      position: absolute;
+      background: var(--sf);
+      border: 1px solid var(--ln);
+      border-radius: 26px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+    .card-label {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mu);
+    }
+
+    /* 1. Monthly Limit Card */
+    #card-limit {
+      left: 40px; top: 110px;
+      width: 660px; height: 320px;
+      padding: 34px;
+      border-color: var(--exp);
+    }
+    .is-portrait #card-limit {
+      left: 32px; top: 120px;
+      width: 916px; height: 360px;
+    }
+
+    #limit-amount {
+      font-size: 96px;
+      font-weight: 600;
+      line-height: 1;
+      margin-top: 14px;
+      margin-bottom: 8px;
+    }
+    .is-portrait #limit-amount { font-size: 110px; }
+
+    #limit-sub {
+      font-size: 25px;
+      color: var(--mu);
+      margin-bottom: 24px;
+    }
+    .limit-progress-bar {
+      width: 100%; height: 20px;
+      border-radius: 10px;
+      background: var(--sf2);
+      overflow: hidden;
+      position: relative;
+    }
+    #limit-progress-fill {
+      height: 100%; width: 0%;
+      border-radius: 10px;
+      background: var(--exp);
+    }
+    #safe-pace-chip {
+      position: absolute;
+      right: 34px; top: 32px;
+      padding: 6px 18px;
+      border-radius: 99px;
+      border: 1.5px solid var(--exp);
+      color: var(--exp);
+      font-size: 19px;
+      font-weight: 600;
+      opacity: 0;
+    }
+    #daily-safe-callout {
+      margin-top: 16px;
+      font-size: 22px;
+      color: var(--ac);
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* 2. Accounts Breakdown Card */
+    #card-accounts {
+      left: 40px; top: 460px;
+      width: 660px; height: 380px;
+      padding: 34px;
+    }
+    .is-portrait #card-accounts {
+      left: 32px; top: 510px;
+      width: 916px; height: 460px;
+    }
+
+    .account-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 58px;
+      border-bottom: 1px solid var(--ln);
+      font-size: 26px;
+    }
+    .account-row b { font-weight: 500; }
+    .account-row i {
+      font-style: normal;
+      font-size: 20px;
+      color: var(--mu);
+      margin-left: 12px;
+    }
+    .account-tag {
+      padding: 3px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--ac);
+      color: var(--ac);
+      font-size: 16px;
+      margin-left: 12px;
+      font-weight: 600;
+      opacity: 0;
+    }
+    #accounts-stacked-bar {
+      margin-top: 22px;
+      height: 18px;
+      width: 100%;
+      border-radius: 9px;
+      overflow: hidden;
+      display: flex;
+      background: var(--sf2);
+    }
+
+    /* 3. Goal Liquid Reservoir Cards */
+    .goal-card {
+      position: absolute;
+      width: 220px; height: 350px;
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--sf);
+      border: 1px solid var(--ln);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+    }
+    .is-portrait .goal-card {
+      width: 280px; height: 420px;
+    }
+
+    .goal-water {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 0%;
+      background: var(--wt);
+      transition: height 0.05s linear;
+    }
+    .goal-wave {
+      position: absolute;
+      left: 0; top: -28px;
+      width: 2400px; height: 30px;
+      background: var(--wt);
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='30'%3E%3Cpath d='M0 15Q50 0 100 15T200 15V30H0Z'/%3E%3C/svg%3E") repeat-x 0 0/200px 30px;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='30'%3E%3Cpath d='M0 15Q50 0 100 15T200 15V30H0Z'/%3E%3C/svg%3E") repeat-x 0 0/200px 30px;
+    }
+    .goal-content {
+      position:relative;
+      height: 100%;
+      padding: 26px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    .goal-priority {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--ac);
+      opacity: 0;
+    }
+    .goal-percent {
+      font-size: 64px;
+      font-weight: 600;
+    }
+    .goal-name {
+      font-size: 28px;
+      font-family: Fraunces, serif;
+      font-weight: 500;
+      line-height: 1.1;
+    }
+    .goal-saved {
+      font-size: 19px;
+      color: var(--mu);
+      margin-top: 6px;
+    }
+
+    /* 4. Income Allocation Modal ("Contributions are transfers, not expenses") */
+    #modal-income {
+      position: absolute;
+      left: 450px; top: 160px;
+      width: 680px;
+      background: var(--sf);
+      border: 1px solid var(--ln);
+      border-radius: 32px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+      padding: 38px 42px;
+      opacity: 0;
+      z-index: 20;
+    }
+    .is-portrait #modal-income {
+      left: 60px; top: 320px;
+      width: 860px;
+    }
+
+    .modal-amount {
+      font-size: 78px;
+      font-weight: 600;
+      color: var(--inc);
+      margin: 16px 0;
+    }
+    .pill-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      border-radius: 99px;
+      background: var(--ac-soft);
+      border: 1px solid var(--ac);
+      color: var(--ac);
+      font-size: 20px;
+      font-weight: 600;
+      margin-top: 14px;
+      opacity: 0;
+    }
+
+    /* 5. Month-End Surplus Card */
+    #card-monthend {
+      left: 730px; top: 460px;
+      width: 710px; height: 380px;
+      padding: 34px;
+      opacity: 0;
+    }
+    .is-portrait #card-monthend {
+      left: 32px; top: 1000px;
+      width: 916px; height: 460px;
+    }
+
+    .surplus-amount {
+      font-size: 58px;
+      font-weight: 600;
+      color: var(--ac);
+      margin: 8px 0 20px;
+    }
+    .surplus-row {
+      margin-bottom: 14px;
+      font-size: 24px;
+    }
+    .surplus-bar {
+      height: 12px;
+      background: var(--sf2);
+      border-radius: 6px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .surplus-fill {
+      height: 100%; width: 0%;
+      border-radius: 6px;
+      background: var(--ac);
+    }
+
+    /* =========================================================================
+       SCENE 3: PRIVACY & GOOGLE SHEETS ARCHITECTURE
+       ========================================================================= */
+    #s-architecture {
+      position: absolute;
+      inset: 0;
+      background: #090B0E;
+      z-index: 40;
+      color: #E9E6DF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      clip-path: circle(0% at 50% 50%);
+    }
+
+    .arch-diagram {
+      position: relative;
+      width: 1400px; height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .is-portrait .arch-diagram {
+      width: 920px; height: 1200px;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    .arch-box {
+      width: 380px; height: 260px;
+      border-radius: 28px;
+      background: #14171D;
+      border: 1.5px solid #282E38;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .arch-box h3 {
+      font-family: Fraunces, serif;
+      font-size: 38px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .arch-box p {
+      font-size: 21px;
+      color: #9299A6;
+      line-height: 1.3;
+    }
+    .arch-box .arch-tag {
+      margin-top: 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 16px;
+      color: var(--ac);
+      background: rgba(200,164,92,0.12);
+      padding: 4px 14px;
+      border-radius: 99px;
+      border: 1px solid rgba(200,164,92,0.25);
+    }
+
+    /* SVG Connecting Data Lines */
+    #arch-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* =========================================================================
+       SCENE 4: PWA, ANDROID APK & HARDWARE SAFE-AREAS
+       ========================================================================= */
+    #s-platforms {
+      position: absolute;
+      inset: 0;
+      background: #090B0E;
+      z-index: 50;
+      color: #E9E6DF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      clip-path: circle(0% at 50% 50%);
+    }
+    .platform-cards-row {
+      display: flex;
+      gap: 50px;
+      margin-top: 40px;
+    }
+    .is-portrait .platform-cards-row {
+      flex-direction: column;
+      gap: 30px;
+    }
+    .platform-card {
+      width: 440px;
+      background: #15181D;
+      border: 1.5px solid #2A313D;
+      border-radius: 30px;
+      padding: 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .platform-card h4 {
+      font-family: Fraunces, serif;
+      font-size: 36px;
+      margin-top: 18px;
+      margin-bottom: 10px;
+    }
+    .platform-card p {
+      font-size: 20px;
+      color: #8E96A3;
+      line-height: 1.4;
+    }
+
+    /* =========================================================================
+       SCENE 5: FINALE & OFFICIAL LOGO INSIGNIA (STRICT ZERO BORDER GLITCH)
+       ========================================================================= */
+    #s-finale {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      background: #07080A;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #E9E6DF;
+      text-align: center;
+      clip-path: circle(0% at 50% 50%);
+    }
+
+    #finale-logo-wrap {
+      width: 220px; height: 220px;
+      opacity: 0;
+      transform: scale(0.6);
+      filter: blur(16px);
+      margin-bottom: 24px;
+    }
+    .is-portrait #finale-logo-wrap {
+      width: 260px; height: 260px;
+    }
+
+    #finale-brand {
+      font-family: Fraunces, serif;
+      font-size: 120px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      margin-bottom: 16px;
+    }
+    #finale-tagline {
+      font-family: Fraunces, serif;
+      font-size: 48px;
+      color: #C8A45C;
+      display: flex;
+      gap: 28px;
+      margin-bottom: 34px;
+    }
+    .tag-word { opacity: 0; transform: translateY(20px); display: inline-block; }
+
+    #finale-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 34px;
+      border: 1.5px solid #C8A45C;
+      border-radius: 99px;
+      color: #C8A45C;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 28px;
+      font-weight: 500;
+      background: rgba(200,164,92,0.06);
+      opacity: 0;
+    }
+
+    /* Kinetic Claim Typography Overlay */
+    .claim-overlay {
+      position: absolute;
+      left: 0; right: 0; top: 38%;
+      text-align: center;
+      font-family: Fraunces, serif;
+      font-weight: 500;
+      z-index: 35;
+      pointer-events: none;
+    }
+    .claim-overlay .c-large {
+      font-size: 130px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .claim-overlay .c-sub {
+      font-size: 78px;
+      line-height: 1.15;
+      color: var(--ac);
+      margin-top: 10px;
+    }
+    .is-portrait .claim-overlay .c-large { font-size: 96px; }
+    .is-portrait .claim-overlay .c-sub { font-size: 60px; }
+    .w { display: inline-block; opacity: 0; transform: translateY(50px); filter: blur(12px); }
+
+    /* Sound Button & Scrub Timeline */
+    #sound-control {
+      position: fixed;
+      right: 24px; bottom: 24px;
+      z-index: 100;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: rgba(13,15,18,0.7);
+      border: 1.5px solid #2C323B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s;
+    }
+    #sound-control:hover { transform: scale(1.08); }
+    #debug-panel {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 100;
+      background: rgba(10,12,15,0.9);
+      padding: 10px 24px;
+      border-top: 1px solid #2C323B;
+      display: none;
+    }
+    #debug-panel input { width: 100%; accent-color: #C8A45C; }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================================
+       VIEWPORT STAGE
+       ========================================================================= -->
+  <div id="stage" class="is-landscape">
+    <div id="world">
+      <!-- Ambient Glows -->
+      <div id="g1" class="glow"></div>
+      <div id="g2" class="glow"></div>
+
+      <!-- =====================================================================
+           SCENE 1: THE TRADITIONAL LEDGER OPENS (Kaala Bahi)
+           ===================================================================== -->
+      <div id="s-ledger">
+        <div id="ledger-bg"></div>
+        <div id="book-rig">
+          <!-- Stationary Right Page -->
+          <div id="page-right">
+            <h2 class="ledger-title h">Expenses & Ledger</h2>
+            <div class="ledger-row" id="lr-1">
+              <span>House Rent <i>SBI</i></span>
+              <span class="mono" style="color:#B4482C">− ₹9,500</span>
+            </div>
+            <div class="ledger-row" id="lr-2">
+              <span>Groceries <i>HDFC</i></span>
+              <span class="mono" style="color:#B4482C">− ₹4,180</span>
+            </div>
+            <div class="ledger-row" id="lr-3">
+              <span>Electricity <i>ICICI</i></span>
+              <span class="mono" style="color:#B4482C">− ₹2,150</span>
+            </div>
+            <div class="ledger-row" id="lr-4">
+              <span>Swiggy & Dining <i>Kotak</i></span>
+              <span class="mono" style="color:#B4482C">− ₹1,870</span>
+            </div>
+            <div class="r" style="margin-top: 50px; font-size: 32px; font-weight: 600; color:#B4482C">
+              <span>Total Spent</span>
+              <span class="mono" id="ledger-total-spent">− ₹17,700</span>
+            </div>
+          </div>
+
+          <!-- Swinging Left Cover -->
+          <div id="book-cover">
+            <!-- Front Cover (Terracotta cloth & Brass Arch) -->
+            <div class="cover-front">
+              <div style="width: 220px; height: 220px;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <!-- Official Logo Arch Motif -->
+                  <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/>
+                </svg>
+              </div>
+              <h1 class="h" style="font-size: 64px; color: #C8A45C; margin-top: 14px;">Munshi</h1>
+              <p style="font-size: 24px; color: #E7C98A; letter-spacing: 0.16em; text-transform: uppercase; font-family:'IBM Plex Mono'; margin-top: 8px;">Kaala Bahi</p>
+            </div>
+
+            <!-- Back Cover Inside: Income Log -->
+            <div class="cover-back">
+              <h2 class="ledger-title h">Income & Credits</h2>
+              <div class="ledger-row" id="lr-inc-1">
+                <span>Monthly Salary <i>HDFC</i></span>
+                <span class="mono" style="color:#2F7A57">+ ₹36,000</span>
+              </div>
+              <div class="ledger-row" id="lr-inc-2">
+                <span>Consulting Project <i>ICICI</i></span>
+                <span class="mono" style="color:#2F7A57">+ ₹6,000</span>
+              </div>
+              <div class="r" style="margin-top: 130px; font-size: 32px; font-weight: 600; color:#2F7A57">
+                <span>Total Received</span>
+                <span class="mono" id="ledger-total-rec">+ ₹42,000</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="book-spine"></div>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           SCENE 2: INTERACTIVE DASHBOARD ENVIRONMENT
+           ===================================================================== -->
+      <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <aside id="nav-rail">
+          <!-- Official Logo in App Bar (Zero border stroke, exact assets match) -->
+          <div class="rail-logo">
+            <svg viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="Munshi logo">
+              <rect width="100" height="100" rx="23" fill="#0D0F12"/>
+              <rect x="24" y="20" width="52" height="60" rx="5" fill="#A95F32"/>
+              <path d="M29 20H35V80H29A5 5 0 0 1 24 75V25A5 5 0 0 1 29 20Z" fill="#C8A45C"/>
+              <g transform="translate(57 52) scale(.5) translate(-50 -47)">
+                <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/>
+            </svg>
+          </div>
+          <div class="nav-btn active" id="btn-dash">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          </div>
+          <div class="nav-btn" id="btn-history">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+          </div>
+          <div class="nav-btn" id="btn-goals">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="nav-btn" id="btn-accounts">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main id="app-main">
+          <header id="app-header">
+            <h1 class="app-headline h" id="main-title">Dashboard</h1>
+            <div id="theme-toggle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              <div id="theme-knob"></div>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+          </header>
+
+          <!-- 1. Monthly Spending Limit Card -->
+          <div class="card" id="card-limit">
+            <div class="card-label">Monthly Limit</div>
+            <div id="safe-pace-chip">Close to limit (92%)</div>
+            <div id="limit-amount" class="mono">₹1,580</div>
+            <div id="limit-sub">left of ₹20,000 · 8 days to go</div>
+            <div class="limit-progress-bar">
+              <div id="limit-progress-fill"></div>
+            </div>
+            <div id="daily-safe-callout">
+              <span style="color:var(--mu)">Spent ₹18,420</span>
+              <span id="daily-calc-text">₹197 a day safe to spend</span>
+            </div>
+          </div>
+
+          <!-- 2. Accounts Card -->
+          <div class="card" id="card-accounts">
+            <div class="card-label">Multiple Accounts</div>
+            <div class="account-row" style="margin-top:16px;">
+              <span><b>HDFC Bank</b> <i>Salary / 4012</i></span>
+              <span class="mono" id="bal-hdfc">₹27,397</span>
+            </div>
+            <div class="account-row">
+              <span><b>ICICI Bank</b> <i>Savings / 8841</i><span class="account-tag" id="tag-savings">Savings</span></span>
+              <span class="mono" id="bal-icici">₹29,600</span>
+            </div>
+            <div class="account-row">
+              <span><b>SBI</b> <i>Emergency Fund</i></span>
+              <span class="mono" id="bal-sbi">₹12,350</span>
+            </div>
+            <div class="account-row">
+              <span><b>Cash & Wallets</b> <i>Daily Spends</i></span>
+              <span class="mono" id="bal-cash">₹2,400</span>
+            </div>
+            <div id="accounts-stacked-bar">
+              <span style="width:38%; background:var(--ac);"></span>
+              <span style="width:40%; background:var(--ac); opacity:0.75;"></span>
+              <span style="width:18%; background:var(--ac); opacity:0.45;"></span>
+              <span style="width:4%; background:var(--ln);"></span>
+            </div>
+            <div class="r" style="margin-top:14px; font-size:22px;">
+              <span class="card-label" style="font-size:16px;">Total Balance</span>
+              <span class="mono" style="font-weight:600; color:var(--tx);">₹71,747</span>
+            </div>
+          </div>
+
+          <!-- 3. Goals Section (Water Reservoirs) -->
+          <div class="goal-card" id="goal-1" style="left:730px; top:110px;">
+            <div class="goal-water" id="gw-1">
+              <div class="goal-wave"></div>
+            </div>
+            <div class="goal-content">
+              <div class="r">
+                <span class="goal-priority" id="gp-badge-1">#1 Priority</span>
+                <span class="goal-percent mono" id="gp-val-1">40%</span>
+              </div>
+              <div>
+                <div class="goal-name">Goa getaway</div>
+                <div class="goal-saved mono">₹12,000 / ₹30,000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="goal-card" id="goal-2" style="left:975px; top:110px;">
+            <div class="goal-water" id="gw-2">
+              <div class="goal-wave"></div>
+            </div>
+            <div class="goal-content">
+              <div class="r">
+                <span class="goal-priority" id="gp-badge-2">#2 Priority</span>
+                <span class="goal-percent mono" id="gp-val-2">62%</span>
+              </div>
+              <div>
+                <div class="goal-name">Rainy-day vault</div>
+                <div class="goal-saved mono">₹6,200 / ₹10,000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="goal-card" id="goal-3" style="left:1220px; top:110px;">
+            <div class="goal-water" id="gw-3">
+              <div class="goal-wave"></div>
+            </div>
+            <div class="goal-content">
+              <div class="r">
+                <span class="goal-priority" id="gp-badge-3">#3 Priority</span>
+                <span class="goal-percent mono" id="gp-val-3">18%</span>
+              </div>
+              <div>
+                <div class="goal-name">Ladakh ride</div>
+                <div class="goal-saved mono">₹14,400 / ₹80,000</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Month-End Surplus Split -->
+          <div class="card" id="card-monthend">
+            <div class="card-label">Month-End Surplus Distribution</div>
+            <div class="surplus-amount mono" id="surplus-val">₹23,580</div>
+            <p style="color:var(--mu); font-size:20px; margin-bottom:18px;">Unspent money automatically allocated to goals by priority:</p>
+            <div class="surplus-row">
+              <div class="r"><span>#1 Goa getaway</span><span class="mono" style="color:var(--ac)">+ ₹7,800 (100% pace)</span></div>
+              <div class="surplus-bar"><div class="surplus-fill" id="sf-1"></div></div>
+            </div>
+            <div class="surplus-row">
+              <div class="r"><span>#2 Rainy-day vault</span><span class="mono" style="color:var(--ac)">+ ₹10,000 (Filled)</span></div>
+              <div class="surplus-bar"><div class="surplus-fill" id="sf-2"></div></div>
+            </div>
+            <div class="surplus-row">
+              <div class="r"><span>#3 Ladakh ride</span><span class="mono" style="color:var(--ac)">+ ₹5,780</span></div>
+              <div class="surplus-bar"><div class="surplus-fill" id="sf-3"></div></div>
+            </div>
+          </div>
+
+          <!-- 5. Educational Modal: Goal Contributions as Transfers -->
+          <div id="modal-income">
+            <div class="card-label">Add Income · Allocation</div>
+            <div class="modal-amount mono">+ ₹42,000</div>
+            <div style="font-size:24px; color:var(--mu); margin-bottom:16px;">Received from Salary · HDFC Bank</div>
+            <div class="r" style="padding:16px 0; border-top:1px solid var(--ln); border-bottom:1px solid var(--ln); font-size:24px;">
+              <span>Allocate directly to goals</span>
+              <span class="mono" style="color:var(--ac); font-weight:600;">ACTIVE</span>
+            </div>
+            <div class="pill-banner" id="transfer-pill">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Goal contributions are transfers, not expenses.</span>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- =====================================================================
+           SCENE 3: PRIVACY & ARCHITECTURE (Google Sheets + IndexedDB)
+           ===================================================================== -->
+      <div id="s-architecture">
+        <h2 class="h" style="font-size:74px; margin-bottom:12px;">Zero Server Tracking.</h2>
+        <p style="font-size:28px; color:#A2A9B5; margin-bottom:48px;">Your financial records stay in your own personal ecosystem.</p>
+
+        <div class="arch-diagram">
+          <!-- Device / Munshi App -->
+          <div class="arch-box" id="ab-1">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <h3>Your Device</h3>
+            <p>Munshi PWA & Android app</p>
+            <div class="arch-tag">Local IndexedDB Cache</div>
+          </div>
+
+          <!-- Apps Script Bridge -->
+          <div class="arch-box" id="ab-2">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <h3>Google Apps Script</h3>
+            <p>Private Web App endpoint</p>
+            <div class="arch-tag">32-char Bearer Token</div>
+          </div>
+
+          <!-- User's Google Sheet -->
+          <div class="arch-box" id="ab-3">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <h3>Your Google Sheet</h3>
+            <p>Stored in your own Google Drive</p>
+            <div class="arch-tag">100% Owned by You</div>
+          </div>
+
+          <!-- Animated Connection SVG Lines -->
+          <svg id="arch-svg" viewBox="0 0 1400 600">
+            <path id="arch-p1" d="M 380 300 L 510 300" stroke="#C8A45C" stroke-width="4" stroke-dasharray="8 8" fill="none"/>
+            <path id="arch-p2" d="M 890 300 L 1020 300" stroke="#C8A45C" stroke-width="4" stroke-dasharray="8 8" fill="none"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           SCENE 4: PWA, ANDROID APK & HARDWARE SAFE-AREAS
+           ===================================================================== -->
+      <div id="s-platforms">
+        <h2 class="h" style="font-size:76px; margin-bottom:12px;">Your Ledger, Everywhere.</h2>
+        <p style="font-size:28px; color:#A2A9B5;">Native Android APK and modern installable PWA.</p>
+
+        <div class="platform-cards-row">
+          <div class="platform-card" id="pc-1">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <h4>Native Android App</h4>
+            <p>Capacitor 8 engine with notch clearance, edge-to-edge layout, and in-app updates.</p>
+          </div>
+
+          <div class="platform-card" id="pc-2">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <h4>Installable PWA</h4>
+            <p>Runs smoothly on iOS, macOS, Windows, and Linux with full offline capabilities.</p>
+          </div>
+
+          <div class="platform-card" id="pc-3">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="1.8"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <h4>Synthesized Audio</h4>
+            <p>Zero external sound files. Synthesized Web Audio clicks and harmonic chimes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           SCENE 5: FINALE & OFFICIAL LOGO INSIGNIA (STRICT ZERO BORDER GLITCH)
+           ===================================================================== -->
+      <div id="s-finale">
+        <!-- Official Munshi Insignia (Zero Outer Border Stroke) -->
+        <div id="finale-logo-wrap">
+          <svg viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="Munshi logo">
+            <rect width="100" height="100" rx="23" fill="#0D0F12"/>
+            <rect x="24" y="20" width="52" height="60" rx="5" fill="#A95F32"/>
+            <path d="M29 20H35V80H29A5 5 0 0 1 24 75V25A5 5 0 0 1 29 20Z" fill="#C8A45C"/>
+            <g transform="translate(57 52) scale(.5) translate(-50 -47)">
+              <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/>
+          </svg>
+        </div>
+
+        <h1 id="finale-brand">Munshi</h1>
+
+        <div id="finale-tagline">
+          <span class="tag-word">Free.</span>
+          <span class="tag-word">Open Source.</span>
+          <span class="tag-word">MIT Licensed.</span>
+        </div>
+
+        <div id="finale-badge">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>github.com/shreyaass/munshi</span>
+        </div>
+      </div>
+
+      <!-- Kinetic Text Claim Overlay -->
+      <div class="claim-overlay" id="claim-1">
+        <div class="c-large"><span class="w">All</span> <span class="w">your</span> <span class="w">accounts.</span></div>
+        <div class="c-sub"><span class="w">One</span> <span class="w">clear</span> <span class="w">picture.</span></div>
+      </div>
+      <div class="claim-overlay" id="claim-2">
+        <div class="c-large"><span class="w">Know</span> <span class="w">what’s</span> <span class="w">safe</span></div>
+        <div class="c-sub"><span class="w">to</span> <span class="w">spend</span> <span class="w">each</span> <span class="w">day.</span></div>
+      </div>
+      <div class="claim-overlay" id="claim-3">
+        <div class="c-large"><span class="w">Goals</span> <span class="w">fill</span> <span class="w">up</span></div>
+        <div class="c-sub"><span class="w">like</span> <span class="w">water.</span></div>
+      </div>
+
+    </div><!-- /world -->
+    <div class="grain"></div>
+  </div><!-- /stage -->
+
+  <!-- Sound Mute/Unmute Toggle Button -->
+  <div id="sound-control" title="Toggle Sound">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <path id="snd-waves" d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>
+      <line id="snd-mute" x1="17" y1="9" x2="23" y2="15" stroke="#B4482C" stroke-width="2.5" style="display:none;"/>
+      <line id="snd-mute2" x1="23" y1="9" x2="17" y2="15" stroke="#B4482C" stroke-width="2.5" style="display:none;"/>
+    </svg>
+  </div>
+
+  <!-- Debug Scrub Panel (Active via ?debug=1) -->
+  <div id="debug-panel">
+    <input type="range" id="debug-scrubber" min="0" max="52" step="0.01" value="0">
+  </div>
+
+  <!-- GSAP Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <script>
+    /* =========================================================================
+       BANG MOTION PROMO SCRIPT (Target Duration: 52 Seconds)
+       ========================================================================= */
+    const DUR = 52.0;
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+
+    // Indian Rupee currency formatter
+    const fmt = v => '₹' + Math.round(v).toLocaleString('en-IN');
+    const rgb = hex => {
+      const n = parseInt(hex.slice(1), 16);
+      return `rgb(${n >> 16}, ${(n >> 8) & 255}, ${n & 255})`;
+    };
+
+    // Design Tokens
+    const THEMES = {
+      light: {
+        '--bg': '#EFEDE8', '--sf': '#FFFFFF', '--sf2': '#F6F4EF',
+        '--tx': '#14171B', '--mu': '#5F6670', '--ln': '#DDD9CF',
+        '--ac': '#A95F32', '--ac-soft': 'rgba(169, 95, 50, 0.12)',
+        '--oa': '#FFFFFF', '--inc': '#2F7A57', '--exp': '#B4482C',
+        '--wt': 'rgba(169, 95, 50, 0.28)'
+      },
+      dark: {
+        '--bg': '#0D0F12', '--sf': '#15181D', '--sf2': '#1E232A',
+        '--tx': '#E9E6DF', '--mu': '#9AA1AB', '--ln': '#2C323B',
+        '--ac': '#C8A45C', '--ac-soft': 'rgba(200, 164, 92, 0.14)',
+        '--oa': '#0D0F12', '--inc': '#4E9E74', '--exp': '#E8876C',
+        '--wt': 'rgba(200, 164, 92, 0.32)'
+      }
+    };
+
+    // Apply initial light theme colors
+    const applyTheme = mode => {
+      const theme = THEMES[mode];
+      for (const key in theme) {
+        document.documentElement.style.setProperty(key, theme[key]);
+      }
+    };
+    applyTheme('light');
+
+    // Responsive Composition Fitting (Landscape 16:9 vs Portrait 9:16)
+    let isPortrait = false;
+    function updateResponsiveLayout() {
+      isPortrait = window.innerWidth / window.innerHeight < 1.0;
+      const stage = $('#stage');
+      if (isPortrait) {
+        stage.classList.add('is-portrait');
+        stage.classList.remove('is-landscape');
+        const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+        document.documentElement.style.setProperty('--fit', scale);
+      } else {
+        stage.classList.add('is-landscape');
+        stage.classList.remove('is-portrait');
+        const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+        document.documentElement.style.setProperty('--fit', scale);
+      }
+    }
+    window.addEventListener('resize', updateResponsiveLayout);
+    updateResponsiveLayout();
+
+    // Camera Rig Transform
+    const cam = (px, py, s) => {
+      const cx = isPortrait ? 540 : 960;
+      const cy = isPortrait ? 960 : 540;
+      return { x: cx - px * s, y: cy - py * s, scale: s };
+    };
+
+    /* =========================================================================
+       AUDIO SYNTHESIS ENGINE (Web Audio API)
+       ========================================================================= */
+    let AC = null, masterGain = null, isMuted = false, audioStarted = false;
+    const soundEvents = [];
+    const cue = (t, type) => soundEvents.push([t, type]);
+
+    function initAudio() {
+      if (AC) return;
+      try {
+        AC = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) { return; }
+    }
+
+    function playTone(t, freq, duration, type, vol, out, freqEnd) {
+      if (!AC) return;
+      const osc = AC.createOscillator();
+      const gain = AC.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t);
+      if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, t + duration);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(vol, t + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+      osc.connect(gain);
+      gain.connect(out);
+      osc.start(t);
+      osc.stop(t + duration + 0.05);
+    }
+
+    function playNoise(t, duration, vol, out, filterType, fStart, fEnd) {
+      if (!AC) return;
+      const bufferSize = AC.sampleRate * 2;
+      const buffer = AC.createBuffer(1, bufferSize, AC.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+      const noise = AC.createBufferSource();
+      noise.buffer = buffer;
+      const filter = AC.createBiquadFilter();
+      filter.type = filterType;
+      filter.frequency.setValueAtTime(fStart, t);
+      filter.frequency.exponentialRampToValueAtTime(fEnd, t + duration);
+
+      const gain = AC.createGain();
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(vol, t + duration * 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(out);
+      noise.start(t);
+      noise.stop(t + duration + 0.05);
+    }
+
+    const bell = (t, f, out, v = 0.18) => {
+      playTone(t, f, 1.8, 'sine', v, out);
+      playTone(t, f * 2.76, 0.9, 'sine', v * 0.35, out);
+    };
+
+    const SOUND_EFFECTS = {
+      whoosh: (t, out) => playNoise(t, 0.75, 0.28, out, 'bandpass', 300, 3200),
+      boom:   (t, out) => { playTone(t, 110, 0.9, 'sine', 0.55, out, 34); playNoise(t, 0.8, 0.22, out, 'lowpass', 1200, 100); },
+      chime:  (t, out) => { bell(t, 880, out); bell(t + 0.12, 1320, out, 0.12); },
+      stamp:  (t, out) => { playTone(t, 140, 0.15, 'sine', 0.45, out, 50); playNoise(t, 0.08, 0.18, out, 'highpass', 3000, 6000); },
+      coin:   (t, out) => { playTone(t, 1318, 0.22, 'triangle', 0.16, out); playTone(t + 0.07, 1760, 0.3, 'triangle', 0.14, out); },
+      tick:   (t, out) => playTone(t, 1400, 0.04, 'square', 0.04, out),
+      click:  (t, out) => { playTone(t, 900, 0.04, 'square', 0.07, out); playTone(t + 0.04, 520, 0.05, 'square', 0.05, out); },
+      page:   (t, out) => playNoise(t, 0.55, 0.26, out, 'bandpass', 800, 4800),
+      water:  (t, out) => playNoise(t, 1.6, 0.16, out, 'lowpass', 300, 1900),
+      zip:    (t, out) => playNoise(t, 0.9, 0.18, out, 'bandpass', 400, 2800),
+      switch: (t, out) => { playTone(t, 520, 0.08, 'square', 0.09, out, 950); playNoise(t, 0.9, 0.18, out, 'bandpass', 200, 2400); }
+    };
+
+    function scheduleSoundtrack() {
+      if (!AC || AC.state !== 'running') return;
+      const startTime = AC.currentTime + 0.06;
+      if (masterGain) masterGain.gain.setTargetAtTime(0, AC.currentTime, 0.03);
+      masterGain = AC.createGain();
+      masterGain.gain.value = isMuted ? 0 : 0.8;
+      masterGain.connect(AC.destination);
+
+      // Schedule discrete SFX
+      soundEvents.forEach(([time, sfxName]) => {
+        if (SOUND_EFFECTS[sfxName]) SOUND_EFFECTS[sfxName](startTime + time, masterGain);
+      });
+
+      // Harmonic Bass Ambient drone
+      const drone = (freq, vol) => {
+        const osc = AC.createOscillator();
+        const g = AC.createGain();
+        const f = AC.createBiquadFilter();
+        osc.type = 'sawtooth';
+        osc.frequency.value = freq;
+        f.type = 'lowpass';
+        f.frequency.value = 360;
+        g.gain.setValueAtTime(0.0001, startTime);
+        g.gain.linearRampToValueAtTime(vol, startTime + 2.5);
+        g.gain.setValueAtTime(vol, startTime + DUR - 2.5);
+        g.gain.linearRampToValueAtTime(0.0001, startTime + DUR);
+        osc.connect(f);
+        f.connect(g);
+        g.connect(masterGain);
+        osc.start(startTime);
+        osc.stop(startTime + DUR + 0.1);
+      };
+      drone(73.4, 0.06);
+      drone(110.0, 0.045);
+
+      // Delicate melodic chimes on rhythmic beats
+      const NOTES = [293.66, 349.23, 392.00, 440.00, 523.25, 587.33];
+      let beat = 0;
+      for (let t = 6.0; t < 48.0; t += 0.65, beat++) {
+        if (beat % 2 === 0) playTone(startTime + t, 120, 0.2, 'sine', 0.32, masterGain, 40);
+        else playNoise(startTime + t, 0.05, 0.06, masterGain, 'highpass', 6500, 8500);
+        if (beat % 2 === 0) bell(startTime + t + 0.25, NOTES[(beat * 3) % NOTES.length], masterGain, 0.06);
+      }
+    }
+
+    /* =========================================================================
+       MASTER GSAP TIMELINE (52.0 Seconds Duration)
+       ========================================================================= */
+    const tl = gsap.timeline({
+      paused: true,
+      defaults: { ease: 'power2.inOut' },
+      onComplete: () => {
+        tl.play(0);
+        scheduleSoundtrack();
+      }
+    });
+
+    // Helper functions
+    function animateCounter(sel, endVal, startSec, duration, startVal = 0, formFn = fmt) {
+      const obj = { v: startVal };
+      tl.to(obj, {
+        v: endVal,
+        duration: duration,
+        ease: 'power2.out',
+        onUpdate: () => { $(sel).textContent = formFn(obj.v); }
+      }, startSec);
+    }
+
+    function animateWords(sel, startSec, staggerSec = 0.12) {
+      tl.fromTo(sel + ' .w',
+        { opacity: 0, y: 50, filter: 'blur(12px)' },
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, stagger: staggerSec, ease: 'power3.out', immediateRender: false },
+        startSec
+      );
+    }
+    function hideWords(sel, startSec) {
+      tl.to(sel, { opacity: 0, duration: 0.4, ease: 'power2.in' }, startSec);
+    }
+
+    // -------------------------------------------------------------------------
+    // 0.0s – 4.5s: SCENE 1 — THE TRADITIONAL LEDGER OPENS
+    // -------------------------------------------------------------------------
+    gsap.set('#book-rig', { y: 40, scale: 0.92 });
+    tl.to('#book-rig', { y: 0, scale: 1, duration: 1.2, ease: 'power3.out' }, 0.2);
+    cue(0.3, 'chime');
+
+    // Book Cover Swings Open
+    cue(1.2, 'page');
+    tl.to('#book-cover', { rotationY: -180, duration: 1.6, ease: 'power2.inOut' }, 1.2);
+
+    // Ledger ink entries appear with stamps
+    [1, 2, 3, 4].forEach((idx, i) => {
+      const t = 1.9 + i * 0.35;
+      tl.fromTo('#lr-' + idx, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out', immediateRender: false }, t);
+      cue(t, 'stamp');
+    });
+    ['inc-1', 'inc-2'].forEach((idx, i) => {
+      const t = 2.4 + i * 0.4;
+      tl.fromTo('#lr-' + idx, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out', immediateRender: false }, t);
+      cue(t, 'coin');
+    });
+
+    // Camera zooms into the heart of the ledger
+    cue(3.8, 'whoosh');
+    tl.to('#s-ledger', { opacity: 0, scale: 1.8, duration: 1.1, ease: 'power3.in' }, 3.9);
+
+    // -------------------------------------------------------------------------
+    // 4.5s – 10.0s: SCENE 2A — MULTIPLE ACCOUNTS BREAKDOWN
+    // -------------------------------------------------------------------------
+    tl.set('#s-ledger', { display: 'none' }, 5.0);
+    tl.fromTo('#app-container', { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 1.0, ease: 'power3.out' }, 4.4);
+    tl.to('#world', { ...cam(370, 650, 1.45), duration: 1.4, ease: 'power3.out' }, 4.4);
+
+    // Kinetic claim 1
+    animateWords('#claim-1', 4.8);
+    cue(4.8, 'chime');
+    hideWords('#claim-1', 7.5);
+
+    // Tag and Account balances animate
+    cue(6.2, 'coin');
+    tl.to('#tag-savings', { opacity: 1, duration: 0.4 }, 6.2);
+    animateCounter('#bal-hdfc', 27397, 6.0, 1.2, 0);
+    animateCounter('#bal-icici', 29600, 6.4, 1.2, 0);
+    animateCounter('#bal-sbi', 12350, 6.8, 1.0, 0);
+
+    // -------------------------------------------------------------------------
+    // 10.0s – 15.5s: SCENE 2B — MONTHLY LIMIT & SAFE DAILY PACE
+    // -------------------------------------------------------------------------
+    cue(9.8, 'whoosh');
+    tl.to('#world', { ...cam(370, 270, 1.55), duration: 1.3, ease: 'power3.inOut' }, 9.8);
+
+    animateWords('#claim-2', 10.4);
+    cue(10.4, 'chime');
+    hideWords('#claim-2', 13.5);
+
+    // Monthly limit dynamic counter & progress fill
+    animateCounter('#limit-amount', 1580, 10.8, 2.2, 20000, fmt);
+    tl.to('#limit-progress-fill', { width: '92%', duration: 2.2, ease: 'power2.inOut' }, 10.8);
+    tl.to('#limit-amount', { color: '#B4482C', duration: 0.5 }, 12.8);
+
+    // Close to limit warning badge
+    cue(12.8, 'stamp');
+    tl.fromTo('#safe-pace-chip', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(2)' }, 12.8);
+
+    // -------------------------------------------------------------------------
+    // 15.5s – 22.0s: SCENE 2C — SAVINGS GOALS (WATER RESERVOIR FILLING)
+    // -------------------------------------------------------------------------
+    cue(15.2, 'whoosh');
+    tl.to('#world', { ...cam(1080, 280, 1.35), duration: 1.4, ease: 'power3.inOut' }, 15.2);
+
+    animateWords('#claim-3', 15.8);
+    cue(15.8, 'chime');
+    hideWords('#claim-3', 19.5);
+
+    // Priority badges pop in
+    [1, 2, 3].forEach((idx, i) => {
+      const t = 16.5 + i * 0.25;
+      tl.fromTo('#gp-badge-' + idx, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2.5)' }, t);
+      cue(t, 'click');
+    });
+
+    // Liquid water rise inside reservoir cards
+    cue(17.4, 'water');
+    tl.to('#gw-1', { height: '40%', duration: 2.2, ease: 'power2.out' }, 17.4);
+    animateCounter('#gp-val-1', 40, 17.4, 2.2, 0, v => Math.round(v) + '%');
+
+    tl.to('#gw-2', { height: '62%', duration: 2.2, ease: 'power2.out' }, 17.8);
+    animateCounter('#gp-val-2', 62, 17.8, 2.2, 0, v => Math.round(v) + '%');
+
+    tl.to('#gw-3', { height: '18%', duration: 2.2, ease: 'power2.out' }, 18.2);
+    animateCounter('#gp-val-3', 18, 18.2, 2.2, 0, v => Math.round(v) + '%');
+
+    // Continuous wave animation loop
+    tl.fromTo('.goal-wave', { x: -800 }, { x: 0, duration: DUR, ease: 'none' }, 0);
+
+    // -------------------------------------------------------------------------
+    // 22.0s – 27.5s: SCENE 2D — GOAL CONTRIBUTIONS (TRANSFERS, NOT EXPENSES)
+    // -------------------------------------------------------------------------
+    cue(21.8, 'whoosh');
+    tl.to('#world', { ...cam(790, 360, 1.25), duration: 1.1 }, 21.8);
+
+    // Modal pops up
+    cue(22.4, 'boom');
+    tl.fromTo('#modal-income',
+      { opacity: 0, y: 40, scale: 0.9 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.8)' },
+      22.4
+    );
+
+    // Banner reveals: "Contributions are transfers, not expenses."
+    cue(23.6, 'stamp');
+    tl.fromTo('#transfer-pill',
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+      23.6
+    );
+
+    // Dismiss modal smoothly
+    tl.to('#modal-income', { opacity: 0, y: -30, scale: 0.95, duration: 0.5, ease: 'power2.in' }, 26.8);
+
+    // -------------------------------------------------------------------------
+    // 27.5s – 33.0s: SCENE 2E — MONTH-END SURPLUS DISTRIBUTION
+    // -------------------------------------------------------------------------
+    cue(27.2, 'whoosh');
+    tl.to('#world', { ...cam(1085, 650, 1.35), duration: 1.2 }, 27.2);
+
+    // Month-End card appears
+    cue(27.9, 'boom');
+    tl.fromTo('#card-monthend',
+      { opacity: 0, y: 40, scale: 0.92 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.7)' },
+      27.9
+    );
+
+    // Surplus distribution bars fill by priority
+    animateCounter('#surplus-val', 23580, 28.2, 1.4, 0);
+    [
+      { id: '#sf-1', w: '100%', t: 28.6 },
+      { id: '#sf-2', w: '100%', t: 29.4 },
+      { id: '#sf-3', w: '64%',  t: 30.2 }
+    ].forEach(item => {
+      tl.to(item.id, { width: item.w, duration: 0.8, ease: 'power2.out' }, item.t);
+      cue(item.t, 'tick');
+    });
+
+    // -------------------------------------------------------------------------
+    // 33.0s – 35.5s: SCENE 2F — THEME SWITCH (LIGHT COPPER → DARK BRASS)
+    // -------------------------------------------------------------------------
+    cue(32.8, 'whoosh');
+    tl.to('#world', { ...cam(1500, 130, 2.1), duration: 1.1 }, 32.8);
+
+    cue(34.0, 'switch');
+    tl.to('#theme-knob', { x: 60, duration: 0.4, ease: 'power2.out' }, 34.0);
+    // Smooth CSS Variable color transition to Dark Theme
+    const darkTheme = THEMES.dark;
+    const themeProxy = { ...THEMES.light };
+    tl.to(themeProxy, {
+      ...darkTheme,
+      duration: 1.0,
+      ease: 'power2.inOut',
+      onUpdate: () => {
+        for (const k in darkTheme) {
+          document.documentElement.style.setProperty(k, themeProxy[k]);
+        }
+      }
+    }, 34.0);
+
+    // -------------------------------------------------------------------------
+    // 35.5s – 42.5s: SCENE 3 — ZERO SERVER PRIVACY ARCHITECTURE
+    // -------------------------------------------------------------------------
+    cue(35.3, 'boom');
+    tl.fromTo('#s-architecture',
+      { clipPath: 'circle(0% at 50% 50%)' },
+      { clipPath: 'circle(150% at 50% 50%)', duration: 1.0, ease: 'power3.inOut' },
+      35.5
+    );
+
+    // Arch boxes slide in
+    ['#ab-1', '#ab-2', '#ab-3'].forEach((id, i) => {
+      const t = 36.4 + i * 0.35;
+      tl.to(id, { opacity: 1, y: 0, duration: 0.6, ease: 'back.out(1.5)' }, t);
+      cue(t, 'stamp');
+    });
+
+    // Data pulse through Google Apps Script
+    cue(38.0, 'zip');
+    tl.fromTo('#arch-p1', { strokeDashoffset: 50 }, { strokeDashoffset: 0, duration: 1.2, ease: 'power1.inOut' }, 38.0);
+    tl.fromTo('#arch-p2', { strokeDashoffset: 50 }, { strokeDashoffset: 0, duration: 1.2, ease: 'power1.inOut' }, 38.6);
+
+    // -------------------------------------------------------------------------
+    // 42.5s – 47.5s: SCENE 4 — PWA, ANDROID APK & HARDWARE SAFE AREAS
+    // -------------------------------------------------------------------------
+    cue(42.3, 'boom');
+    tl.fromTo('#s-platforms',
+      { clipPath: 'circle(0% at 50% 50%)' },
+      { clipPath: 'circle(150% at 50% 50%)', duration: 0.95, ease: 'power3.inOut' },
+      42.5
+    );
+
+    ['#pc-1', '#pc-2', '#pc-3'].forEach((id, i) => {
+      const t = 43.3 + i * 0.3;
+      tl.to(id, { opacity: 1, y: 0, duration: 0.6, ease: 'back.out(1.6)' }, t);
+      cue(t, 'stamp');
+    });
+
+    // -------------------------------------------------------------------------
+    // 47.5s – 52.0s: SCENE 5 — FINALE & OFFICIAL LOGO INSIGNIA (ZERO BORDER GLITCH)
+    // -------------------------------------------------------------------------
+    cue(47.3, 'boom');
+    tl.fromTo('#s-finale',
+      { clipPath: 'circle(0% at 50% 50%)' },
+      { clipPath: 'circle(150% at 50% 50%)', duration: 1.0, ease: 'power3.inOut' },
+      47.5
+    );
+
+    // Official Logo emerges
+    cue(48.2, 'chime');
+    tl.to('#finale-logo-wrap', {
+      opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power3.out'
+    }, 48.2);
+
+    // Brand Name
+    tl.fromTo('#finale-brand',
+      { opacity: 0, y: 25 },
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
+      48.8
+    );
+
+    // Tagline words stagger
+    tl.to('.tag-word', {
+      opacity: 1, y: 0, stagger: 0.25, duration: 0.55, ease: 'power2.out'
+    }, 49.3);
+    [49.3, 49.55, 49.8].forEach(t => cue(t, 'chime'));
+
+    // Final GitHub link badge
+    cue(50.2, 'coin');
+    tl.fromTo('#finale-badge',
+      { opacity: 0, scale: 0.8 },
+      { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2)' },
+      50.2
+    );
+
+    // End padding to complete exactly 52.0s
+    tl.to({}, { duration: 0.2 }, DUR);
+
+    /* =========================================================================
+       USER INTERACTION & PLAYBACK INITIATION
+       ========================================================================= */
+    function startPlayback() {
+      tl.play(0);
+      scheduleSoundtrack();
+    }
+
+    const initExperience = () => {
+      if (audioStarted) return;
+      audioStarted = true;
+      initAudio();
+      if (AC) AC.resume().then(startPlayback);
+      else startPlayback();
+    };
+
+    window.addEventListener('pointerdown', initExperience, { once: true });
+    window.addEventListener('keydown', initExperience, { once: true });
+
+    // Sound toggle
+    $('#sound-control').addEventListener('click', e => {
+      e.stopPropagation();
+      initAudio();
+      if (AC && AC.state === 'suspended') AC.resume();
+      isMuted = !isMuted;
+      if (masterGain) masterGain.gain.value = isMuted ? 0 : 0.8;
+      $('#snd-waves').style.display = isMuted ? 'none' : '';
+      $('#snd-mute').style.display = isMuted ? '' : 'none';
+      $('#snd-mute2').style.display = isMuted ? '' : 'none';
+    });
+
+    // Keyboard controls
+    window.addEventListener('keydown', e => {
+      if (e.key === 'r' || e.key === 'R') {
+        tl.play(0);
+        scheduleSoundtrack();
+      }
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (tl.paused()) {
+          tl.play();
+          if (AC && AC.state === 'suspended') AC.resume();
+        } else {
+          tl.pause();
+          if (AC && AC.state === 'running') AC.suspend();
+        }
+      }
+    });
+
+    // Debugging controls
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('debug')) {
+      const dbg = $('#debug-panel');
+      const scrubber = $('#debug-scrubber');
+      dbg.style.display = 'block';
+      scrubber.oninput = e => {
+        tl.pause().time(parseFloat(e.target.value));
+      };
+      tl.eventCallback('onUpdate', () => {
+        scrubber.value = tl.time();
+      });
+    }
+
+    if (urlParams.has('clean')) {
+      tl.pause(0);
+    } else {
+      // Autoplay without sound on direct load if audio is blocked
+      initAudio();
+      tl.play(0);
+    }
+  </script>
+</body>
+</html>
