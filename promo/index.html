@@ -1,187 +1,1837 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Munshi promo</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"><style>html,body{margin:0;height:100%;background:#050607;overflow:hidden}*{box-sizing:border-box}
-#stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(var(--fit,1));overflow:hidden;background:var(--bg);font:400 26px Inter,sans-serif;color:var(--tx)}
-#world{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
-#g1,#g2{position:absolute;width:1100px;height:1100px;border-radius:50%}#g1{left:-200px;top:-300px;background:radial-gradient(circle,var(--wt),transparent 62%)}#g2{left:1000px;top:300px;background:radial-gradient(circle,var(--wt),transparent 62%)}
-#app{position:absolute;left:210px;top:110px;width:1500px;height:860px;border-radius:28px;overflow:hidden;background:var(--bg);border:1px solid var(--ln);box-shadow:0 40px 90px rgba(0,0,0,.22)}
-#desk{position:absolute;left:0;top:0;width:1500px;height:860px}
-#rail{position:absolute;left:0;top:0;width:90px;height:860px;background:var(--sf);border-right:1px solid var(--ln)}#rl{position:absolute;left:18px;top:18px}
-.ni{position:absolute;left:0;width:90px;height:64px;display:flex;align-items:center;justify-content:center;color:var(--mu)}.ni:nth-of-type(1){top:120px}.ni:nth-of-type(2){top:200px}.ni:nth-of-type(3){top:280px}.ni:nth-of-type(4){top:360px}.ni:nth-of-type(5){top:440px}
-#nav{position:absolute;left:12px;top:120px;width:66px;height:64px;border-radius:18px;background:var(--sf2);border:1px solid var(--ac)}
-#main{position:absolute;left:90px;top:0;width:1410px;height:860px}
-#hdr{position:absolute;left:30px;right:30px;top:20px;height:56px}#hdr .h{position:absolute;left:0;top:0}
-#tg2{position:absolute;right:0;top:4px;width:128px;height:48px;border-radius:99px;border:1px solid var(--ln);background:var(--sf);display:flex;justify-content:space-between;align-items:center;padding:0 12px;color:var(--mu)}#tk{position:absolute;left:4px;top:4px;width:56px;height:38px;border-radius:99px;background:var(--ac);opacity:.22}
-.h{font-family:Fraunces,serif;font-weight:500}.mono{font-family:'IBM Plex Mono',monospace}.r{display:flex;justify-content:space-between;align-items:center}
-.card{position:absolute;background:var(--sf);border:1px solid var(--ln);border-radius:28px;box-shadow:0 24px 50px rgba(0,0,0,.10)}
-.lab,.l{position:absolute;font:500 22px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}.l{position:static}
-#lim{left:30px;top:90px;width:640px;height:300px;border-color:var(--exp)}#lnum{position:absolute;left:34px;top:62px;font-size:98px;color:var(--tx)}
-#chip{position:absolute;right:30px;top:20px;padding:5px 16px;border:1.5px solid var(--exp);color:var(--exp);border-radius:99px;font:500 20px Inter;opacity:0}
-.sub{position:absolute;left:34px;color:var(--mu);font-size:25px}#bar{position:absolute;left:34px;top:232px;width:572px;height:18px;border-radius:9px;background:var(--sf2)}#lfill{height:100%;width:0;border-radius:9px;background:var(--exp)}#tick{position:absolute;left:452px;top:224px;width:3px;height:34px;background:var(--tx)}
-#acc{left:30px;top:410px;width:640px;height:420px}.arow{position:absolute;left:34px;right:34px;height:56px}.arow b{font-weight:500;font-size:28px}.arow i{font-style:normal;color:var(--mu);font-size:22px;margin-left:14px}.arow .mono{position:absolute;right:0;top:4px;font-size:28px}
-.pill{display:inline-block;padding:2px 14px;border:1.5px solid var(--ac);color:var(--ac);border-radius:99px;font:500 20px Inter;margin-left:14px;opacity:0}
-#sbar{position:absolute;left:34px;top:326px;height:22px;width:0;overflow:hidden;border-radius:11px;display:flex}#sbar span{flex:none;height:100%}
-#tchip{position:absolute;left:440px;top:70px;padding:8px 20px;background:var(--ac);color:var(--oa);border-radius:99px;font:500 24px 'IBM Plex Mono';opacity:0}
-.gc{position:absolute;overflow:hidden;background:var(--sf);border:1px solid var(--ln);border-radius:28px;box-shadow:0 24px 50px rgba(0,0,0,.10)}
-.water{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--wt)}
-.wv{position:absolute;left:0;top:-30px;width:3000px;height:32px;background:var(--wt);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='32'%3E%3Cpath d='M0 16Q55 0 110 16T220 16V32H0Z'/%3E%3C/svg%3E") repeat-x 0 0/220px 32px;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='32'%3E%3Cpath d='M0 16Q55 0 110 16T220 16V32H0Z'/%3E%3C/svg%3E") repeat-x 0 0/220px 32px}.wv.b{top:-22px;opacity:.6}
-.gt{position:relative;height:100%;padding:24px 22px;display:flex;flex-direction:column;justify-content:space-between}.rk{font:500 26px 'IBM Plex Mono';color:var(--ac);opacity:0}.gn{font-family:Fraunces,serif;font-weight:500;line-height:1.1}.gs{color:var(--mu);margin-top:4px}
-#me{left:700px;top:440px;width:670px;height:390px;opacity:0}#sv2{position:absolute;left:34px;top:60px;font-size:54px;color:var(--ac)}.mrow{position:absolute;left:34px;right:34px}.mrow .r{font-size:27px}.mb{height:12px;background:var(--sf2);border-radius:6px;margin-top:10px}.mb div{height:100%;width:0;border-radius:6px;background:var(--ac)}#short{position:absolute;right:34px;top:344px;font:500 22px 'IBM Plex Mono';color:var(--exp);opacity:0}
-#vg{position:absolute;inset:0;opacity:0}#dots{left:30px;top:550px;width:900px;height:260px}#dr{position:absolute;left:34px;right:34px;top:100px;display:flex;justify-content:space-between}.dw{text-align:center}.dt{width:44px;height:44px;border-radius:50%;box-sizing:border-box;border:3px dashed var(--ln)}
-#pace{left:960px;top:550px;width:420px;height:260px}#pb{position:absolute;left:34px;right:34px;top:110px;height:16px;border-radius:8px;background:var(--sf2)}#pf{height:100%;width:0;border-radius:8px;background:var(--ac)}#pt{position:absolute;left:58%;top:-9px;width:3px;height:34px;background:var(--tx)}
-#inc{position:absolute;left:385px;top:100px;width:640px;padding:30px 34px;background:var(--sf);border:1px solid var(--ln);border-radius:28px;box-shadow:0 40px 90px rgba(0,0,0,.35);opacity:0}
-.chs{display:flex;gap:10px}.ch{padding:9px 18px;border:1px solid var(--ln);border-radius:99px;font-size:24px;color:var(--mu)}.ch.on{border-color:var(--ac);color:var(--ac)}.tgl{margin:22px 0 8px;font-size:26px}.sw{width:62px;height:34px;border-radius:99px;background:var(--ln);position:relative;display:inline-block}.sw b{position:absolute;left:4px;top:4px;width:26px;height:26px;border-radius:50%;background:var(--mu)}
-.ar{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--ln);font-size:26px;opacity:0}.sm{margin-top:16px;font-size:25px;opacity:0}
-#mob{position:absolute;left:0;top:0;width:390px;height:844px;opacity:0;background:var(--bg)}#stk{position:absolute;left:20px;top:150px;width:350px;height:560px}
-.mc{position:absolute;left:0;width:350px;height:230px;overflow:hidden;background:var(--sf);border:1px solid var(--ln);border-radius:26px;box-shadow:0 -8px 26px rgba(0,0,0,.12)}
-#mlim{position:absolute;left:20px;right:20px;bottom:28px;padding:20px 22px;background:var(--sf);border:1px solid var(--exp);border-radius:24px}.mbar{height:12px;background:var(--sf2);border-radius:6px}.mbar div{height:100%;width:92%;background:var(--exp);border-radius:6px}
-#tap{position:absolute;left:175px;top:300px;width:90px;height:90px;margin:-45px;border-radius:50%;border:3px solid var(--ac);opacity:0}
-.chip2{position:absolute;padding:8px 22px;border:1.5px solid var(--ac);color:var(--ac);border-radius:99px;font:500 24px Inter;z-index:2}
-.blob{position:absolute;width:200px;height:200px;margin:-100px 0 0 -100px;border-radius:50%;transform:scale(0);z-index:6}
-.cl{position:absolute;left:0;right:0;top:330px;text-align:center;font-family:Fraunces,serif;font-weight:500;z-index:7;pointer-events:none}.cl .l1{font-size:150px;line-height:1.05}.cl .l2{font-size:104px;line-height:1.15}.w{display:inline-block;opacity:0}
-#s0,#s1{position:absolute;inset:0;z-index:12;background:#0A0B0D;overflow:hidden}#s0{z-index:13}#s1{opacity:0;z-index:12}#s1bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#3a2210,#0A0B0D 70%)}
-#s0in{position:absolute;inset:0;transform-origin:960px 524px}#tile{position:absolute;left:700px;top:280px;opacity:0}#fl{position:absolute;inset:0;background:#E7C98A;opacity:0}
-#led{position:absolute;left:310px;top:160px;width:1300px;height:760px;perspective:2400px}.pg{background:#F6EFDD;color:#2A1D1A;border-radius:6px 22px 22px 6px;box-shadow:inset 40px 0 50px -40px rgba(0,0,0,.25)}
-#pr{position:absolute;left:650px;top:0;width:650px;height:760px}#cv{position:absolute;left:650px;top:0;width:650px;height:760px;transform-origin:0 50%;transform-style:preserve-3d}.fr{position:absolute;inset:0;backface-visibility:hidden}.cvr{background:linear-gradient(135deg,#B8672F,#7E4624);border-radius:6px 22px 22px 6px;border:6px solid #C8A45C;display:flex;align-items:center;justify-content:center}.bk{transform:rotateY(180deg);border-radius:22px 6px 6px 22px;box-shadow:inset -40px 0 50px -40px rgba(0,0,0,.25)}
-#spine{position:absolute;left:645px;top:0;width:10px;height:760px;background:#7E4624}.ph{position:absolute;left:44px;top:46px;font:500 56px Fraunces,serif}.er{position:absolute;left:44px;right:44px;height:70px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #D9C79F;font-size:32px;opacity:0}.er i{font-style:normal;font-size:23px;color:#7A6A4E;margin-left:14px}.er .mono{font-size:32px}
-.tot{position:absolute;left:44px;bottom:36px;font-size:40px;color:#B4482C}
-#fd,#fk{position:absolute;inset:0;clip-path:circle(0 at 960px 540px)}#fd{background:#F4EBDD;z-index:8;color:#14171B}#fk{background:#0D0F12;z-index:9}
-.dc{position:absolute;width:420px;height:200px;border-radius:30px;background:#fff;border:1px solid #DDD9CF;box-shadow:0 30px 60px rgba(126,70,36,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font:500 42px Fraunces,serif;opacity:0}.dc small{font:400 26px 'IBM Plex Mono';color:#5F6670}
-#dl{position:absolute;inset:0;width:1920px;height:1080px}#al{position:absolute;left:810px;top:490px;font-size:28px;color:#7E4624;opacity:0}.pk{position:absolute;width:26px;height:26px;margin:-13px;border-radius:50%;background:#A95F32;opacity:0}
-#rl2{position:absolute;inset:0;z-index:7;background:#0D0F12;clip-path:circle(0 at 960px 540px);color:#E9E6DF}#rlab{position:absolute;left:0;right:0;top:300px;text-align:center;font:500 44px Fraunces,serif;color:#C8A45C}#rwin{position:absolute;left:0;right:0;top:400px;height:230px;overflow:hidden}#rcol{text-align:center;font:500 190px/230px Fraunces,serif}
-#end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;color:#E9E6DF}#lg{opacity:0}#wm{font:500 130px Fraunces,serif;opacity:0}#tg{font:500 56px Fraunces,serif;color:#C8A45C;display:flex;gap:30px}#url{display:flex;align-items:center;gap:16px;padding:14px 30px;border:1.5px solid #C8A45C;color:#C8A45C;border-radius:99px;font:500 32px 'IBM Plex Mono';opacity:0}
-.grain{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:.05;background:repeating-radial-gradient(circle at 30% 40%,#fff 0 1px,transparent 1px 3px)}
-#snd{position:fixed;right:18px;bottom:18px;z-index:99;width:46px;height:46px;border-radius:50%;background:rgba(13,15,18,.6);border:1px solid #2C323B;display:flex;align-items:center;justify-content:center;cursor:pointer}#dbg{position:fixed;left:0;right:0;bottom:0;z-index:99;display:none}#dbg input{width:100%}
-</style></head><body><div id="stage"><div id="world"><div id="g1"></div><div id="g2"></div><div id="app"><div id="desk"><div id="rail"><div id="rl"><svg viewBox="0 0 100 100" width="54" height="54"><rect width="100" height="100" rx="23" fill="#0D0F12"/><rect x="24" y="20" width="52" height="60" rx="5" fill="#A95F32"/><path d="M29 20H35V80H29A5 5 0 0 1 24 75V25A5 5 0 0 1 29 20Z" fill="#C8A45C"/><g transform="translate(57 52) scale(.5) translate(-50 -47)"><path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/></svg></div><div id="nav"></div><div class="ni" style="top:120px"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></div><div class="ni" style="top:200px"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></div><div class="ni" style="top:280px"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C8 8 6 11 6 14a6 6 0 0 0 12 0c0-3-2-6-6-11Z"/></svg></div><div class="ni" style="top:360px"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14h2"/></svg></div><div class="ni" style="top:440px"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></div></div><div id="main">
-<div id="hdr"><div class="h" id="t1" style="font-size:38px">Dashboard</div><div class="h" id="t2" style="font-size:38px;opacity:0">Goals</div><div id="tg2"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/></svg><div id="tk"></div><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></div></div>
-<div id="v1"><div class="card" id="lim"><div class="lab" style="left:34px;top:26px">Monthly limit</div><div id="chip">Close to limit</div><div id="lnum" class="mono">₹20,000</div><div class="sub" style="top:178px">left of ₹20,000 · 8 days to go</div><div id="bar"><div id="lfill"></div></div><div id="tick"></div></div>
-<div class="card" id="acc"><div class="lab" style="left:34px;top:24px">Accounts</div><div class="arow" style="top:72px"><b>HDFC Bank</b><i>Salary</i><span class="mono" id="kot">₹27,397</span></div><div class="arow" style="top:130px"><b>SBI</b><i>Savings</i><span class="mono" id="sbi">₹2,350</span></div><div class="arow" style="top:188px"><b>Cash</b><i></i><span class="mono" id="csh">₹0</span></div><div class="arow" style="top:246px"><b>ICICI</b><span class="pill" id="sv">Savings</span><span class="mono" id="hd">₹29,600</span></div><div id="sbar"><span style="width:200px;background:var(--ac)"></span><span style="width:240px;background:var(--ac);opacity:.65"></span><span style="width:104px;background:var(--ac);opacity:.4"></span><span style="width:32px;background:var(--ln)"></span></div><div class="sub mono" style="top:360px;font-size:24px">Total ₹59,347</div><div id="tchip">₹5,000</div></div>
-<div class="gc" style="left:700px;top:90px;width:210px;height:330px"><div class="water" id="dw0"><div class="wv a"></div><div class="wv b"></div></div><div class="gt"><div class="r"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L3 11l7 2 2 7z"/></svg><span class="rk">#1</span></div><div class="mono pc" id="dp0" style="font-size:62px">0%</div><div><div class="gn" style="font-size:27px">Goa getaway</div><div class="mono gs" style="font-size:20px">₹12,000 / ₹30,000</div></div></div></div><div class="gc" style="left:930px;top:90px;width:210px;height:330px"><div class="water" id="dw1"><div class="wv a"></div><div class="wv b"></div></div><div class="gt"><div class="r"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg><span class="rk">#2</span></div><div class="mono pc" id="dp1" style="font-size:62px">0%</div><div><div class="gn" style="font-size:27px">Rainy-day vault</div><div class="mono gs" style="font-size:20px">₹6,200 / ₹10,000</div></div></div></div><div class="gc" style="left:1160px;top:90px;width:210px;height:330px"><div class="water" id="dw2"><div class="wv a"></div><div class="wv b"></div></div><div class="gt"><div class="r"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l6-10 4 6 3-4 5 8z"/></svg><span class="rk">#3</span></div><div class="mono pc" id="dp2" style="font-size:62px">0%</div><div><div class="gn" style="font-size:27px">Ladakh ride</div><div class="mono gs" style="font-size:20px">₹14,400 / ₹80,000</div></div></div></div>
-<div class="card" id="me"><div class="lab" style="left:34px;top:24px">Close November</div><div id="sv2" class="mono">₹0</div>
-<div class="mrow" style="top:150px"><div class="r"><span>#1 Goa getaway</span><span class="mono">₹7,800</span></div><div class="mb"><div></div></div></div><div class="mrow" style="top:226px"><div class="r"><span>#2 Rainy-day vault</span><span class="mono">₹10,000</span></div><div class="mb"><div></div></div></div><div class="mrow" style="top:302px"><div class="r"><span>#3 Ladakh ride</span><span class="mono" style="color:var(--exp)">₹5,780</span></div><div class="mb"><div style="background:var(--exp)"></div></div></div><div id="short">short ₹3,220</div></div></div>
-<div id="vg"><div class="gc" style="left:30px;top:90px;width:430px;height:430px"><div class="water" id="gw0"><div class="wv a"></div><div class="wv b"></div></div><div class="gt"><div class="r"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L3 11l7 2 2 7z"/></svg><span class="rk">#1</span></div><div class="mono pc" id="gp0" style="font-size:96px">0%</div><div><div class="gn" style="font-size:44px">Goa getaway</div><div class="mono gs" style="font-size:26px">₹12,000 / ₹30,000</div></div></div></div><div class="gc" style="left:490px;top:90px;width:430px;height:430px"><div class="water" id="gw1"><div class="wv a"></div><div class="wv b"></div></div><div class="gt"><div class="r"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg><span class="rk">#2</span></div><div class="mono pc" id="gp1" style="font-size:96px">0%</div><div><div class="gn" style="font-size:44px">Rainy-day vault</div><div class="mono gs" style="font-size:26px">₹6,200 / ₹10,000</div></div></div></div><div class="gc" style="left:950px;top:90px;width:430px;height:430px"><div class="water" id="gw2"><div class="wv a"></div><div class="wv b"></div></div><div class="gt"><div class="r"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l6-10 4 6 3-4 5 8z"/></svg><span class="rk">#3</span></div><div class="mono pc" id="gp2" style="font-size:96px">0%</div><div><div class="gn" style="font-size:44px">Ladakh ride</div><div class="mono gs" style="font-size:26px">₹14,400 / ₹80,000</div></div></div></div><div class="card" id="dots"><div class="lab" style="left:34px;top:24px">Rainy-day vault · 2026</div><div id="dr"><div class="dw"><div class="dt" id="dt0" data-s="h"></div><div class="l" style="font-size:20px;margin-top:8px">J</div></div><div class="dw"><div class="dt" id="dt1" data-s="h"></div><div class="l" style="font-size:20px;margin-top:8px">F</div></div><div class="dw"><div class="dt" id="dt2" data-s="p"></div><div class="l" style="font-size:20px;margin-top:8px">M</div></div><div class="dw"><div class="dt" id="dt3" data-s="h"></div><div class="l" style="font-size:20px;margin-top:8px">A</div></div><div class="dw"><div class="dt" id="dt4" data-s="m"></div><div class="l" style="font-size:20px;margin-top:8px">M</div></div><div class="dw"><div class="dt" id="dt5" data-s="h"></div><div class="l" style="font-size:20px;margin-top:8px">J</div></div><div class="dw"><div class="dt" id="dt6" data-s="h"></div><div class="l" style="font-size:20px;margin-top:8px">J</div></div><div class="dw"><div class="dt" id="dt7" data-s="p"></div><div class="l" style="font-size:20px;margin-top:8px">A</div></div><div class="dw"><div class="dt" id="dt8" data-s="h"></div><div class="l" style="font-size:20px;margin-top:8px">S</div></div><div class="dw"><div class="dt" id="dt9" data-s="m"></div><div class="l" style="font-size:20px;margin-top:8px">O</div></div><div class="dw"><div class="dt" id="dt10" data-s="c"></div><div class="l" style="font-size:20px;margin-top:8px">N</div></div><div class="dw"><div class="dt" id="dt11" data-s="u"></div><div class="l" style="font-size:20px;margin-top:8px">D</div></div></div></div><div class="card" id="pace"><div class="lab" style="left:34px;top:24px">Goa getaway · pace</div><div id="pb"><div id="pf"></div><div id="pt"></div></div><div class="sub mono" style="top:176px;font-size:24px;color:var(--exp)">₹5,400 behind</div></div></div>
-<div id="inc"><div class="h" style="font-size:40px">Add income</div><div class="mono" style="font-size:76px;color:var(--inc);margin:14px 0">+ ₹42,000</div><div class="chs"><span class="ch on">Salary</span><span class="ch">HDFC Bank</span></div><div class="r tgl"><span>Put towards a goal</span><span class="sw" id="sw"><b id="sk"></b></span></div>
-<div class="ar" id="a0"><span>#1 Goa getaway</span><span class="mono" id="x0">₹0</span></div><div class="ar" id="a1"><span>#2 Rainy-day vault</span><span class="mono" id="x1">₹0</span></div><div class="ar" id="a2"><span>#3 Ladakh ride</span><span class="mono" id="x2">₹0</span></div><div class="r sm"><span style="color:var(--mu)">To ICICI Savings</span><span class="mono" style="color:var(--ac)" id="xs">₹0</span></div></div>
-</div></div><div id="mob"><div class="h" style="font-size:40px;padding:56px 28px 0">Goals</div><div id="stk"><div class="mc" id="mc0" style="z-index:1"><div class="water" id="mw0"><div class="wv a"></div><div class="wv b"></div></div><div class="gt" style="padding:18px 22px;justify-content:flex-start;gap:8px"><div class="r"><div style="display:flex;gap:12px;align-items:center"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L3 11l7 2 2 7z"/></svg><span class="gn" style="font-size:30px">Goa getaway</span></div><span class="mono" id="mp0" style="font-size:38px">0%</span></div><div class="mono gs" style="font-size:22px">₹12,000 / ₹30,000</div></div></div><div class="mc" id="mc1" style="z-index:2"><div class="water" id="mw1"><div class="wv a"></div><div class="wv b"></div></div><div class="gt" style="padding:18px 22px;justify-content:flex-start;gap:8px"><div class="r"><div style="display:flex;gap:12px;align-items:center"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg><span class="gn" style="font-size:30px">Rainy-day vault</span></div><span class="mono" id="mp1" style="font-size:38px">0%</span></div><div class="mono gs" style="font-size:22px">₹6,200 / ₹10,000</div></div></div><div class="mc" id="mc2" style="z-index:3"><div class="water" id="mw2"><div class="wv a"></div><div class="wv b"></div></div><div class="gt" style="padding:18px 22px;justify-content:flex-start;gap:8px"><div class="r"><div style="display:flex;gap:12px;align-items:center"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="var(--ac)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l6-10 4 6 3-4 5 8z"/></svg><span class="gn" style="font-size:30px">Ladakh ride</span></div><span class="mono" id="mp2" style="font-size:38px">0%</span></div><div class="mono gs" style="font-size:22px">₹14,400 / ₹80,000</div></div></div></div><div id="mlim"><div class="lab" style="position:static">Monthly limit</div><div class="mono" style="font-size:40px;color:var(--exp);margin:6px 0">₹1,580 left</div><div class="mbar"><div></div></div></div><div id="tap"></div></div></div>
-<div class="chip2" id="cd" style="left:210px;top:60px">Desktop</div><div class="chip2" id="cp" style="left:210px;top:60px;opacity:0">Phone</div>
-<div class="blob" id="b1" style="left:650px;top:350px;background:radial-gradient(circle,#A95F32,#7E4624)"></div><div class="blob" id="b2" style="left:545px;top:420px;background:radial-gradient(circle,#E0C27F,#C8A45C)"></div><div class="blob" id="b3" style="left:1500px;top:600px;background:radial-gradient(circle,#8A4F2A,#5E3419)"></div></div>
-<div class="cl" id="c1" style="color:#F6EDE1"><div class="l1"><span class="w">Know</span> <span class="w">what’s</span> <span class="w">left</span></div><div class="l2"><span class="w">every</span> <span class="w">single</span> <span class="w">day</span></div></div>
-<div class="cl" id="c2" style="color:#0D0F12"><div class="l1"><span class="w">Goals</span> <span class="w">fill</span> <span class="w">up</span></div><div class="l2"><span class="w">like</span> <span class="w">water</span></div></div>
-<div id="s1"><div id="s1bg"></div><div id="led"><div id="pr" class="pg"><div class="ph">Expenses</div><div class="er" id="e2" style="top:150px"><span class="fr2">Rent<i>SBI</i></span><span class="mono" style="color:#B4482C">− ₹9,500</span></div><div class="er" id="e3" style="top:220px"><span class="fr2">Groceries<i>Kotak</i></span><span class="mono" style="color:#B4482C">− ₹4,180</span></div><div class="er" id="e4" style="top:290px"><span class="fr2">Electricity<i>ICICI Bank</i></span><span class="mono" style="color:#B4482C">− ₹2,150</span></div><div class="er" id="e5" style="top:360px"><span class="fr2">Fuel<i>HDFC Bank</i></span><span class="mono" style="color:#B4482C">− ₹1,870</span></div><div class="er" id="e6" style="top:430px"><span class="fr2">Swiggy<i>Kotak</i></span><span class="mono" style="color:#B4482C">− ₹420</span></div><div class="er" id="e7" style="top:500px"><span class="fr2">Metro card<i>HDFC Bank</i></span><span class="mono" style="color:#B4482C">− ₹300</span></div><div class="tot mono" id="tr">Spent ₹0</div></div><div id="cv"><div class="fr cvr"><div class="emb"><svg viewBox="0 0 100 100" width="260" height="260"><path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="2.4" stroke-linecap="round"/><path d="M62 80V94L66 90L70 94V80Z" fill="#C8A45C"/></svg></div></div><div class="fr bk pg"><div class="ph">Income</div><div class="er" id="e0" style="top:150px"><span class="fr2">Salary<i>HDFC Bank</i></span><span class="mono" style="color:#2F7A57">+ ₹36,000</span></div><div class="er" id="e1" style="top:220px"><span class="fr2">Freelance<i>ICICI Bank</i></span><span class="mono" style="color:#2F7A57">+ ₹6,000</span></div><div class="tot mono" id="tl2" style="color:#2F7A57">Received ₹0</div></div></div><div id="spine"></div></div><div class="blob" id="b0" style="left:1270px;top:870px;background:#EFEDE8"></div></div>
-<div id="s0"><div id="s0in"><svg id="tile" viewBox="0 0 100 100" width="520" height="520"><defs><radialGradient id="hg" cx="50%" cy="62%" r="62%"><stop offset="0" stop-color="#B8672F"/><stop offset=".35" stop-color="#3a1f0f"/><stop offset="1" stop-color="#050607"/></radialGradient></defs><rect width="100" height="100" rx="23" fill="#0D0F12"/><path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80Z" fill="url(#hg)" stroke="#C8A45C" stroke-width="1.2"/><g id="book"><rect x="24" y="20" width="52" height="60" rx="5" fill="#A95F32"/><path d="M29 20H35V80H29A5 5 0 0 1 24 75V25A5 5 0 0 1 29 20Z" fill="#C8A45C"/><g transform="translate(57 52) scale(.5) translate(-50 -47)"><path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/></g></svg></div><div id="fl"></div></div>
-<div id="fd"><svg id="dl" viewBox="0 0 1920 1080"><path id="l1" d="M690 560H1230" stroke="#C8A45C" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="540" stroke-dashoffset="540"/><path id="l2" d="M480 660V790" stroke="#C8A45C" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="130" stroke-dashoffset="130"/></svg><div class="dc" id="d1" style="left:270px;top:460px">Munshi<small>web and phone</small></div><div class="dc" id="d2" style="left:1230px;top:460px">Google Sheet<small>in your own Drive</small></div><div class="dc" id="d3" style="left:270px;top:790px;height:150px">Local cache<small>on your device</small></div><div class="mono" id="al">Apps Script</div><div class="pk" id="pk"></div></div>
-<div id="rl2"><div id="rlab">Everything in one ledger</div><div id="rwin"><div id="rcol"><div>Limits</div><div>Goals</div><div>Savings</div><div>Splits</div><div>Themes</div><div>Sheets</div></div></div></div>
-<div id="fk"><div id="end"><div id="lg"><svg viewBox="0 0 100 100" width="240" height="240"><rect width="100" height="100" rx="23" fill="#0D0F12"/><rect x="24" y="20" width="52" height="60" rx="5" fill="#A95F32"/><path d="M29 20H35V80H29A5 5 0 0 1 24 75V25A5 5 0 0 1 29 20Z" fill="#C8A45C"/><g transform="translate(57 52) scale(.5) translate(-50 -47)"><path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/></svg></div><div id="wm">Munshi</div><div id="tg"><span class="w">Free</span><span class="w">open source</span><span class="w">MIT licensed</span></div><div id="url"><svg viewBox="0 0 16 16" width="34" height="34" fill="#C8A45C"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>github.com/shreyaass/munshi</div></div></div>
-<div class="grain"></div></div>
-<div id="snd" aria-label="Sound"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#C8A45C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path id="sw1" d="M16 9c1.5 1.5 1.5 4.500 0 6M19 6.500c3 3 3 8 0 11"/><path id="sx" d="M17 9l5 6M22 9l-5 6" style="display:none"/></svg></div>
-<div id="dbg"><input type="range" min="0" max="69.5" step="0.01" value="0"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script><script>const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],DUR=70;
-const fit=()=>document.documentElement.style.setProperty('--fit',Math.min(innerWidth/1920,innerHeight/1080));addEventListener('resize',fit);fit();
-const cam=(px,py,s)=>({x:960-px*s,y:540-py*s,scale:s});
-const fmt=v=>'₹'+Math.round(v).toLocaleString('en-IN');
-const rgb=h=>{const n=parseInt(h.slice(1),16);return `rgb(${n>>16},${n>>8&255},${n&255})`};
-const TH={l:{'--bg':'#EFEDE8','--sf':'#FFFFFF','--sf2':'#F6F4EF','--tx':'#14171B','--mu':'#5F6670','--ln':'#DDD9CF','--ac':'#A95F32','--oa':'#FFFFFF','--inc':'#2F7A57','--exp':'#B4482C'},d:{'--bg':'#0D0F12','--sf':'#15181D','--sf2':'#1E232A','--tx':'#E9E6DF','--mu':'#9AA1AB','--ln':'#2C323B','--ac':'#C8A45C','--oa':'#0D0F12','--inc':'#6FB38F','--exp':'#E8876C'}};
-const th=k=>{const o={};for(const a in TH[k])o[a]=rgb(TH[k][a]);o['--wt']=k=='l'?'rgba(169,95,50,.28)':'rgba(200,164,92,.30)';return o};
-gsap.set('#stage',th('l'));
-const EV=[],cue=(t,n,a)=>EV.push([t,n,a]);
-const tl=gsap.timeline({paused:true,defaults:{ease:'power2.inOut'},onComplete:()=>{tl.play(0);sched()}});
-function cnt(sel,to,t,d,from=0,f=fmt,e='power2.out'){const o={v:from};tl.to(o,{v:to,duration:d,ease:e,onUpdate:()=>{$(sel).textContent=f(o.v)}},t)}
-const words=(sel,t,st=.14)=>tl.fromTo(sel+' .w',{opacity:0,y:60,filter:'blur(14px)'},{opacity:1,y:0,filter:'blur(0px)',duration:.65,stagger:st,ease:'power3.out',immediateRender:false},t);
-const out=(sel,t)=>tl.to(sel,{opacity:.5,duration:.4,ease:'none'},t).to(sel,{opacity:0,duration:.3,ease:'none'},t+.4);
-const blob=(id,a,b)=>{tl.fromTo(id,{scale:0},{scale:15,duration:.9,ease:'power3.in',immediateRender:false},a);tl.to(id,{scale:0,duration:.9,ease:'power3.inOut'},b)};
-const pop=(sel,t,o={})=>tl.fromTo(sel,{scale:0,opacity:0},{scale:1,opacity:1,duration:.5,ease:'back.out(2.4)',immediateRender:false,...o},t);
-const view=(t,toGoals)=>{tl.to('#nav',{y:toGoals?160:0,duration:.35},t);tl.to(toGoals?'#v1':'#vg',{opacity:0,x:-40,duration:.45,ease:'power2.in'},t);tl.fromTo(toGoals?'#vg':'#v1',{opacity:0,x:40},{opacity:1,x:0,duration:.5,ease:'power2.out',immediateRender:false},t+.15);tl.to('#t1',{opacity:toGoals?0:1,duration:.3,ease:'none'},t).to('#t2',{opacity:toGoals?1:0,duration:.3,ease:'none'},t);cue(t,'click')};
-const DP=[40,62,18];
-/* initial state */
-gsap.set('#world',{transformOrigin:'0 0',...cam(650,350,2.4)});
-gsap.set('#v1,#vg',{position:'absolute',left:0,top:0,width:1410,height:860});gsap.set('#vg',{opacity:0});
-[0,1,2].forEach(i=>{gsap.set('#dw'+i,{height:330*DP[i]/100});$('#dp'+i).textContent=DP[i]+'%'});gsap.set('#v1 .rk',{opacity:1});
-$$('.dt').forEach(d=>{const s=d.dataset.s,st=d.style;if(s=='h'){st.background='var(--ac)';st.border='3px solid var(--ac)'}else if(s=='p'){st.border='3px solid var(--ac)';st.background='linear-gradient(90deg,var(--ac) 50%,transparent 50%)'}else if(s=='m'){st.border='3px solid var(--exp)'}else if(s=='c'){st.border='3px solid var(--ac)';st.background='conic-gradient(var(--ac) 62%,var(--sf2) 0)'}});
-gsap.set('.mc',{top:0});[0,1,2].forEach(i=>gsap.set('#mc'+i,{top:i*74}));
-gsap.set('#s0in',{scale:.55});gsap.set('#led',{x:325});gsap.set('#tile',{opacity:0});
-tl.fromTo('.wv.a',{x:-1320},{x:0,duration:DUR,ease:'none'},0).fromTo('.wv.b',{x:0},{x:-1320,duration:DUR,ease:'none'},0);
-tl.to('#g1',{x:260,y:120,duration:DUR,ease:'none'},0).to('#g2',{x:-240,y:-100,duration:DUR,ease:'none'},0);
-/* intro: icon, fall through the hole */
-cue(.2,'swell');tl.to('#tile',{opacity:1,duration:1},.2).to('#s0in',{scale:1,duration:1.5},.2);cue(1.7,'whoosh');tl.to('#s0in',{scale:2.4,duration:1.3},1.7);
-cue(2.9,'chime');tl.to('#book',{y:-3,scale:1.06,svgOrigin:'50 50',duration:.35,ease:'power2.out'},2.9);
-cue(3.25,'fall');tl.to('#book',{y:7,scale:.18,rotation:28,opacity:0,svgOrigin:'50 55',duration:1.15,ease:'power2.in'},3.25);
-cue(3.6,'whoosh');tl.to('#s0in',{scale:60,duration:1.4,ease:'power3.in'},3.6);cue(4.9,'boom');
-tl.to('#fl',{opacity:1,duration:.35,ease:'none'},4.65).to('#s1',{opacity:1,duration:.05,ease:'none'},4.95).to('#s0',{opacity:0,duration:.05,ease:'none'},5.0).to('#fl',{opacity:0,duration:.1,ease:'none'},5.0);
-tl.fromTo('#led',{y:90,scale:.85,filter:'blur(12px)'},{y:0,scale:1,filter:'blur(0px)',duration:1,ease:'power3.out',immediateRender:false},5.1);
-cue(6.3,'page');tl.to('#cv',{rotationY:-180,duration:1.3,ease:'power2.inOut'},6.3).to('#led',{x:0,duration:1.3},6.3);
-[[0,'coin'],[2,'stamp'],[3,'stamp'],[1,'coin'],[4,'stamp'],[5,'stamp'],[6,'stamp'],[7,'stamp']].forEach(([id,s],k)=>{const t=7.7+k*.42;tl.fromTo('#e'+id,{opacity:0,x:-24},{opacity:1,x:0,duration:.3,ease:'power2.out',immediateRender:false},t);cue(t,s)});
-cnt('#tl2',42000,10.8,1,0,v=>'Received '+fmt(v));cnt('#tr',18420,10.8,1,0,v=>'Spent '+fmt(v));cue(11,'swell2');
-cue(12,'whoosh');tl.fromTo('#b0',{scale:0},{scale:15,duration:.8,ease:'power3.in',immediateRender:false},12).to('#s1',{opacity:0,duration:.5,ease:'none'},12.85);
-/* limit */
-tl.to('#world',{...cam(960,540,1.05),duration:1.8,ease:'power3.out'},12.8);
-cnt('#lnum',1580,13,2.4,20000,fmt,'power2.inOut');tl.to('#lfill',{width:526,duration:2.4},13).to('#lnum',{color:'rgb(180,72,44)',duration:.6,ease:'none'},15);
-pop('#chip',15.5);cue(15.5,'pop');tl.to('#world',{...cam(650,350,1.7),duration:1.1},15);
-cue(16.3,'whoosh');blob('#b1',16.3,18.9);words('#c1',17.1);cue(17.1,'chime');out('#c1',18.5);
-/* theme switch */
-cue(18.9,'whoosh');tl.to('#world',{...cam(1616,158,2.2),duration:1.2},18.9);
-cue(20.3,'switch');tl.to('#tk',{x:64,duration:.4},20.3).to('#stage',{...th('d'),duration:1.1,ease:'power2.inOut'},20.3);tl.to('#tk',{opacity:.4,duration:.1},20.3);
-tl.to('#world',{...cam(960,540,1.05),duration:1.1},21.5);
-/* goals screen */
-view(23,true);cue(23.8,'water');
-[0,1,2].forEach(i=>{tl.to('#gw'+i,{height:430*DP[i]/100,duration:1.7,ease:'power2.out'},23.8+i*.15);cnt('#gp'+i,DP[i],23.8+i*.15,1.7,0,v=>Math.round(v)+'%')});
-tl.fromTo('#vg .rk',{scale:0,opacity:0},{scale:1,opacity:1,stagger:.18,duration:.45,ease:'back.out(3)',immediateRender:false},25.2);cue(25.2,'pop');cue(25.4,'pop');cue(25.6,'pop');
-tl.to('#world',{...cam(545,415,1.7),duration:.9},25.4);
-cue(26.4,'whoosh');blob('#b2',26.4,29);words('#c2',27.2);cue(27.2,'chime');out('#c2',28.8);
-tl.to('#world',{...cam(780,790,1.5),duration:1.2},29);
-tl.fromTo('.dt',{scale:0},{scale:1,stagger:.1,duration:.35,ease:'back.out(3)',immediateRender:false},30.4);for(let i=0;i<12;i++)cue(30.4+i*.1,'tick');
-tl.to('#pf',{width:141,duration:1,ease:'power2.out'},30.6);tl.to('#world',{...cam(960,540,1.05),duration:1},32);
-/* accounts */
-view(33.2,false);tl.to('#world',{...cam(650,730,1.45),duration:1},33.6);
-tl.fromTo('#tchip',{opacity:0,y:0},{opacity:1,duration:.3,ease:'none',immediateRender:false},35).to('#tchip',{y:178,duration:.8},35.3).to('#tchip',{opacity:0,duration:.2,ease:'none'},36.1);cue(35.3,'coin');
-cnt('#kot',22397,35.3,.8,27397);cnt('#hd',34600,35.3,.8,29600);pop('#sv',36.2);cue(36.2,'pop');tl.to('#sbar',{width:576,duration:1,ease:'power2.out'},36.5);
-/* income towards goals */
-tl.to('#world',{...cam(1005,530,1.2),duration:1.1},37.9);tl.fromTo('#inc',{opacity:0,y:40,scale:.94},{y:0,scale:1,opacity:1,duration:.5,ease:'back.out(1.6)',immediateRender:false},38.3);cue(38.3,'pop');
-tl.to('#sw',{background:'rgb(200,164,92)',duration:.3},39).to('#sk',{x:28,duration:.3},39);
-tl.fromTo('.ar',{opacity:0,y:20},{opacity:1,y:0,stagger:.35,duration:.4,ease:'power2.out',immediateRender:false},39.3);
-[[7800,'#x0'],[10000,'#x1'],[5000,'#x2']].forEach(([v,s],k)=>{cnt(s,v,39.5+k*.35,.8);cue(39.5+k*.35,'coin')});
-tl.fromTo('.sm',{opacity:0},{opacity:1,duration:.4,ease:'none',immediateRender:false},40.8);cnt('#xs',22800,40.9,.7);tl.to('#inc',{opacity:0,y:30,duration:.5,ease:'power2.in'},42.2);
-/* month end */
-tl.to('#world',{...cam(1335,745,1.35),duration:1.2},42.4);
-tl.fromTo('#me',{opacity:0,scale:.92,y:40},{opacity:1,scale:1,y:0,duration:.6,ease:'back.out(1.6)',immediateRender:false},43.3);cue(43.3,'pop');
-cnt('#sv2',23580,43.4,1.1);['100%','100%','64%'].forEach((w,k)=>{tl.to($$('.mb div')[k],{width:w,duration:.8,ease:'power2.out'},44+k*.4);cue(44+k*.4,'tick')});
-tl.fromTo('#short',{opacity:0,y:10},{opacity:1,y:0,duration:.4,ease:'none',immediateRender:false},46);cue(46,'stamp');
-/* desktop to phone */
-tl.to('#world',{...cam(960,540,1),duration:.9},46.6);cue(47.6,'whoosh');
-tl.to('#app',{left:765,top:118,width:390,height:844,borderRadius:56,duration:1.2,ease:'power3.inOut'},47.6).to('#desk',{opacity:0,duration:.5,ease:'none'},47.6).to('#mob',{opacity:1,duration:.5,ease:'none'},48.3);
-tl.to('#cd',{opacity:0,left:765,duration:.4},47.7).to('#cp',{opacity:1,left:765,duration:.4},48.2);
-tl.fromTo('.mc',{opacity:0,y:120},{opacity:1,y:0,stagger:.15,duration:.5,ease:'power3.out',immediateRender:false},49);cue(49,'pop');cue(49.15,'pop');cue(49.3,'pop');
-tl.fromTo('#tap',{scale:.3,opacity:1},{scale:1.6,opacity:0,duration:.6,ease:'power2.out',immediateRender:false},50.4);cue(50.4,'tap');
-tl.to('#mlim',{opacity:0,duration:.3,ease:'none'},50.5);[0,1,2].forEach(i=>tl.to('#mc'+i,{top:i*190,duration:.7,ease:'power3.inOut'},50.5));
-[92,143,41].forEach((h,i)=>{tl.to('#mw'+i,{height:h,duration:1.4,ease:'power2.out'},51.4+i*.15);cnt('#mp'+i,DP[i],51.4+i*.15,1.4,0,v=>Math.round(v)+'%')});cue(51.4,'water');
-cue(53,'whoosh');tl.to('#mc2',{x:420,duration:.4,ease:'power2.in'},53).set('#mc2',{zIndex:0},53.4).to('#mc2',{x:0,top:0,duration:.6,ease:'power3.out'},53.4).to('#mc0',{top:190,duration:.6},53.4).to('#mc1',{top:380,duration:.6},53.4);cue(53.9,'pop');
-/* feature roll */
-cue(55,'boom');tl.fromTo('#rl2',{clipPath:'circle(0px at 960px 540px)'},{clipPath:'circle(1500px at 960px 540px)',duration:.9,ease:'power3.inOut',immediateRender:false},55);
-for(let k=1;k<6;k++){tl.to('#rcol',{y:-230*k,duration:.35,ease:'back.out(1.4)'},56+k*.62);cue(56+k*.62,'tick')}
-/* sheet diagram */
-cue(60.2,'whoosh');tl.fromTo('#fd',{clipPath:'circle(0px at 960px 540px)'},{clipPath:'circle(1500px at 960px 540px)',duration:.9,ease:'power3.inOut',immediateRender:false},60.2);
-tl.fromTo('.dc',{opacity:0,y:50},{opacity:1,y:0,stagger:.2,duration:.6,ease:'back.out(1.4)',immediateRender:false},61);cue(61,'pop');cue(61.2,'pop');cue(61.4,'pop');
-tl.to('#l1',{strokeDashoffset:0,duration:.8},61.7).to('#l2',{strokeDashoffset:0,duration:.5},62).to('#al',{opacity:1,duration:.4,ease:'none'},62.2);
-tl.fromTo('#pk',{opacity:1,x:690,y:560},{x:1230,y:560,duration:1.1,ease:'power1.inOut',immediateRender:false},62.7).to('#pk',{x:690,duration:1.1,ease:'power1.inOut'},63.9);cue(62.7,'zip');
-/* close */
-cue(64.9,'boom');tl.fromTo('#fk',{clipPath:'circle(0px at 960px 540px)'},{clipPath:'circle(1500px at 960px 540px)',duration:.9,ease:'power3.inOut',immediateRender:false},64.9);
-cue(65.6,'chime');tl.fromTo('#lg',{opacity:0,scale:.6,filter:'blur(18px)'},{opacity:1,scale:1,filter:'blur(0px)',duration:.9,ease:'power3.out',immediateRender:false},65.6);
-tl.fromTo('#wm',{opacity:0,y:30},{opacity:1,y:0,duration:.7,ease:'power3.out',immediateRender:false},66.2);
-tl.fromTo('#tg .w',{opacity:0,y:30,filter:'blur(10px)'},{opacity:1,y:0,filter:'blur(0px)',stagger:.35,duration:.6,ease:'power3.out',immediateRender:false},66.8);[66.8,67.15,67.5].forEach(t=>cue(t,'chime'));
-pop('#url',68,{scale:1});cue(68,'coin');tl.to({},{duration:.1},DUR-.1);
-/* audio: synthesized, scheduled against the timeline start */
-let AC=null,mst=null,muted=false,NB=null,started=false;
-function mk(){if(AC)return;try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}NB=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=((Math.sin(i*12.9898)*43758.5453)%1)*2-1}
-function tone(t,f,d,ty,v,o,f2){const s=AC.createOscillator(),g=AC.createGain();s.type=ty;s.frequency.setValueAtTime(f,t);if(f2)s.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(g);g.connect(o);s.start(t);s.stop(t+d+.05)}
-function nz(t,d,v,o,ty,f0,f1){const s=AC.createBufferSource();s.buffer=NB;s.loop=true;const b=AC.createBiquadFilter(),g=AC.createGain();b.type=ty;b.frequency.setValueAtTime(f0,t);b.frequency.exponentialRampToValueAtTime(f1,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+d*.4);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(b);b.connect(g);g.connect(o);s.start(t);s.stop(t+d+.05)}
-const bell=(t,f,o,v=.16)=>{tone(t,f,1.6,'sine',v,o);tone(t,f*2.76,.9,'sine',v*.35,o)};
-const S={pop:(t,o)=>tone(t,640,.14,'sine',.22,o,1100),whoosh:(t,o)=>nz(t,.8,.32,o,'bandpass',250,3400),boom:(t,o)=>{tone(t,110,.9,'sine',.6,o,32);nz(t,.9,.25,o,'lowpass',1500,120)},thud:(t,o)=>tone(t,140,.3,'sine',.5,o,45),chime:(t,o)=>{bell(t,880,o);bell(t+.12,1318.5,o,.1)},stamp:(t,o)=>{tone(t,150,.14,'sine',.45,o,60);nz(t,.07,.18,o,'highpass',3000,6000)},coin:(t,o)=>{tone(t,1318,.25,'triangle',.15,o);tone(t+.07,1760,.35,'triangle',.13,o)},tick:(t,o)=>tone(t,1500,.05,'square',.05,o),click:(t,o)=>{tone(t,900,.05,'square',.08,o);tone(t+.05,500,.07,'square',.06,o)},swell:(t,o)=>{nz(t,1.8,.18,o,'lowpass',200,2200);tone(t,220,1.8,'sawtooth',.05,o,440)},swell2:(t,o)=>tone(t,330,1.2,'sawtooth',.06,o,660),fall:(t,o)=>tone(t,1200,1.1,'sine',.15,o,120),page:(t,o)=>nz(t,.5,.3,o,'bandpass',900,5000),water:(t,o)=>nz(t,1.8,.14,o,'lowpass',300,1800),zip:(t,o)=>nz(t,1.1,.2,o,'bandpass',400,2600),tap:(t,o)=>tone(t,420,.12,'sine',.25,o,260),switch:(t,o)=>{tone(t,500,.08,'square',.1,o,900);nz(t,1.1,.2,o,'bandpass',200,2500)}};
-function music(T,o){const dr=(f,v)=>{const s=AC.createOscillator(),g=AC.createGain(),b=AC.createBiquadFilter();s.type='sawtooth';s.frequency.value=f;b.type='lowpass';b.frequency.value=380;g.gain.setValueAtTime(.0001,T);g.gain.linearRampToValueAtTime(v,T+3);g.gain.setValueAtTime(v,T+DUR-3);g.gain.linearRampToValueAtTime(.0001,T+DUR);s.connect(b);b.connect(g);g.connect(o);s.start(T);s.stop(T+DUR+.1)};dr(73.4,.07);dr(110,.05);dr(146.8,.025);
-const N=[293.66,349.23,392,440,523.25,587.33];let b=0;for(let t=12.6;t<64.5;t+=.6,b++){if(b%2==0)tone(T+t,120,.22,'sine',.38,o,42);else nz(T+t,.05,.07,o,'highpass',7000,9000);if(b%2==0)bell(T+t+.3,N[(b*3+(b>>2))%6],o,.07)}}
-function sched(){if(!AC||AC.state!=='running')return;const T=AC.currentTime+.08;if(mst)mst.gain.setTargetAtTime(0,AC.currentTime,.04);mst=AC.createGain();mst.gain.value=muted?0:.75;mst.connect(AC.destination);EV.forEach(([t,n,a])=>S[n]&&S[n](T+t,mst));music(T,mst)}
-function begin(){tl.play(0);sched()}
-mk();tl.play(0);
-const go=()=>{if(started)return;started=true;mk();if(AC)AC.resume().then(begin)};
-if(AC&&AC.state==='running'){started=true;begin()}else{addEventListener('pointerdown',go,{once:true});addEventListener('keydown',go,{once:true})}
-$('#snd').addEventListener('click',()=>{if(!started)return;muted=!muted;if(mst)mst.gain.value=muted?0:.75;$('#sx').style.display=muted?'':'none';$('#sw1').style.display=muted?'none':''});
-const q=new URLSearchParams(location.search);window.tl=tl;
-if(q.has('debug')){const d=$('#dbg');d.style.display='block';d.firstElementChild.oninput=e=>tl.pause().time(+e.target.value)}
-if(q.has('clean'))tl.pause(0);
-addEventListener('keydown',e=>{if(e.key==='r'||e.key==='R'){tl.play(0);sched()}if(e.code==='Space'){e.preventDefault();if(tl.paused()){tl.play();AC&&AC.resume()}else{tl.pause();AC&&AC.suspend()}}});
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<!--
+  Munshi (मुंशी) — Cinematic Promotional Motion Ad (v3.3)
+  Story: Logo Emergence -> Ledger Falls Through Portal -> Camera Dives In ->
+         Impact Ripples -> Ledger Opens -> Fluid Wave Bucket ->
+         External Toggle Flips -> Entire Screen & Cards Morph to Light Theme ->
+         Direct Architecture (Confined Beam) -> Grand Finale CTA.
+  Rule: 100% Theme Vector SVGs. Zero Emojis. Full Fluid Responsiveness.
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Munshi — The 100% Private Expense & Wealth Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"
+}}
+</script>
+<style>
+:root {
+  /* Munshi Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  /* Dark Obsidian Palette */
+  --bg-dark: #0D0F12;
+  --surface-dark: #15181D;
+  --surface-raised: #1C2027;
+  --line-dark: #2B313C;
+  --text-dark: #EAE6DF;
+  --muted-dark: #9AA1AB;
+  --brass: #C8A45C;
+  --brass-light: #E5C07B;
+  --brass-glow: rgba(200, 164, 92, 0.4);
+
+  /* Light Warm Sand Palette */
+  --bg-light: #EFEDE8;
+  --surface-light: #FFFFFF;
+  --raised-light: #F7F5F0;
+  --line-light: #DDD9CF;
+  --text-light: #14171B;
+  --muted-light: #5F6670;
+  --copper: #A95F32;
+
+  /* Semantic */
+  --income: #4EAD7B;
+  --expense: #E87A5D;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; height:100%; background:#07080A; overflow:hidden;
+  font-family: var(--font-sans); color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Master Stage (Fluid 100vw x 100vh / 100dvh) */
+#stage {
+  position: relative; width: 100vw; height: 100vh; height: 100dvh;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 45%, #161A22 0%, #0D0F12 55%, #050608 100%);
+  transition: background 0.8s ease;
+}
+
+/* Dynamic Three.js Canvas */
+#gl-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 1; opacity: 0.8;
+}
+
+/* Ambient Grain & Vignette */
+.vignette {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(4,5,7,0.85) 100%);
+}
+.grid-lines {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2; opacity: 0.035;
+  background-image: linear-gradient(var(--line-dark) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--line-dark) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* 3D World Camera Container */
+#world {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  perspective: 1200px; transform-style: preserve-3d; z-index: 3;
+}
+
+/* Acts Container */
+.act {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transform-style: preserve-3d; will-change: transform, opacity;
+  padding: clamp(16px, 4vw, 50px);
+  max-width: 1400px; margin: 0 auto;
+}
+
+/* Typography Classes */
+.font-fraunces {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: 'SOFT' 0, 'WONK' 0;
+}
+.font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF0CF 0%, #C8A45C 50%, #94712A 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* Kinetic Word Roll-Up Typography */
+.roll-box {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  margin-right: 0.16em;
+  padding-bottom: 0.05em;
+}
+.roll-word {
+  display: inline-block;
+  transform: translateY(125%);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Category Badge */
+.category-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 18px; border-radius: 999px;
+  font-size: clamp(12px, 1.4vw, 14px); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 2px; margin-bottom: clamp(10px, 2vh, 18px);
+}
+.badge-gold {
+  background: rgba(200, 164, 92, 0.12); border: 1px solid rgba(200, 164, 92, 0.4);
+  color: var(--brass-light);
+}
+
+/* ==================== ACT 1: LOGO SHOWS & LEDGER FALLS THROUGH HOLE ==================== */
+#act1 .logo-portal-stage {
+  position: relative; width: 340px; height: 340px;
+  display: flex; align-items: center; justify-content: center;
+  transform-style: preserve-3d;
+}
+.logo-outer-frame {
+  width: 140px; height: 140px; border-radius: 32px;
+  background: #0D0F12; border: 2px solid #C8A45C;
+  box-shadow: 0 0 60px rgba(200, 164, 92, 0.5);
+  position: relative; display: flex; align-items: center; justify-content: center;
+  transform-style: preserve-3d;
+}
+/* The Hole Created in Logo */
+.logo-portal-hole {
+  position: absolute; width: 72px; height: 84px; border-radius: 12px;
+  background: radial-gradient(circle, #050608 20%, #15181E 100%);
+  border: 1.5px dashed rgba(200, 164, 92, 0.4);
+  box-shadow: inset 0 0 25px rgba(0,0,0,0.9), 0 0 30px rgba(200, 164, 92, 0.2);
+}
+/* The Detached Ledger That Falls */
+.logo-falling-ledger {
+  position: absolute; width: 72px; height: 84px; border-radius: 12px;
+  background: linear-gradient(145deg, #1A1F26 0%, #A95F32 100%);
+  border: 1.5px solid #C8A45C;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(200, 164, 92, 0.4);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transform-style: preserve-3d; z-index: 10;
+}
+.falling-spine {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 12px;
+  background: #C8A45C; border-top-left-radius: 12px; border-bottom-left-radius: 12px;
+}
+
+/* ==================== ACT 2: LANDING IMPACT RIPPLES & LEDGER OPENS ==================== */
+#act2 .impact-ripple-wrap {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 400px; height: 400px; pointer-events: none;
+  display: flex; align-items: center; justify-content: center; z-index: 1;
+}
+.impact-ripple {
+  position: absolute; border-radius: 50%;
+  border: 2px solid rgba(200, 164, 92, 0.8);
+  pointer-events: none;
+}
+#act2 .book-stage {
+  perspective: 1400px; width: min(92vw, 840px); height: min(58vh, 460px);
+  position: relative; transform-style: preserve-3d; z-index: 5;
+}
+.book-cover {
+  position: absolute; inset: 0; border-radius: 24px;
+  background: linear-gradient(145deg, #1A1F26 0%, #101317 100%);
+  border: 1.5px solid rgba(200, 164, 92, 0.45);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.9), 0 0 40px var(--brass-glow);
+  transform-origin: left center; transform-style: preserve-3d; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.book-spine-gold {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 34px;
+  background: linear-gradient(180deg, #D4AF37 0%, #7A5816 100%);
+  border-top-left-radius: 24px; border-bottom-left-radius: 24px;
+  border-right: 2px solid rgba(0,0,0,0.4);
+}
+.book-pages-spread {
+  position: absolute; inset: 0; border-radius: 22px;
+  background: #15181E; border: 1.5px solid rgba(200, 164, 92, 0.35);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.85);
+  display: flex; overflow: hidden; z-index: 2;
+}
+.book-page {
+  flex: 1; padding: clamp(18px, 3vw, 36px); display: flex; flex-direction: column;
+  justify-content: space-between; position: relative;
+}
+.book-page-left {
+  border-right: 1px dashed rgba(200, 164, 92, 0.25);
+  background: linear-gradient(90deg, rgba(20,24,30,0.9) 0%, rgba(17,20,25,0.7) 100%);
+}
+.book-page-right {
+  background: linear-gradient(90deg, rgba(17,20,25,0.7) 0%, rgba(20,24,30,0.9) 100%);
+}
+.page-entry-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px;
+}
+.surplus-stamp {
+  align-self: center; padding: 8px 24px; border-radius: 999px;
+  background: rgba(78, 173, 123, 0.15); border: 1.5px solid var(--income);
+  color: var(--income); font-weight: 700; font-size: clamp(12px, 1.4vw, 15px);
+  box-shadow: 0 0 20px rgba(78, 173, 123, 0.3);
+}
+
+/* ==================== ACT 3: FLUID GOALS & SCENE-WIDE LIGHT/DARK MORPH ==================== */
+#act3 {
+  transition: background 0.7s ease, color 0.7s ease;
+}
+/* Scene-Wide Light Theme Transformation */
+#act3.light-theme-active {
+  background: radial-gradient(circle at 50% 45%, #FFFFFF 0%, #F5F3ED 65%, #E9E5DC 100%) !important;
+  color: #14171B !important;
+}
+#act3.light-theme-active .font-fraunces {
+  color: #14171B !important;
+}
+#act3.light-theme-active .sub-desc-text {
+  color: #5F6670 !important;
+}
+#act3.light-theme-active .goal-water-card {
+  background: #FFFFFF !important;
+  border-color: #DDD9CF !important;
+  color: #14171B !important;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.12), 0 0 40px rgba(169, 95, 50, 0.15) !important;
+}
+#act3.light-theme-active .guardrail-card {
+  background: #FFFFFF !important;
+  border-color: #DDD9CF !important;
+  color: #14171B !important;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.12) !important;
+}
+#act3.light-theme-active .scene-theme-control {
+  background: #FFFFFF !important;
+  border-color: #DDD9CF !important;
+  color: #14171B !important;
+}
+#act3.light-theme-active .scene-toggle-track {
+  background: #A95F32 !important;
+}
+#act3.light-theme-active #safeDailyText {
+  color: #A95F32 !important;
+}
+#act3.light-theme-active .pace-track {
+  background: #E8E5DC !important;
+}
+#act3.light-theme-active .pace-fill {
+  background: linear-gradient(90deg, #2F7A57 0%, #A95F32 85%) !important;
+}
+#act3.light-theme-active .pace-needle {
+  background: #14171B !important; box-shadow: 0 0 8px rgba(0,0,0,0.4) !important;
+}
+#act3.light-theme-active .guardrail-stat-chip {
+  background: #F7F5F0 !important; border-color: #DDD9CF !important; color: #14171B !important;
+}
+
+/* External Master Theme Toggle (Placed outside of all cards!) */
+.scene-theme-control {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 20px; border-radius: 999px;
+  background: rgba(22, 26, 33, 0.9); border: 1.5px solid rgba(200, 164, 92, 0.35);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  margin-bottom: clamp(14px, 2.5vh, 24px); transition: all 0.6s ease;
+}
+.scene-toggle-track {
+  width: 44px; height: 24px; border-radius: 999px; background: #28303C;
+  position: relative; display: flex; align-items: center; padding: 2px;
+  transition: background 0.4s ease;
+}
+.scene-toggle-thumb {
+  width: 20px; height: 20px; border-radius: 50%; background: #FFF;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  position: absolute; left: 2px;
+}
+
+#act3 .cards-showcase-stage {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(18px, 3.5vw, 44px); width: 100%; max-width: 1250px; flex-wrap: wrap;
+}
+/* The "Card with Bucket" Fluid Goals Wave */
+.goal-water-card {
+  flex: 1 1 340px; max-width: 560px; height: clamp(320px, 42vh, 400px);
+  border-radius: 28px; background: #161A21; border: 1.5px solid rgba(200, 164, 92, 0.45);
+  position: relative; overflow: hidden; padding: clamp(20px, 3vh, 32px);
+  display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(200, 164, 92, 0.15);
+  transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease;
+}
+.wave-container {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 65%;
+  pointer-events: none; overflow: hidden;
+}
+.wave-svg {
+  position: absolute; left: -100%; width: 300%; height: 100%;
+}
+.goal-badge-icon {
+  width: clamp(44px, 5.5vw, 56px); height: clamp(44px, 5.5vw, 56px);
+  border-radius: 16px; background: rgba(200,164,92,0.18);
+  border: 1.5px solid rgba(200,164,92,0.5);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Guardrail Card */
+.guardrail-card {
+  flex: 1 1 340px; max-width: 560px; border-radius: 28px;
+  background: #15181E; border: 1.5px solid rgba(78, 173, 123, 0.4);
+  padding: clamp(22px, 3.2vh, 36px); box-shadow: 0 25px 70px rgba(0,0,0,0.8);
+  transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease;
+}
+.pace-track {
+  width: 100%; height: 14px; border-radius: 999px; background: #252B35;
+  position: relative; margin: 20px 0; overflow: visible;
+  transition: background 0.6s ease;
+}
+.pace-fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #4EAD7B 0%, #C8A45C 85%);
+  width: 62%; box-shadow: 0 0 16px rgba(200, 164, 92, 0.45);
+}
+.pace-needle {
+  position: absolute; top: -7px; bottom: -7px; width: 4px; border-radius: 2px;
+  background: #FFF; box-shadow: 0 0 12px #FFF; left: 68%;
+}
+.guardrail-stats-row {
+  display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;
+}
+.guardrail-stat-chip {
+  flex: 1; padding: 10px 14px; border-radius: 14px;
+  background: rgba(25, 30, 38, 0.7); border: 1px solid rgba(44, 50, 59, 0.7);
+  display: flex; align-items: center; gap: 8px; font-size: 12px;
+  transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease;
+}
+
+/* ==================== ACT 4: DIRECT ARCHITECTURE (APP -> SHEET) ==================== */
+#act4 .diagram-container {
+  display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1200px;
+}
+.nodes-row {
+  display: flex; align-items: center; justify-content: center; gap: clamp(16px, 3vw, 44px);
+  width: 100%; position: relative; flex-wrap: wrap;
+}
+.arch-card {
+  flex: 1 1 290px; max-width: 440px; border-radius: 24px;
+  padding: clamp(20px, 3vh, 30px) clamp(18px, 2.5vw, 26px);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.85); transform-style: preserve-3d;
+}
+.arch-card-app {
+  background: linear-gradient(145deg, #181C23 0%, #111419 100%);
+  border: 1.5px solid rgba(200, 164, 92, 0.45);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px var(--brass-glow);
+}
+.arch-card-sheet {
+  background: linear-gradient(145deg, #121A15 0%, #0B120E 100%);
+  border: 1.5px solid rgba(78, 173, 123, 0.45);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(78, 173, 123, 0.25);
+}
+.arch-card-icon {
+  width: clamp(48px, 6vw, 62px); height: clamp(48px, 6vw, 62px);
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+.sync-connector {
+  flex: 0 1 240px; display: flex; flex-direction: column; align-items: center;
+  min-width: 180px; position: relative; margin: 10px 0;
+}
+/* Strict Overflow Hidden on Pipe so Loader Stays Confined */
+.sync-pipe {
+  width: 100%; height: 8px; border-radius: 999px; background: #222832;
+  position: relative; overflow: hidden !important;
+  border: 1px solid rgba(200, 164, 92, 0.25);
+}
+.sync-beam {
+  position: absolute; top: 0; left: 0; width: 35%; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, transparent 0%, #C8A45C 50%, #FFF 100%);
+  box-shadow: 0 0 12px #C8A45C;
+}
+.sync-badge-center {
+  margin-top: 14px; padding: 6px 16px; border-radius: 999px;
+  background: rgba(28, 34, 43, 0.95); border: 1px solid rgba(200, 164, 92, 0.4);
+  color: var(--brass-light); font-size: clamp(11px, 1.2vw, 13px); font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.trust-banner {
+  display: flex; gap: clamp(10px, 2vw, 18px); margin-top: clamp(18px, 3vh, 32px);
+  flex-wrap: wrap; justify-content: center;
+}
+.trust-pill {
+  padding: 8px 18px; border-radius: 12px; font-size: clamp(12px, 1.3vw, 14px); font-weight: 600;
+  background: rgba(22, 26, 33, 0.85); border: 1px solid rgba(44, 50, 59, 0.8);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ==================== ACT 5: GRAND FINALE ==================== */
+#act5 .brand-logo-large {
+  width: clamp(90px, 11vw, 130px); height: clamp(90px, 11vw, 130px);
+  border-radius: 30px; box-shadow: 0 20px 60px rgba(200, 164, 92, 0.4);
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+.feature-pills {
+  display: flex; gap: clamp(8px, 1.4vw, 14px);
+  margin: clamp(16px, 2.5vh, 28px) 0 clamp(18px, 3vh, 32px) 0;
+  flex-wrap: wrap; justify-content: center; max-width: 900px;
+}
+.pill {
+  padding: 8px 18px; border-radius: 999px; font-size: clamp(12px, 1.3vw, 15px);
+  font-weight: 600; background: rgba(28, 33, 41, 0.85);
+  border: 1px solid rgba(200, 164, 92, 0.35); color: var(--text-dark);
+  display: flex; align-items: center; gap: 8px;
+}
+.cta-button {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: clamp(14px, 2vh, 18px) clamp(30px, 4vw, 48px); border-radius: 18px;
+  background: linear-gradient(135deg, #F0D597 0%, #C8A45C 60%, #99732B 100%);
+  color: #0A0C0E; font-size: clamp(18px, 2vw, 23px); font-weight: 800;
+  box-shadow: 0 14px 40px rgba(200, 164, 92, 0.45);
+  text-decoration: none; cursor: pointer;
+}
+
+/* Modern Bottom Player Control Bar */
+#player-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 52px; z-index: 50;
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+  background: linear-gradient(to top, rgba(7, 8, 10, 0.95) 0%, rgba(7, 8, 10, 0.7) 65%, transparent 100%);
+  user-select: none;
+}
+
+.tap-sound-pill {
+  position: absolute; bottom: 58px; left: 16px; z-index: 50;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(13, 15, 18, 0.85); backdrop-filter: blur(8px);
+  border: 1px solid rgba(200, 164, 92, 0.4);
+  color: #C8A45C; font-family: var(--font-sans);
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+.tap-sound-pill:hover {
+  background: rgba(200, 164, 92, 0.15); border-color: #C8A45C; transform: translateY(-1px);
+}
+.tap-sound-pill:active { transform: scale(0.96); }
+
+.p-btn {
+  background: none; border: none; color: #EAE6DF;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  transition: color 0.2s, transform 0.1s; padding: 0; flex-shrink: 0;
+  outline: none;
+}
+.p-btn:hover { color: #C8A45C; }
+.p-btn:active { transform: scale(0.92); }
+
+.time-text {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500;
+  color: #9AA1AB; white-space: nowrap; flex-shrink: 0;
+}
+
+.slider-wrapper {
+  flex: 1; display: flex; align-items: center; position: relative;
+}
+
+.scrubber-range {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 5px; border-radius: 3px;
+  background: linear-gradient(to right, #C8A45C 0%, #C8A45C 0%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.2) 100%);
+  outline: none; cursor: pointer; transition: height 0.15s ease;
+}
+.slider-wrapper:hover .scrubber-range { height: 7px; }
+
+.scrubber-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #C8A45C;
+  box-shadow: 0 0 8px rgba(200, 164, 92, 0.8), 0 2px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer; transition: transform 0.15s ease;
+}
+.slider-wrapper:hover .scrubber-range::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+.scrubber-range::-moz-range-thumb {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #C8A45C; border: none;
+  box-shadow: 0 0 8px rgba(200, 164, 92, 0.8), 0 2px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.right-controls {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+
+.hidden { display: none !important; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nodes-row { flex-direction: column; gap: 14px; }
+  .sync-connector { transform: rotate(90deg); margin: 20px 0; }
+  .book-pages-spread { flex-direction: column; }
+  .book-page-left { border-right: none; border-bottom: 1px dashed rgba(200,164,92,0.25); }
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <!-- Dynamic 3D WebGL Canvas -->
+  <canvas id="gl-canvas"></canvas>
+  <div class="vignette"></div>
+  <div class="grid-lines"></div>
+
+  <!-- 3D World Camera Container -->
+  <div id="world">
+
+    <!-- =========================================================================
+         ACT 1: LOGO SHOWS & LEDGER FALLS THROUGH HOLE (0:00 - 0:03.2)
+         Camera dives right through the hole left in the logo!
+         ========================================================================= -->
+    <div class="act" id="act1">
+      <div class="logo-portal-stage" id="act1PortalStage">
+        
+        <!-- Logo Frame with Hole Aperture -->
+        <div class="logo-outer-frame" id="act1LogoFrame">
+          <div class="logo-portal-hole"></div>
+
+          <!-- The Detached Ledger That Drops Downward -->
+          <div class="logo-falling-ledger" id="logoFallingLedger">
+            <div class="falling-spine"></div>
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+              <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" stroke="#FFF" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+      <div class="font-mono rollup-text" id="act1Tagline" style="margin-top:20px; font-size:14px; color:var(--brass-light); letter-spacing:2px; text-transform:uppercase;">
+        MUNSHI · THE PRIVATE LEDGER
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 2: IMPACT RIPPLE & 3D LEDGER SWINGS OPEN (0:03.2 - 0:08.5)
+         Landing creates concentric ripples; the ledger cover opens into pages
+         ========================================================================= -->
+    <div class="act" id="act2">
+      <!-- Concentric Ripples Triggered by Fall Impact -->
+      <div class="impact-ripple-wrap" id="impactRippleWrap">
+        <div class="impact-ripple" id="impRipple1" style="width:120px; height:120px;"></div>
+        <div class="impact-ripple" id="impRipple2" style="width:220px; height:220px;"></div>
+        <div class="impact-ripple" id="impRipple3" style="width:320px; height:320px;"></div>
+      </div>
+
+      <div class="category-badge badge-gold">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/>
+          <line x1="16" y1="8" x2="2" y2="22"/>
+          <line x1="17.5" y1="15" x2="9" y2="15"/>
+        </svg>
+        <span class="rollup-text">The Digital Bahi Khata</span>
+      </div>
+
+      <div class="book-stage" id="bookStage">
+        <!-- Rotating Front Cover with Munshi Gold Seal -->
+        <div class="book-cover" id="bookCover">
+          <div class="book-spine-gold"></div>
+          <svg width="74" height="74" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="44" stroke="#C8A45C" stroke-width="2"/>
+            <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" stroke="#C8A45C" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <div class="font-fraunces rollup-text" style="font-size:clamp(22px, 3vw, 32px); color:#FFF; margin-top:16px;">
+            MUNSHI
+          </div>
+          <div class="font-mono rollup-text" style="font-size:12px; color:var(--brass-light); letter-spacing:2px; margin-top:4px;">
+            100% PRIVATE LEDGER
+          </div>
+        </div>
+
+        <!-- Interior Parchment Pages Spread -->
+        <div class="book-pages-spread" id="bookSpread">
+          
+          <!-- Left Page: Income Column (आवक) -->
+          <div class="book-page book-page-left">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="font-mono rollup-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--income);">
+                  CREDIT · आवक
+                </span>
+                <span class="font-mono" style="font-size:12px; color:var(--muted-dark);">MARCH 2026</span>
+              </div>
+              <div class="font-fraunces" id="incomeSum" style="font-size:clamp(24px, 3vw, 34px); font-weight:700; color:var(--income); margin-top:6px;">
+                +₹85,000
+              </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+              <div class="page-entry-row" id="row1">
+                <span style="color:#FFF;">Consulting & Retainer</span>
+                <span class="font-mono" style="color:var(--income);">+₹65,000</span>
+              </div>
+              <div class="page-entry-row" id="row2">
+                <span style="color:#FFF;">Dividends & Yield</span>
+                <span class="font-mono" style="color:var(--income);">+₹20,000</span>
+              </div>
+            </div>
+
+            <div class="font-mono" style="font-size:11px; color:var(--muted-dark);">
+              Verified in personal Google Sheet
+            </div>
+          </div>
+
+          <!-- Right Page: Expense Column (जावक) -->
+          <div class="book-page book-page-right">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="font-mono rollup-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--expense);">
+                  DEBIT · जावक
+                </span>
+                <span class="font-mono" style="font-size:12px; color:var(--muted-dark);">19 TRANSACTIONS</span>
+              </div>
+              <div class="font-fraunces" id="expenseSum" style="font-size:clamp(24px, 3vw, 34px); font-weight:700; color:var(--expense); margin-top:6px;">
+                -₹32,450
+              </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+              <div class="page-entry-row" id="row3">
+                <span style="color:#FFF;">Studio & Workspace</span>
+                <span class="font-mono" style="color:var(--expense);">-₹18,000</span>
+              </div>
+              <div class="page-entry-row" id="row4">
+                <span style="color:#FFF;">Groceries & Pantry</span>
+                <span class="font-mono" style="color:var(--expense);">-₹14,450</span>
+              </div>
+            </div>
+
+            <!-- Surplus Stamp -->
+            <div class="surplus-stamp font-mono">
+              NET SURPLUS: +₹52,550
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 3: FLUID WAVE BUCKET & EXTERNAL THEME TOGGLE (0:08.5 - 0:15.0)
+         Wave bucket fills up -> External Master Toggle clicks ->
+         Entire screen and cards morph smoothly to white daylight theme!
+         ========================================================================= -->
+    <div class="act" id="act3">
+      <div class="category-badge badge-gold">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+        </svg>
+        <span class="rollup-text">Disciplined Wealth Control</span>
+      </div>
+
+      <h2 class="font-fraunces rollup-text" style="font-size:clamp(26px, 4vw, 48px); text-align:center; margin-bottom:6px;">
+        Living Goals. <span class="gold-gradient-text">Zero Guesswork.</span>
+      </h2>
+      <p class="sub-desc-text rollup-text" style="font-size:clamp(14px, 1.8vw, 19px); color:var(--muted-dark); text-align:center; max-width:850px; margin-bottom: 16px;">
+        Watch your savings targets rise like water, while daily guardrails keep every rupee protected.
+      </p>
+
+      <!-- External Master Theme Switch (Placed outside all cards!) -->
+      <div class="scene-theme-control" id="sceneThemeControl">
+        <span class="font-mono" style="font-size:12px; font-weight:700;">THEME:</span>
+        <div class="scene-toggle-track">
+          <div class="scene-toggle-thumb" id="sceneToggleThumb"></div>
+        </div>
+        <span class="font-mono" id="sceneThemeLabel" style="font-size:12px; font-weight:700; letter-spacing:1px;">DARK OBSIDIAN</span>
+      </div>
+
+      <div class="cards-showcase-stage">
+        
+        <!-- The "Bucket Card" with Fluid Waves -->
+        <div class="goal-water-card" id="fluidGoalCard">
+          <div class="wave-container">
+            <svg class="wave-svg" viewBox="0 0 1200 400" preserveAspectRatio="none">
+              <path id="waveBack" fill="rgba(200, 164, 92, 0.22)" d="M0,80 C300,140 600,20 900,80 C1200,140 1500,20 1800,80 L1800,400 L0,400 Z"/>
+              <path id="waveFront" fill="rgba(200, 164, 92, 0.4)" stroke="rgba(200, 164, 92, 0.95)" stroke-width="2.5" d="M0,60 C300,10 600,110 900,60 C1200,10 1500,110 1800,60 L1800,400 L0,400 Z"/>
+            </svg>
+          </div>
+
+          <!-- Goal Info with Mountain SVG -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:2;">
+            <div style="display:flex; gap:16px; align-items:center;">
+              <div class="goal-badge-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="font-fraunces rollup-text" style="font-size:clamp(20px, 2.4vw, 26px); font-weight:700;">
+                  Himalayan Expedition
+                </div>
+                <div class="font-mono" style="font-size:clamp(12px, 1.3vw, 14px); opacity:0.75; margin-top:2px;">
+                  Target: ₹1,50,000 · Main Savings
+                </div>
+              </div>
+            </div>
+            <div class="font-mono" style="background:rgba(200, 164, 92, 0.2); border:1px solid rgba(200, 164, 92, 0.5); padding:4px 12px; border-radius:999px; color:var(--brass-light); font-weight:700; font-size:12px;">
+              #1 PRIORITY
+            </div>
+          </div>
+
+          <!-- Animated Counters -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; position:relative; z-index:2;">
+            <div>
+              <div style="font-size:12px; opacity:0.75; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Current Progress</div>
+              <div class="font-fraunces" id="goalAmountCount" style="font-size:clamp(30px, 3.8vw, 44px); font-weight:700;">₹0</div>
+            </div>
+            <div class="font-mono" id="goalPercentCount" style="font-size:clamp(34px, 4.2vw, 50px); font-weight:800; color:var(--brass-light);">0%</div>
+          </div>
+        </div>
+
+        <!-- Guardrail Card -->
+        <div class="guardrail-card" id="guardrailCard">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div style="width:10px; height:10px; border-radius:50%; background:var(--income); box-shadow:0 0 10px var(--income);"></div>
+              <span class="font-mono rollup-text" style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;">
+                Monthly Limit Guardrail
+              </span>
+            </div>
+            <span class="font-mono" style="color:var(--income); font-size:12px; font-weight:700; background:rgba(78,173,123,0.15); padding:3px 9px; border-radius:6px;">
+              ON TRACK (62%)
+            </span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:20px;">
+            <div>
+              <div class="font-mono" style="font-size:11px; opacity:0.75;">SAFE TO SPEND TODAY</div>
+              <div class="font-fraunces" id="safeDailyText" style="font-size:clamp(32px, 4vw, 44px); font-weight:700; color:var(--brass-light); margin-top:2px;">
+                ₹1,450<span style="font-size:18px; font-weight:400; opacity:0.6;">/day</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div class="font-mono" style="font-size:11px; opacity:0.75;">REMAINING BUDGET</div>
+              <div class="font-fraunces" id="remainingBudgetText" style="font-size:clamp(22px, 2.8vw, 30px); font-weight:700; margin-top:2px;">
+                ₹18,850 <span style="font-size:14px; opacity:0.6;">/ ₹50,000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pace Progress Bar -->
+          <div class="pace-track">
+            <div class="pace-fill" id="paceFillBar"></div>
+            <div class="pace-needle" title="Current Day"></div>
+          </div>
+
+          <!-- Bottom Stat Chips -->
+          <div class="guardrail-stats-row font-mono">
+            <div class="guardrail-stat-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Zero Overspending</span>
+            </div>
+            <div class="guardrail-stat-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>11 Days Remaining</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 4: ARCHITECTURE DIAGRAM (APP -> SHEET) (0:15.0 - 0:20.5)
+         Multi-Device Client <-> Contained Laser Beam <-> Personal Google Sheet
+         ========================================================================= -->
+    <div class="act" id="act4">
+      <div class="category-badge badge-gold">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span class="rollup-text">Peer-to-Cloud Architecture</span>
+      </div>
+
+      <h2 class="font-fraunces rollup-text" style="font-size:clamp(26px, 4vw, 48px); text-align:center; margin-bottom:8px;">
+        Your Devices. <span class="gold-gradient-text">Your Private Google Sheet.</span>
+      </h2>
+      <p class="rollup-text" style="font-size:clamp(14px, 1.8vw, 19px); color:var(--muted-dark); text-align:center; max-width:850px; line-height:1.5; margin-bottom: clamp(16px, 2.5vh, 28px);">
+        Zero company servers in between. You own every formula and every row.
+      </p>
+
+      <div class="diagram-container">
+        <div class="nodes-row">
+          
+          <!-- Node 1: Multi-Device Client (Laptop + Phone SVG) -->
+          <div class="arch-card arch-card-app">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div class="arch-card-icon" style="background:rgba(200, 164, 92, 0.15); border:1.5px solid rgba(200, 164, 92, 0.45);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="14" height="10" rx="2"/>
+                  <line x1="2" y1="17" x2="16" y2="17"/>
+                  <rect x="15" y="8" width="7" height="12" rx="1.5"/>
+                  <line x1="18.5" y1="17.5" x2="18.5" y2="17.51"/>
+                </svg>
+              </div>
+              <div class="font-mono" style="font-size:11px; color:var(--brass-light); background:rgba(200,164,92,0.15); padding:3px 9px; border-radius:6px; font-weight:700;">
+                LOCAL-FIRST
+              </div>
+            </div>
+            <div class="font-fraunces rollup-text" style="font-size:clamp(20px, 2.2vw, 24px); font-weight:700; color:#FFF; margin-bottom:6px;">
+              Munshi Client
+            </div>
+            <div style="font-size:clamp(13px, 1.3vw, 14px); color:var(--muted-dark); line-height:1.5;">
+              Offline PWA & Android app. Fast, encrypted IndexedDB database on your own device.
+            </div>
+          </div>
+
+          <!-- Laser Beam Sync Channel (Confined strictly inside the pipe capsule) -->
+          <div class="sync-connector">
+            <div class="sync-pipe">
+              <div class="sync-beam" id="syncPulseBeam"></div>
+            </div>
+            <div class="sync-badge-center font-mono">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Direct Apps Script API</span>
+            </div>
+          </div>
+
+          <!-- Node 2: Personal Google Sheet (Spreadsheet Grid SVG) -->
+          <div class="arch-card arch-card-sheet">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div class="arch-card-icon" style="background:rgba(78, 173, 123, 0.15); border:1.5px solid rgba(78, 173, 123, 0.45);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4EAD7B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <line x1="3" y1="9" x2="21" y2="9"/>
+                  <line x1="3" y1="15" x2="21" y2="15"/>
+                  <line x1="9" y1="3" x2="9" y2="21"/>
+                  <line x1="15" y1="3" x2="15" y2="21"/>
+                </svg>
+              </div>
+              <div class="font-mono" style="font-size:11px; color:#4EAD7B; background:rgba(78,173,123,0.15); padding:3px 9px; border-radius:6px; font-weight:700;">
+                YOUR DRIVE
+              </div>
+            </div>
+            <div class="font-fraunces rollup-text" style="font-size:clamp(20px, 2.2vw, 24px); font-weight:700; color:#FFF; margin-bottom:6px;">
+              Personal Google Sheet
+            </div>
+            <div style="font-size:clamp(13px, 1.3vw, 14px); color:var(--muted-dark); line-height:1.5;">
+              Stored in your private Google Drive. You can inspect, modify, or export anytime.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Trust Badges with Pure SVGs -->
+        <div class="trust-banner font-mono">
+          <div class="trust-pill" style="border-color:rgba(232,122,93,0.4); color:var(--expense);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <span>Zero Third-Party Databases</span>
+          </div>
+          <div class="trust-pill" style="border-color:rgba(78,173,123,0.4); color:var(--income);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Direct Google OAuth</span>
+          </div>
+          <div class="trust-pill" style="border-color:rgba(200,164,92,0.4); color:var(--brass-light);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>100% Free & Open Source</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ACT 5: GRAND FINALE & CTA (0:20.5 - 0:26.0)
+         Emblem Corona, Tagline, Feature Badges, Live App Link
+         ========================================================================= -->
+    <div class="act" id="act5">
+      <svg class="brand-logo-large" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="23" fill="#0D0F12"/>
+        <rect x=".5" y=".5" width="99" height="99" rx="22.5" stroke="#C8A45C" stroke-width="1.5"/>
+        <rect x="24" y="20" width="52" height="60" rx="5" fill="#A95F32"/>
+        <path d="M29 20H35V80H29A5 5 0 0 1 24 75V25A5 5 0 0 1 29 20Z" fill="#C8A45C"/>
+        <g transform="translate(57 52) scale(.5) translate(-50 -47)">
+          <path d="M28 80V46C28 34 38 28 44 24C47 22 49 20 50 14C51 20 53 22 56 24C62 28 72 34 72 46V80" fill="none" stroke="#C8A45C" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <path d="M62 80V91L66 87L70 91V80Z" fill="#C8A45C"/>
+      </svg>
+
+      <h1 class="font-fraunces rollup-text" style="font-size:clamp(36px, 5.5vw, 68px); font-weight:800; margin-bottom:8px; text-align:center;">
+        MUNSHI <span style="font-weight:400; color:var(--brass);">(मुंशी)</span>
+      </h1>
+      
+      <p class="rollup-text" style="font-size:clamp(15px, 2vw, 22px); color:var(--muted-dark); letter-spacing:0.5px; text-align:center; max-width:850px;">
+        The 100% Private Expense & Wealth Tracker You Truly Own
+      </p>
+
+      <div class="feature-pills">
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Peer-to-Sheet Sync</span>
+        </div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4EAD7B" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          <span>Private Google Drive</span>
+        </div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C8A45C" stroke-width="2"><rect x="2" y="4" width="14" height="10" rx="2"/><line x1="2" y1="17" x2="16" y2="17"/><rect x="15" y="8" width="7" height="12" rx="1.5"/></svg>
+          <span>Offline PWA & Android</span>
+        </div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A95F32" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/></svg>
+          <span>Obsidian & Warm Sand Themes</span>
+        </div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4EAD7B" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Zero Subscriptions Ever</span>
+        </div>
+      </div>
+
+      <a href="https://shreyaass.github.io/munshi/" target="_blank" class="cta-button">
+        <span>Launch Munshi</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+
+      <div class="font-mono" style="margin-top:16px; font-size:clamp(12px, 1.4vw, 15px); color:var(--brass-light); letter-spacing:1px;">
+        shreyaass.github.io/munshi
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tap for Sound Pill Button -->
+  <button id="tapSoundPill" class="tap-sound-pill" aria-label="Tap for sound">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <path id="pillWave" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+    </svg>
+    <span id="pillSoundLabel">Tap for sound</span>
+  </button>
+
+  <!-- Modern Interactive Player Bar -->
+  <div id="player-bar">
+    <!-- Play / Pause -->
+    <button id="playPauseBtn" class="p-btn" aria-label="Play or Pause">
+      <svg id="playIcon" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+      <svg id="pauseIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="4" width="4" height="16"></rect>
+        <rect x="14" y="4" width="4" height="16"></rect>
+      </svg>
+    </button>
+
+    <!-- Time Counter -->
+    <div id="time-display" class="time-text">0:00 / 0:26</div>
+
+    <!-- Scrubber Slider -->
+    <div class="slider-wrapper">
+      <input id="scrubberSlider" type="range" min="0" max="100" value="0" step="0.1" class="scrubber-range" aria-label="Seek video">
+    </div>
+
+    <!-- Right Controls -->
+    <div class="right-controls">
+      <!-- CC / Captions Indicator -->
+      <button id="captionsBtn" class="p-btn" aria-label="Captions" title="Subtitles" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; border:1px solid rgba(255,255,255,0.25); width:26px; height:18px; border-radius:4px; padding:0;">
+        CC
+      </button>
+
+      <!-- Sound Mute/Unmute -->
+      <button id="soundToggleBtn" class="p-btn" aria-label="Toggle Sound" title="Sound On/Off">
+        <svg id="soundOnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path id="soundWave1" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path id="soundWave2" d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <svg id="soundOffIcon" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="23" y1="9" x2="17" y2="15"></line>
+          <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+      </button>
+
+      <!-- Fullscreen -->
+      <button id="fullscreenBtn" class="p-btn" aria-label="Toggle Fullscreen" title="Fullscreen">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== THREE.JS PARTICLES & RESPONSIVE GSAP MASTER TIMELINE ==================== -->
+<script type="module">
+import * as THREE from 'three';
+
+// 1. DYNAMIC FLUID THREE.JS CANVAS
+const canvas = document.getElementById('gl-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 250;
+
+function resizeGL() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resizeGL);
+resizeGL();
+
+// Ambient Gold Dust Particles
+const particleCount = 220;
+const geometry = new THREE.BufferGeometry();
+const positions = new Float32Array(particleCount * 3);
+
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3] = (Math.random() - 0.5) * 800;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 500;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 400;
+}
+
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const material = new THREE.PointsMaterial({
+  color: 0xC8A45C,
+  size: 3.2,
+  transparent: true,
+  opacity: 0.5,
+  blending: THREE.AdditiveBlending
+});
+
+const particles = new THREE.Points(geometry, material);
+scene.add(particles);
+
+function renderGL() {
+  particles.rotation.y += 0.0008;
+  particles.rotation.x += 0.0004;
+  renderer.render(scene, camera);
+  requestAnimationFrame(renderGL);
+}
+renderGL();
+
+// 2. CONTINUOUS WAVE UNDULATION
+gsap.to('#waveFront', {
+  x: -600,
+  duration: 4,
+  repeat: -1,
+  ease: 'none'
+});
+gsap.to('#waveBack', {
+  x: -600,
+  duration: 6,
+  repeat: -1,
+  ease: 'none'
+});
+
+// ==================== 2.5 CINEMATIC PROCEDURAL SOUND ENGINE ====================
+class PromoSoundEngine {
+  constructor() {
+    this.ctx = null;
+    this.enabled = true;
+    this.masterGain = null;
+    this.droneGain = null;
+    this.droneOsc1 = null;
+    this.droneOsc2 = null;
+    this.isInitialized = false;
+  }
+
+  init() {
+    if (this.isInitialized) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      this.ctx = new AudioCtx();
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.setValueAtTime(0.75, this.ctx.currentTime);
+      this.masterGain.connect(this.ctx.destination);
+      this.startAmbientDrone();
+      this.isInitialized = true;
+    } catch (e) {
+      console.warn('AudioContext init paused', e);
+    }
+  }
+
+  resume() {
+    if (!this.isInitialized) this.init();
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  toggle() {
+    this.resume();
+    this.enabled = !this.enabled;
+    if (this.masterGain && this.ctx) {
+      this.masterGain.gain.setValueAtTime(this.enabled ? 0.75 : 0, this.ctx.currentTime);
+    }
+    return this.enabled;
+  }
+
+  startAmbientDrone() {
+    if (!this.ctx) return;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(95, this.ctx.currentTime);
+    
+    this.droneGain = this.ctx.createGain();
+    this.droneGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+    
+    this.droneOsc1 = this.ctx.createOscillator();
+    this.droneOsc1.type = 'sine';
+    this.droneOsc1.frequency.setValueAtTime(55, this.ctx.currentTime);
+    
+    this.droneOsc2 = this.ctx.createOscillator();
+    this.droneOsc2.type = 'sine';
+    this.droneOsc2.frequency.setValueAtTime(55.6, this.ctx.currentTime);
+    
+    this.droneOsc1.connect(filter);
+    this.droneOsc2.connect(filter);
+    filter.connect(this.droneGain);
+    this.droneGain.connect(this.masterGain);
+    
+    this.droneOsc1.start();
+    this.droneOsc2.start();
+  }
+
+  playEmblemChime() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    [1046.5, 1318.5, 2093.0].forEach((freq, i) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.04);
+      gain.gain.setValueAtTime(0.12, now + i * 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 1.2);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now + i * 0.04);
+      osc.stop(now + i * 0.04 + 1.25);
+    });
+  }
+
+  playDiveWhoosh() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const bufferSize = Math.floor(this.ctx.sampleRate * 1.0);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.setValueAtTime(3.2, now);
+    filter.frequency.setValueAtTime(250, now);
+    filter.frequency.exponentialRampToValueAtTime(1700, now + 0.45);
+    filter.frequency.exponentialRampToValueAtTime(220, now + 0.95);
+    
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.01, now);
+    gain.gain.exponentialRampToValueAtTime(0.26, now + 0.45);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.95);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    noise.start(now);
+    noise.stop(now + 1.0);
+  }
+
+  playImpactThud() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(140, now);
+    subOsc.frequency.exponentialRampToValueAtTime(36, now + 0.45);
+    subGain.gain.setValueAtTime(0.48, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+    subOsc.connect(subGain);
+    subGain.connect(this.masterGain);
+    subOsc.start(now);
+    subOsc.stop(now + 0.75);
+    
+    const punch = this.ctx.createOscillator();
+    const punchGain = this.ctx.createGain();
+    punch.type = 'triangle';
+    punch.frequency.setValueAtTime(80, now);
+    punchGain.gain.setValueAtTime(0.3, now);
+    punchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    punch.connect(punchGain);
+    punchGain.connect(this.masterGain);
+    punch.start(now);
+    punch.stop(now + 0.16);
+  }
+
+  playRippleResonance() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    [440, 554.37, 659.25].forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.14);
+      gain.gain.setValueAtTime(0.08, now + idx * 0.14);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.14 + 1.1);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now + idx * 0.14);
+      osc.stop(now + idx * 0.14 + 1.15);
+    });
+  }
+
+  playBookOpen() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const bufferSize = Math.floor(this.ctx.sampleRate * 0.7);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(750, now);
+    filter.frequency.linearRampToValueAtTime(2400, now + 0.6);
+    
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.02, now);
+    gain.gain.exponentialRampToValueAtTime(0.12, now + 0.3);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.68);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    noise.start(now);
+    noise.stop(now + 0.7);
+  }
+
+  // Act 2: Individual financial entry insertion sound (tactile typewriter/register strike + coin chime)
+  playEntryInserted(isCredit, pitchOffset = 0) {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const clickOsc = this.ctx.createOscillator();
+    const clickGain = this.ctx.createGain();
+    clickOsc.type = 'triangle';
+    clickOsc.frequency.setValueAtTime(isCredit ? 980 + pitchOffset : 620 + pitchOffset, now);
+    clickGain.gain.setValueAtTime(0.24, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    clickOsc.connect(clickGain);
+    clickGain.connect(this.masterGain);
+    clickOsc.start(now);
+    clickOsc.stop(now + 0.09);
+    
+    if (isCredit) {
+      const coinOsc = this.ctx.createOscillator();
+      const coinGain = this.ctx.createGain();
+      coinOsc.type = 'sine';
+      coinOsc.frequency.setValueAtTime(1864 + pitchOffset, now + 0.01);
+      coinGain.gain.setValueAtTime(0.1, now + 0.01);
+      coinGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      coinOsc.connect(coinGain);
+      coinGain.connect(this.masterGain);
+      coinOsc.start(now + 0.01);
+      coinOsc.stop(now + 0.36);
+    }
+  }
+
+  // Act 2: Surplus stamp verification chime
+  playSurplusStamp() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+      gain.gain.setValueAtTime(0.16, now + idx * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 1.0);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now + idx * 0.08);
+      osc.stop(now + idx * 0.08 + 1.05);
+    });
+  }
+
+  // Act 3: Water filling into bucket sound (rushing fluid noise + rising bubbling droplets)
+  playWaterPour() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const dur = 2.2;
+    
+    // Liquid rush body
+    const bufferSize = Math.floor(this.ctx.sampleRate * dur);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.setValueAtTime(4.2, now);
+    filter.frequency.setValueAtTime(300, now);
+    filter.frequency.exponentialRampToValueAtTime(1400, now + dur);
+    
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.01, now);
+    gain.gain.linearRampToValueAtTime(0.22, now + 0.3);
+    gain.gain.linearRampToValueAtTime(0.22, now + dur - 0.3);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    noise.start(now);
+    noise.stop(now + dur + 0.05);
+
+    // Rising frequency bubbly droplets
+    for (let i = 0; i < 14; i++) {
+      const dropTime = now + 0.1 + (i * 0.14) + (Math.random() * 0.05);
+      const osc = this.ctx.createOscillator();
+      const dropGain = this.ctx.createGain();
+      const startFreq = 420 + i * 50 + Math.random() * 80;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(startFreq, dropTime);
+      osc.frequency.exponentialRampToValueAtTime(startFreq + 260, dropTime + 0.07);
+      dropGain.gain.setValueAtTime(0.12, dropTime);
+      dropGain.gain.exponentialRampToValueAtTime(0.001, dropTime + 0.08);
+      osc.connect(dropGain);
+      dropGain.connect(this.masterGain);
+      osc.start(dropTime);
+      osc.stop(dropTime + 0.09);
+    }
+  }
+
+  // Act 3: Tactile physical switch click (Dark <-> Light Mode)
+  playTactileSwitch() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    [2800, 920].forEach((freq, idx) => {
+      const t = now + idx * 0.015;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = idx === 0 ? 'square' : 'triangle';
+      osc.frequency.setValueAtTime(freq, t);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.35, t + 0.03);
+      gain.gain.setValueAtTime(idx === 0 ? 0.3 : 0.22, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(t);
+      osc.stop(t + 0.045);
+    });
+  }
+
+  // Act 4: Data movement track (rhythmic high-speed encrypted telemetry pulses)
+  playDataStreamTrack() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const notes = [880, 1174, 1318, 1760, 2093, 2637];
+    for (let i = 0; i < 24; i++) {
+      const t = now + i * 0.12;
+      const freq = notes[i % notes.length];
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, t);
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(freq, t);
+      filter.Q.setValueAtTime(8, t);
+      
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(t);
+      osc.stop(t + 0.09);
+    }
+  }
+
+  playLaserPulse() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(2200, now);
+    osc.frequency.exponentialRampToValueAtTime(450, now + 0.16);
+    gain.gain.setValueAtTime(0.14, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start(now);
+    osc.stop(now + 0.22);
+  }
+
+  playSyncPing() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    [1760, 2637].forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+      gain.gain.setValueAtTime(0.12, now + idx * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.75);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now + idx * 0.07);
+      osc.stop(now + idx * 0.07 + 0.8);
+    });
+  }
+
+  // Act 5: Conclusion track (triumphant brass chord progression + warm sub-bass + shimmer)
+  playConclusionTrack() {
+    if (!this.ctx || !this.enabled) return;
+    const now = this.ctx.currentTime;
+    
+    // Warm sub-bass foundation
+    const sub = this.ctx.createOscillator();
+    const subG = this.ctx.createGain();
+    sub.type = 'sine';
+    sub.frequency.setValueAtTime(73.42, now); // D2
+    subG.gain.setValueAtTime(0.35, now);
+    subG.gain.linearRampToValueAtTime(0.4, now + 1.5);
+    subG.exponentialRampToValueAtTime(0.001, now + 4.8);
+    sub.connect(subG);
+    subG.connect(this.masterGain);
+    sub.start(now);
+    sub.stop(now + 4.9);
+    
+    // Triumphant orchestral brass chords (D major 9th progression)
+    const chord = [146.83, 220.00, 369.99, 440.00, 554.37, 659.25, 880.00];
+    chord.forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = idx < 2 ? 'sawtooth' : 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.02);
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.13, now + 0.8);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 4.5);
+      
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(600, now);
+      filter.frequency.linearRampToValueAtTime(3600, now + 1.2);
+      
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now + idx * 0.02);
+      osc.stop(now + 4.6);
+    });
+
+    // Shimmering sparkle chimes on the logo
+    [1760, 2217, 2637, 3520].forEach((freq, i) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + 0.6 + i * 0.1);
+      gain.gain.setValueAtTime(0.08, now + 0.6 + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6 + i * 0.1 + 1.2);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now + 0.6 + i * 0.1);
+      osc.stop(now + 0.6 + i * 0.1 + 1.25);
+    });
+  }
+}
+
+const soundEngine = new PromoSoundEngine();
+
+// ==================== 2.8 KINETIC WORD ROLL-UP SETUP ====================
+function setupWordRollUps() {
+  document.querySelectorAll('.rollup-text').forEach(el => {
+    const raw = el.innerHTML.trim();
+    const temp = document.createElement('div');
+    temp.innerHTML = raw;
+    const words = [];
+    
+    function extractWords(node, parentClasses = '') {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const parts = node.textContent.split(/\s+/).filter(Boolean);
+        parts.forEach(w => words.push({ text: w, classes: parentClasses }));
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const cls = node.className || '';
+        node.childNodes.forEach(child => extractWords(child, cls));
+      }
+    }
+    temp.childNodes.forEach(child => extractWords(child));
+    
+    el.innerHTML = words.map(item => {
+      const spanClass = item.classes ? ` class="${item.classes}"` : '';
+      return `<span class="roll-box"><span class="roll-word"${spanClass}>${item.text}</span></span>`;
+    }).join(' ');
+  });
+}
+setupWordRollUps();
+
+// 3. MASTER CINEMATIC TIMELINE (Responsive 3D Depth)
+const master = gsap.timeline({ repeat: -1 });
+
+// Initial 3D Act Setup
+gsap.set('#act1', { zIndex: 5, autoAlpha: 1 });
+gsap.set('#act2', { zIndex: 4, autoAlpha: 0, z: -150, scale: 0.85 });
+gsap.set('#act3', { zIndex: 3, autoAlpha: 0, z: -350, rotationX: -12 });
+gsap.set('#act4', { zIndex: 2, autoAlpha: 0, z: -400, rotationY: -15 });
+gsap.set('#act5', { zIndex: 1, autoAlpha: 0, z: -450 });
+
+// === ACT 1 (0.0s - 3.2s): Logo Shows -> Ledger Drops -> Camera Dives In ===
+master
+  .call(() => soundEngine.resume(), null, 0.1)
+  .fromTo('#act1LogoFrame', { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: 'back.out(1.4)' }, 0)
+  .call(() => soundEngine.playEmblemChime(), null, 0.5)
+  // Words roll up in Act 1!
+  .fromTo('#act1 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.05, duration: 0.55, ease: 'power3.out' }, 0.2)
+  
+  // Ledger drops down from logo into depth
+  .to('#logoFallingLedger', { y: 350, z: -280, rotationX: 40, duration: 1.0, ease: 'power2.in' }, '+=0.3')
+  
+  // Camera dives right through the hole in the logo frame
+  .call(() => soundEngine.playDiveWhoosh(), null, 2.2)
+  .to('#act1LogoFrame', { scale: 5.5, opacity: 0, duration: 0.9, ease: 'power2.in' }, '-=0.5')
+  .to('#act1Tagline', { opacity: 0, duration: 0.4 }, '-=0.7')
+  .to('#act1', { autoAlpha: 0, duration: 0.2 }, '-=0.1')
+  
+  // === ACT 2 (3.2s - 8.5s): Impact Ripples & Fast-Tracked Ledger Opens ===
+  // Ledger lands in place in Act 2
+  .to('#act2', { autoAlpha: 1, z: 0, scale: 1, duration: 0.4, ease: 'power2.out' }, '-=0.1')
+  .call(() => soundEngine.playImpactThud(), null, 3.2)
+  .fromTo('#bookStage', { y: -180, scale: 0.75 }, { y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.4)' }, '-=0.4')
+  
+  // Impact concentric ripples expand outward from the landed ledger
+  .call(() => soundEngine.playRippleResonance(), null, 3.3)
+  .fromTo('#impRipple1', { scale: 0.2, opacity: 1 }, { scale: 2.2, opacity: 0, duration: 1.4, ease: 'power2.out' }, '-=0.4')
+  .fromTo('#impRipple2', { scale: 0.2, opacity: 1 }, { scale: 2.7, opacity: 0, duration: 1.6, delay: 0.2, ease: 'power2.out' }, '-=0.4')
+  .fromTo('#impRipple3', { scale: 0.2, opacity: 1 }, { scale: 3.2, opacity: 0, duration: 1.8, delay: 0.4, ease: 'power2.out' }, '-=0.4')
+  
+  // Words roll up in Act 2 header / cover!
+  .fromTo('#act2 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.04, duration: 0.45, ease: 'power3.out' }, 3.3)
+  
+  // FAST-TRACKED: Ledger cover swings open crisply!
+  .call(() => soundEngine.playBookOpen(), null, 3.5)
+  .to('#bookCover', { rotationY: -115, duration: 0.85, ease: 'power3.inOut' }, 3.5)
+  
+  // Financial entries inserted one by one with distinct entry insertion sounds!
+  .call(() => soundEngine.playEntryInserted(true, 0), null, 4.3)
+  .fromTo('#row1', { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, 4.3)
+  
+  .call(() => soundEngine.playEntryInserted(true, 80), null, 4.6)
+  .fromTo('#row2', { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, 4.6)
+  
+  .call(() => soundEngine.playEntryInserted(false, 0), null, 4.9)
+  .fromTo('#row3', { opacity: 0, x: 16 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, 4.9)
+  
+  .call(() => soundEngine.playEntryInserted(false, -50), null, 5.2)
+  .fromTo('#row4', { opacity: 0, x: 16 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, 5.2)
+  
+  // Surplus verified seal stamp pops in
+  .call(() => soundEngine.playSurplusStamp(), null, 5.7)
+  .fromTo('.surplus-stamp', { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2)' }, 5.7)
+  .to('#world', { rotationY: 3, z: 15, duration: 2.5, ease: 'power1.inOut' }, '-=1.8')
+  
+  // Transition Act 2 -> Act 3
+  .to('#act2', { autoAlpha: 0, z: 350, rotationY: 15, duration: 0.7, ease: 'power2.in' })
+  .to('#act3', { autoAlpha: 1, z: 0, rotationX: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
+
+// === ACT 3 (8.5s - 15.0s): Fluid Bucket Card & External Toggle Screen Morph ===
+const goalCounter = { val: 0, percent: 0 };
+master
+  .fromTo('#fluidGoalCard', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+  .fromTo('.guardrail-card', { scale: 0.9, y: 25 }, { scale: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+  .fromTo('#sceneThemeControl', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.5')
+  
+  // Words roll up in Act 3!
+  .fromTo('#act3 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.035, duration: 0.55, ease: 'power3.out' }, 8.4)
+  
+  // Authentic Water Filling Sound while fluid waves rise to 75%!
+  .call(() => soundEngine.playWaterPour(), null, 8.6)
+  .fromTo('.wave-container', { height: '0%' }, { height: '75%', duration: 2.2, ease: 'power2.out' }, '-=0.2')
+  .to(goalCounter, {
+    val: 112500,
+    percent: 75,
+    duration: 2.2,
+    ease: 'power2.out',
+    onUpdate: () => {
+      document.getElementById('goalAmountCount').textContent = '₹' + Math.floor(goalCounter.val).toLocaleString('en-IN');
+      document.getElementById('goalPercentCount').textContent = Math.floor(goalCounter.percent) + '%';
+    }
+  }, '-=2.2')
+  .fromTo('#paceFillBar', { width: '0%' }, { width: '62%', duration: 1.6, ease: 'power2.out' }, '-=1.8')
+  
+  // EXTERNAL THEME TOGGLE CLICKS WITH REALISTIC SWITCH SOUND & SCREEN-WIDE LIGHT THEME MORPH!
+  .to('#sceneToggleThumb', { x: 20, duration: 0.4, ease: 'power2.out' }, '+=0.2')
+  .call(() => {
+    soundEngine.playTactileSwitch();
+    const act3 = document.getElementById('act3');
+    const label = document.getElementById('sceneThemeLabel');
+    if (act3) act3.classList.add('light-theme-active');
+    if (label) label.textContent = 'WARM SAND LIGHT';
+  })
+  .to('#world', { rotationX: 4, z: -15, duration: 2.6, ease: 'power1.inOut' }, '-=0.2')
+  
+  // Transition Act 3 -> Act 4 (Reset light theme class before leaving)
+  .call(() => {
+    const act3 = document.getElementById('act3');
+    const label = document.getElementById('sceneThemeLabel');
+    if (act3) act3.classList.remove('light-theme-active');
+    if (label) label.textContent = 'DARK OBSIDIAN';
+    gsap.set('#sceneToggleThumb', { x: 0 });
+  })
+  .to('#act3', { autoAlpha: 0, z: 350, rotationX: 12, duration: 0.7, ease: 'power2.in' })
+  .to('#act4', { autoAlpha: 1, z: 0, rotationY: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
+
+// === ACT 4 (15.0s - 20.5s): Architecture Diagram (Data Movement Track) ===
+master
+  .fromTo('#act4 .arch-card-app', { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' })
+  .fromTo('#act4 .arch-card-sheet', { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+  
+  // Words roll up in Act 4!
+  .fromTo('#act4 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.035, duration: 0.55, ease: 'power3.out' }, 14.8)
+  
+  // Moving of data sound track & laser pulse through pipe!
+  .call(() => soundEngine.playDataStreamTrack(), null, 15.0)
+  .fromTo('#syncPulseBeam', { x: '-100%', opacity: 0 }, { x: '320%', opacity: 1, repeat: 2, duration: 1.1, ease: 'power1.inOut' }, '-=0.4')
+  .call(() => soundEngine.playLaserPulse(), null, 16.1)
+  .call(() => soundEngine.playSyncPing(), null, 17.2)
+  .fromTo('.trust-pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.5, ease: 'power2.out' }, '-=0.7')
+  .to('#world', { rotationY: -4, z: 15, duration: 2.8, ease: 'power1.inOut' }, '-=1.8')
+  
+  // Transition Act 4 -> Act 5
+  .to('#act4', { autoAlpha: 0, z: 350, duration: 0.7, ease: 'power2.in' })
+  .to('#act5', { autoAlpha: 1, z: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
+
+// === ACT 5 (20.5s - 26.0s): Grand Finale (Conclusion Track) ===
+master
+  // Triumphant conclusion track as logo appears!
+  .call(() => soundEngine.playConclusionTrack(), null, 20.5)
+  .fromTo('.brand-logo-large', { scale: 0.65, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: 'back.out(1.5)' })
+  
+  // Words roll up in Act 5!
+  .fromTo('#act5 .roll-word', { y: '125%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.04, duration: 0.6, ease: 'power3.out' }, 20.6)
+  .fromTo('.pill', { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+  .fromTo('.cta-button', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.6)' }, '-=0.2')
+  .to('#world', { z: -70, duration: 2.5, ease: 'power1.inOut' }, '-=1.2')
+  .to('#act5', { autoAlpha: 0, duration: 0.6, ease: 'power2.in' });
+
+// 4. MODERN PLAYER CONTROLLER & SCRUBBER
+const timeDisplay = document.getElementById('time-display');
+const scrubberSlider = document.getElementById('scrubberSlider');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const playIcon = document.getElementById('playIcon');
+const pauseIcon = document.getElementById('pauseIcon');
+const soundToggleBtn = document.getElementById('soundToggleBtn');
+const soundOnIcon = document.getElementById('soundOnIcon');
+const soundOffIcon = document.getElementById('soundOffIcon');
+const tapSoundPill = document.getElementById('tapSoundPill');
+const pillSoundLabel = document.getElementById('pillSoundLabel');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+let isScrubbing = false;
+
+function updateSliderBackground(val) {
+  if (scrubberSlider) {
+    scrubberSlider.style.background = `linear-gradient(to right, #C8A45C 0%, #C8A45C ${val}%, rgba(255, 255, 255, 0.2) ${val}%, rgba(255, 255, 255, 0.2) 100%)`;
+  }
+}
+
+function updatePlaybackState() {
+  const isPaused = master.paused();
+  if (playIcon) playIcon.classList.toggle('hidden', !isPaused);
+  if (pauseIcon) pauseIcon.classList.toggle('hidden', isPaused);
+}
+
+function updateSoundState(enabled) {
+  if (soundOnIcon) soundOnIcon.classList.toggle('hidden', !enabled);
+  if (soundOffIcon) soundOffIcon.classList.toggle('hidden', enabled);
+  if (pillSoundLabel) {
+    pillSoundLabel.textContent = enabled ? 'Sound: ON' : 'Tap for sound';
+  }
+}
+
+master.eventCallback('onUpdate', () => {
+  if (isScrubbing) return;
+  const current = master.time();
+  const total = master.duration() || 26;
+  const mins = Math.floor(current / 60);
+  const secs = Math.floor(current % 60);
+  const totalMins = Math.floor(total / 60);
+  const totalSecs = Math.floor(total % 60);
+  if (timeDisplay) {
+    timeDisplay.textContent = `${mins}:${String(secs).padStart(2, '0')} / ${totalMins}:${String(totalSecs).padStart(2, '0')}`;
+  }
+  
+  const pct = (current / total) * 100;
+  if (scrubberSlider) scrubberSlider.value = pct;
+  updateSliderBackground(pct);
+  updatePlaybackState();
+});
+
+if (playPauseBtn) {
+  playPauseBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (master.paused()) {
+      master.play();
+    } else {
+      master.pause();
+    }
+    updatePlaybackState();
+  });
+}
+
+if (scrubberSlider) {
+  scrubberSlider.addEventListener('input', (e) => {
+    isScrubbing = true;
+    const pct = parseFloat(e.target.value);
+    updateSliderBackground(pct);
+    const total = master.duration() || 26;
+    const seekTime = (pct / 100) * total;
+    master.pause();
+    master.seek(seekTime);
+    const mins = Math.floor(seekTime / 60);
+    const secs = Math.floor(seekTime % 60);
+    const totalMins = Math.floor(total / 60);
+    const totalSecs = Math.floor(total % 60);
+    if (timeDisplay) {
+      timeDisplay.textContent = `${mins}:${String(secs).padStart(2, '0')} / ${totalMins}:${String(totalSecs).padStart(2, '0')}`;
+    }
+    updatePlaybackState();
+  });
+
+  scrubberSlider.addEventListener('change', () => {
+    isScrubbing = false;
+    master.play();
+    updatePlaybackState();
+  });
+}
+
+const toggleSound = (e) => {
+  if (e) e.stopPropagation();
+  soundEngine.resume();
+  const enabled = soundEngine.toggle();
+  updateSoundState(enabled);
+};
+
+if (soundToggleBtn) soundToggleBtn.addEventListener('click', toggleSound);
+if (tapSoundPill) tapSoundPill.addEventListener('click', toggleSound);
+
+if (fullscreenBtn) {
+  fullscreenBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
+  });
+}
+
+// Auto-unlock Web Audio on first user interaction
+const unlockAudio = () => {
+  soundEngine.resume();
+  window.removeEventListener('click', unlockAudio);
+  window.removeEventListener('touchstart', unlockAudio);
+  window.removeEventListener('keydown', unlockAudio);
+};
+window.addEventListener('click', unlockAudio);
+window.addEventListener('touchstart', unlockAudio);
+window.addEventListener('keydown', unlockAudio);
+
+window.OPENER = {
+  tl: master,
+  sound: soundEngine,
+  ready: true,
+  DURATION: 26,
+  seek: (t) => master.seek(t)
+};
+
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    master.paused() ? master.play() : master.pause();
+  } else if (e.code === 'KeyR') {
+    master.restart();
+  }
+});
+</script>
+</body>
+</html>

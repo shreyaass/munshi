@@ -449,15 +449,82 @@ html, body {
   text-decoration: none; cursor: pointer;
 }
 
-/* HUD Controller */
-#hud-indicator {
-  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 10px; z-index: 10;
-  padding: 6px 18px; border-radius: 999px;
-  background: rgba(13, 15, 18, 0.75); backdrop-filter: blur(8px);
-  border: 1px solid rgba(44, 50, 59, 0.6); font-size: 12px; color: var(--muted-dark);
+/* Modern Bottom Player Control Bar */
+#player-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 52px; z-index: 50;
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+  background: linear-gradient(to top, rgba(7, 8, 10, 0.95) 0%, rgba(7, 8, 10, 0.7) 65%, transparent 100%);
+  user-select: none;
 }
-.hud-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brass); }
+
+.tap-sound-pill {
+  position: absolute; bottom: 58px; left: 16px; z-index: 50;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(13, 15, 18, 0.85); backdrop-filter: blur(8px);
+  border: 1px solid rgba(200, 164, 92, 0.4);
+  color: #C8A45C; font-family: var(--font-sans);
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+.tap-sound-pill:hover {
+  background: rgba(200, 164, 92, 0.15); border-color: #C8A45C; transform: translateY(-1px);
+}
+.tap-sound-pill:active { transform: scale(0.96); }
+
+.p-btn {
+  background: none; border: none; color: #EAE6DF;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  transition: color 0.2s, transform 0.1s; padding: 0; flex-shrink: 0;
+  outline: none;
+}
+.p-btn:hover { color: #C8A45C; }
+.p-btn:active { transform: scale(0.92); }
+
+.time-text {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500;
+  color: #9AA1AB; white-space: nowrap; flex-shrink: 0;
+}
+
+.slider-wrapper {
+  flex: 1; display: flex; align-items: center; position: relative;
+}
+
+.scrubber-range {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 5px; border-radius: 3px;
+  background: linear-gradient(to right, #C8A45C 0%, #C8A45C 0%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.2) 100%);
+  outline: none; cursor: pointer; transition: height 0.15s ease;
+}
+.slider-wrapper:hover .scrubber-range { height: 7px; }
+
+.scrubber-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #C8A45C;
+  box-shadow: 0 0 8px rgba(200, 164, 92, 0.8), 0 2px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer; transition: transform 0.15s ease;
+}
+.slider-wrapper:hover .scrubber-range::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+.scrubber-range::-moz-range-thumb {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #C8A45C; border: none;
+  box-shadow: 0 0 8px rgba(200, 164, 92, 0.8), 0 2px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.right-controls {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+
+.hidden { display: none !important; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -898,21 +965,64 @@ html, body {
 
   </div>
 
-  <!-- HUD Player Status / Controls -->
-  <div id="hud-indicator">
-    <div class="hud-dot"></div>
-    <span id="time-display">00:00 / 00:26</span>
-    <span style="opacity:0.4;">|</span>
-    <button id="soundToggleBtn" style="background:none; border:none; color:inherit; font:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:6px; padding:0; outline:none;">
-      <svg id="soundIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-        <path id="soundWave1" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-        <path id="soundWave2" d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+  <!-- Tap for Sound Pill Button -->
+  <button id="tapSoundPill" class="tap-sound-pill" aria-label="Tap for sound">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <path id="pillWave" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+    </svg>
+    <span id="pillSoundLabel">Tap for sound</span>
+  </button>
+
+  <!-- Modern Interactive Player Bar -->
+  <div id="player-bar">
+    <!-- Play / Pause -->
+    <button id="playPauseBtn" class="p-btn" aria-label="Play or Pause">
+      <svg id="playIcon" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
       </svg>
-      <span id="soundText">Sound: ON</span>
+      <svg id="pauseIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="4" width="4" height="16"></rect>
+        <rect x="14" y="4" width="4" height="16"></rect>
+      </svg>
     </button>
-    <span style="opacity:0.4;">|</span>
-    <span>Space to pause · R to restart</span>
+
+    <!-- Time Counter -->
+    <div id="time-display" class="time-text">0:00 / 0:26</div>
+
+    <!-- Scrubber Slider -->
+    <div class="slider-wrapper">
+      <input id="scrubberSlider" type="range" min="0" max="100" value="0" step="0.1" class="scrubber-range" aria-label="Seek video">
+    </div>
+
+    <!-- Right Controls -->
+    <div class="right-controls">
+      <!-- CC / Captions Indicator -->
+      <button id="captionsBtn" class="p-btn" aria-label="Captions" title="Subtitles" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; border:1px solid rgba(255,255,255,0.25); width:26px; height:18px; border-radius:4px; padding:0;">
+        CC
+      </button>
+
+      <!-- Sound Mute/Unmute -->
+      <button id="soundToggleBtn" class="p-btn" aria-label="Toggle Sound" title="Sound On/Off">
+        <svg id="soundOnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path id="soundWave1" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path id="soundWave2" d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <svg id="soundOffIcon" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="23" y1="9" x2="17" y2="15"></line>
+          <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+      </button>
+
+      <!-- Fullscreen -->
+      <button id="fullscreenBtn" class="p-btn" aria-label="Toggle Fullscreen" title="Fullscreen">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1583,28 +1693,115 @@ master
   .to('#world', { z: -70, duration: 2.5, ease: 'power1.inOut' }, '-=1.2')
   .to('#act5', { autoAlpha: 0, duration: 0.6, ease: 'power2.in' });
 
-// 4. HUD TIMER & CONTROLS
+// 4. MODERN PLAYER CONTROLLER & SCRUBBER
 const timeDisplay = document.getElementById('time-display');
+const scrubberSlider = document.getElementById('scrubberSlider');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const playIcon = document.getElementById('playIcon');
+const pauseIcon = document.getElementById('pauseIcon');
+const soundToggleBtn = document.getElementById('soundToggleBtn');
+const soundOnIcon = document.getElementById('soundOnIcon');
+const soundOffIcon = document.getElementById('soundOffIcon');
+const tapSoundPill = document.getElementById('tapSoundPill');
+const pillSoundLabel = document.getElementById('pillSoundLabel');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+let isScrubbing = false;
+
+function updateSliderBackground(val) {
+  if (scrubberSlider) {
+    scrubberSlider.style.background = `linear-gradient(to right, #C8A45C 0%, #C8A45C ${val}%, rgba(255, 255, 255, 0.2) ${val}%, rgba(255, 255, 255, 0.2) 100%)`;
+  }
+}
+
+function updatePlaybackState() {
+  const isPaused = master.paused();
+  if (playIcon) playIcon.classList.toggle('hidden', !isPaused);
+  if (pauseIcon) pauseIcon.classList.toggle('hidden', isPaused);
+}
+
+function updateSoundState(enabled) {
+  if (soundOnIcon) soundOnIcon.classList.toggle('hidden', !enabled);
+  if (soundOffIcon) soundOffIcon.classList.toggle('hidden', enabled);
+  if (pillSoundLabel) {
+    pillSoundLabel.textContent = enabled ? 'Sound: ON' : 'Tap for sound';
+  }
+}
+
 master.eventCallback('onUpdate', () => {
+  if (isScrubbing) return;
   const current = master.time();
+  const total = master.duration() || 26;
   const mins = Math.floor(current / 60);
   const secs = Math.floor(current % 60);
-  timeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} / 00:26`;
+  const totalMins = Math.floor(total / 60);
+  const totalSecs = Math.floor(total % 60);
+  if (timeDisplay) {
+    timeDisplay.textContent = `${mins}:${String(secs).padStart(2, '0')} / ${totalMins}:${String(totalSecs).padStart(2, '0')}`;
+  }
+  
+  const pct = (current / total) * 100;
+  if (scrubberSlider) scrubberSlider.value = pct;
+  updateSliderBackground(pct);
+  updatePlaybackState();
 });
 
-// Sound Toggle in HUD
-const soundToggleBtn = document.getElementById('soundToggleBtn');
-const soundText = document.getElementById('soundText');
-const soundWave1 = document.getElementById('soundWave1');
-const soundWave2 = document.getElementById('soundWave2');
-
-if (soundToggleBtn) {
-  soundToggleBtn.addEventListener('click', (e) => {
+if (playPauseBtn) {
+  playPauseBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const enabled = soundEngine.toggle();
-    soundText.textContent = enabled ? 'Sound: ON' : 'Sound: OFF';
-    if (soundWave1) soundWave1.style.display = enabled ? 'block' : 'none';
-    if (soundWave2) soundWave2.style.display = enabled ? 'block' : 'none';
+    if (master.paused()) {
+      master.play();
+    } else {
+      master.pause();
+    }
+    updatePlaybackState();
+  });
+}
+
+if (scrubberSlider) {
+  scrubberSlider.addEventListener('input', (e) => {
+    isScrubbing = true;
+    const pct = parseFloat(e.target.value);
+    updateSliderBackground(pct);
+    const total = master.duration() || 26;
+    const seekTime = (pct / 100) * total;
+    master.pause();
+    master.seek(seekTime);
+    const mins = Math.floor(seekTime / 60);
+    const secs = Math.floor(seekTime % 60);
+    const totalMins = Math.floor(total / 60);
+    const totalSecs = Math.floor(total % 60);
+    if (timeDisplay) {
+      timeDisplay.textContent = `${mins}:${String(secs).padStart(2, '0')} / ${totalMins}:${String(totalSecs).padStart(2, '0')}`;
+    }
+    updatePlaybackState();
+  });
+
+  scrubberSlider.addEventListener('change', () => {
+    isScrubbing = false;
+    master.play();
+    updatePlaybackState();
+  });
+}
+
+const toggleSound = (e) => {
+  if (e) e.stopPropagation();
+  soundEngine.resume();
+  const enabled = soundEngine.toggle();
+  updateSoundState(enabled);
+};
+
+if (soundToggleBtn) soundToggleBtn.addEventListener('click', toggleSound);
+if (tapSoundPill) tapSoundPill.addEventListener('click', toggleSound);
+
+if (fullscreenBtn) {
+  fullscreenBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
   });
 }
 
