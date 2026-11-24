@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icon';
 import { Logo } from '../components/Logo';
@@ -8,6 +8,17 @@ import { useTheme } from '../lib/theme';
 export function Landing() {
   const navigate = useNavigate();
   const { resolved, setMode } = useTheme();
+
+  // Sticky Scroll-to-Top State (Visible only after scrolling)
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 250);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Native Video Player State
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -117,9 +128,9 @@ export function Landing() {
           </span>
         </div>
 
-        {/* Right Navigation Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Light / Dark Theme Switch (Active throughout all viewports) */}
+        {/* Right Navigation Controls: Theme Switch & GitHub (Identical h-9 height) */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Light / Dark Theme Switch */}
           <button
             type="button"
             onClick={() => {
@@ -136,43 +147,19 @@ export function Landing() {
             />
           </button>
 
-          {/* GitHub Link (Tablet & Desktop pill) */}
+          {/* GitHub Link (Exact h-9 height to match Theme Switch) */}
           <a
             href="https://github.com/shreyaass/munshi"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => sound.play('click')}
-            className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface/70 px-3.5 py-2 text-xs font-semibold text-text hover:bg-raised transition-colors shadow-sm"
+            className="inline-flex h-9 items-center gap-2 rounded-xl border border-line bg-surface/70 px-3.5 text-xs font-semibold text-text hover:bg-raised transition-colors shadow-sm"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
               <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
             </svg>
             <span className="hidden sm:inline">GitHub</span>
           </a>
-
-          {/* Start the Tour (Header CTA) */}
-          <button
-            type="button"
-            onClick={() => {
-              sound.play('click');
-              navigate('/tour');
-            }}
-            className="hidden sm:inline-flex rounded-xl border border-line bg-surface/70 px-3.5 py-2 text-xs font-semibold text-text hover:bg-raised transition-colors active:scale-95 shadow-sm"
-          >
-            Start the tour
-          </button>
-
-          {/* Connect / Get Started */}
-          <button
-            type="button"
-            onClick={() => {
-              sound.play('click');
-              navigate('/connect');
-            }}
-            className="rounded-xl bg-accent px-4 py-2 text-xs font-semibold text-on-accent hover:brightness-105 shadow-sm transition-all active:scale-[0.98]"
-          >
-            Get started
-          </button>
         </div>
       </header>
 
@@ -182,7 +169,7 @@ export function Landing() {
           - Tablet (md: to xl:): Centered layout with Video Player in center (Mockup Image 3)
           - Mobile (< md:): Centered layout with Video Player & 3-column features
           ========================================================================= */}
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-between px-6 sm:px-10 md:px-12 pt-4 sm:pt-8 md:pt-10 pb-6 xl:py-14">
+      <main className="mx-auto flex w-full max-w-7xl flex-col items-center px-6 sm:px-10 md:px-12 pt-2 sm:pt-4 pb-4 md:pb-6">
         <div className="grid grid-cols-1 xl:grid-cols-12 items-center gap-10 xl:gap-14 w-full">
           {/* Hero Copy (Centered on Tablet/Mobile per mockup Image 3, Left-aligned on Desktop per mockup Image 2) */}
           <div className="flex flex-col items-center text-center space-y-6 sm:space-y-7 xl:items-start xl:text-left xl:col-span-6">
@@ -198,67 +185,65 @@ export function Landing() {
               like a <span className="font-serif italic text-accent font-normal">ledger.</span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="max-w-xl text-base sm:text-lg leading-relaxed text-muted">
-              Track spending, stay under a monthly limit and fill your goals. Every entry lives in your own Google Sheet.
+            {/* Tagline / Ethos Lead */}
+            <p className="font-serif italic text-lg sm:text-xl text-accent font-medium leading-relaxed">
+              Built for privacy — Your ledger. Your data. Your rules.
             </p>
 
-            {/* Desktop-only Buttons (Shown on desktop in left column; moved below player on tablet/mobile) */}
-            <div className="hidden xl:flex flex-col items-start gap-2.5 pt-1">
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    sound.play('click');
-                    navigate('/connect');
-                  }}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-on-accent shadow-md hover:brightness-105 transition-all active:scale-[0.98]"
-                >
-                  <span>Get started</span>
-                  <Icon name="arrow_forward" size={16} />
-                </button>
+            {/* Pointers / Key Value Props (Clean Dots) */}
+            <ul className="space-y-2.5 text-sm sm:text-base text-muted max-w-xl text-left">
+              <li className="flex items-start gap-3">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent mt-2 shrink-0 select-none" />
+                <span>Track spending, stay under a monthly limit, and fill your goals.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent mt-2 shrink-0 select-none" />
+                <span>Direct sync to your personal Google Sheet — stored only on your device.</span>
+              </li>
+            </ul>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    sound.play('click');
-                    navigate('/tour');
-                  }}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-surface/70 px-5 py-3.5 text-sm font-semibold text-text hover:bg-raised transition-colors active:scale-[0.98] shadow-sm"
-                >
-                  <Icon name="play_arrow" size={17} className="text-accent" />
-                  <span>Start the tour</span>
-                </button>
-              </div>
+            {/* Desktop Single Primary CTA: Get started (Substantial, Prominent & High-Converting) */}
+            <div className="hidden xl:flex flex-col items-start gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => {
+                  sound.play('click');
+                  navigate('/tour');
+                }}
+                className="inline-flex items-center justify-center gap-3.5 rounded-2xl bg-accent px-10 py-4.5 text-lg font-semibold text-on-accent shadow-xl shadow-accent/30 hover:brightness-105 hover:scale-[1.02] transition-all active:scale-[0.98] group cursor-pointer"
+              >
+                <span>Get started</span>
+                <Icon name="arrow_forward" size={20} className="group-hover:translate-x-1 transition-transform" />
+              </button>
 
-              <p className="text-xs text-muted pt-1">
-                Plays in your browser. No sign-up needed to watch.
+              <p className="text-xs text-muted pt-0.5">
+                2-minute guided setup. Skip anytime to connect directly.
               </p>
             </div>
 
-            {/* 3 Core Features (Side-by-side 3-column grid on ALL viewports: mobile, tablet, desktop) */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 pt-4 w-full max-w-xl sm:max-w-2xl xl:max-w-none">
-              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-1.5 sm:gap-3 p-2.5 sm:p-0 rounded-2xl border border-line/60 bg-surface/50 backdrop-blur-sm sm:border-0 sm:bg-transparent">
-                <Icon name="speed" size={20} className="text-accent shrink-0 sm:mt-0.5" />
+            {/* 3 Core Architectural Pillars (Side-by-side balanced 3-column grid) */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 pt-5 w-full max-w-xl sm:max-w-2xl xl:max-w-none">
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-1.5 sm:gap-2.5 p-2 sm:p-0 rounded-2xl border border-line/60 bg-surface/50 backdrop-blur-sm sm:border-0 sm:bg-transparent">
+                <Icon name="devices" size={20} className="text-accent shrink-0 sm:mt-0.5" />
                 <div>
-                  <div className="text-text font-semibold text-[11px] sm:text-sm leading-tight">Monthly limit</div>
-                  <p className="hidden sm:block text-xs text-muted leading-relaxed mt-0.5">See what is left, every day</p>
+                  <div className="text-text font-semibold text-[11px] sm:text-sm leading-tight whitespace-nowrap">100% Client-side</div>
+                  <p className="hidden sm:block text-xs text-muted leading-relaxed mt-0.5 whitespace-nowrap">Zero central servers</p>
                 </div>
               </div>
 
-              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-1.5 sm:gap-3 p-2.5 sm:p-0 rounded-2xl border border-line/60 bg-surface/50 backdrop-blur-sm sm:border-0 sm:bg-transparent">
-                <Icon name="water_drop" size={20} className="text-accent shrink-0 sm:mt-0.5" />
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-1.5 sm:gap-2.5 p-2 sm:p-0 rounded-2xl border border-line/60 bg-surface/50 backdrop-blur-sm sm:border-0 sm:bg-transparent">
+                <Icon name="shield" size={20} className="text-accent shrink-0 sm:mt-0.5" />
                 <div>
-                  <div className="text-text font-semibold text-[11px] sm:text-sm leading-tight">Goals that fill up</div>
-                  <p className="hidden sm:block text-xs text-muted leading-relaxed mt-0.5">Watch the water rise</p>
+                  <div className="text-text font-semibold text-[11px] sm:text-sm leading-tight whitespace-nowrap">Zero tracking</div>
+                  <p className="hidden sm:block text-xs text-muted leading-relaxed mt-0.5 whitespace-nowrap">Your data in your hands</p>
                 </div>
               </div>
 
-              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-1.5 sm:gap-3 p-2.5 sm:p-0 rounded-2xl border border-line/60 bg-surface/50 backdrop-blur-sm sm:border-0 sm:bg-transparent">
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-1.5 sm:gap-2.5 p-2 sm:p-0 rounded-2xl border border-line/60 bg-surface/50 backdrop-blur-sm sm:border-0 sm:bg-transparent">
                 <Icon name="grid_view" size={20} className="text-accent shrink-0 sm:mt-0.5" />
                 <div>
-                  <div className="text-text font-semibold text-[11px] sm:text-sm leading-tight">Your Google Sheet</div>
-                  <p className="hidden sm:block text-xs text-muted leading-relaxed mt-0.5">Every entry stays yours</p>
+                  <div className="text-text font-semibold text-[11px] sm:text-sm leading-tight whitespace-nowrap">Your Google Sheet</div>
+                  <p className="hidden sm:block text-xs text-muted leading-relaxed mt-0.5 whitespace-nowrap">Every entry stays yours</p>
                 </div>
               </div>
             </div>
@@ -347,14 +332,6 @@ export function Landing() {
 
                   {/* Right Control Icons */}
                   <div className="flex items-center gap-1 sm:gap-2">
-                    {/* CC Closed Captions Indicator */}
-                    <span
-                      title="Subtitles"
-                      className="hidden sm:inline-flex items-center justify-center font-mono text-[10px] font-bold text-white/80 border border-white/25 rounded px-1 h-5 select-none"
-                    >
-                      CC
-                    </span>
-
                     {/* Mute / Unmute Sound Toggle Button */}
                     <button
                       type="button"
@@ -386,9 +363,6 @@ export function Landing() {
                   Watch the official product tour
                 </span>
                 <div className="flex items-center gap-2 font-mono text-[10px] sm:text-[11px]">
-                  <span className="rounded-full border border-line bg-surface/60 px-2.5 py-0.5 text-text">
-                    Captions on
-                  </span>
                   <button
                     type="button"
                     onClick={toggleMute}
@@ -400,36 +374,22 @@ export function Landing() {
               </div>
             </div>
 
-            {/* Tablet & Mobile Buttons (Centered below the player per Mockup Image 3) */}
+            {/* Tablet & Mobile Single Primary CTA */}
             <div className="flex xl:hidden flex-col items-center gap-2.5 pt-6 sm:pt-8 w-full">
-              <div className="flex items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    sound.play('click');
-                    navigate('/connect');
-                  }}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-on-accent shadow-md hover:brightness-105 transition-all active:scale-[0.98]"
-                >
-                  <span>Get started</span>
-                  <Icon name="arrow_forward" size={16} />
-                </button>
+              <button
+                type="button"
+                onClick={() => {
+                  sound.play('click');
+                  navigate('/tour');
+                }}
+                className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-accent px-8 py-3.5 text-sm sm:text-base font-semibold text-on-accent shadow-lg shadow-accent/25 hover:brightness-105 transition-all active:scale-[0.98] group cursor-pointer"
+              >
+                <span>Get started</span>
+                <Icon name="arrow_forward" size={17} className="group-hover:translate-x-0.5 transition-transform" />
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    sound.play('click');
-                    navigate('/tour');
-                  }}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-surface/70 px-5 py-3.5 text-sm font-semibold text-text hover:bg-raised transition-colors active:scale-[0.98] shadow-sm"
-                >
-                  <Icon name="play_arrow" size={17} className="text-accent" />
-                  <span>Start the tour</span>
-                </button>
-              </div>
-
-              <p className="text-xs text-muted pt-1">
-                Plays in your browser. No sign-up needed to watch.
+              <p className="text-xs text-muted pt-0.5 text-center">
+                2-minute guided setup. Skip anytime to connect directly.
               </p>
             </div>
           </div>
@@ -437,16 +397,79 @@ export function Landing() {
       </main>
 
       {/* =========================================================================
-          FOOTER BAR (With safe area bottom inset)
+          MINIMAL SINGLE-LINE FOOTER (Links on top in mobile, single-line in tablet/desktop)
           ========================================================================= */}
-      <footer className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 border-t border-line/40 px-6 pt-5 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] font-sans text-xs text-muted sm:flex-row md:px-12 mt-6">
-        <p className="text-center sm:text-left">
-          Your entries live in your Google Sheet. Munshi keeps only a local cache.
-        </p>
-        <p className="text-center sm:text-right">
-          MIT License · <a href="https://github.com/shreyaass/munshi" target="_blank" rel="noopener noreferrer" className="hover:text-text underline">github.com/shreyaass/munshi</a>
-        </p>
+      <footer className="mt-8 sm:mt-12 w-full border-t border-line/60 bg-surface/30 backdrop-blur-md py-5 sm:py-6 px-4 sm:px-6 md:px-10 transition-colors duration-300">
+        <div className="mx-auto flex w-full max-w-7xl flex-col-reverse md:flex-row items-center justify-between gap-3 text-center md:text-left font-mono text-[11px] sm:text-xs text-muted">
+          {/* Copyright & Hyperlinked MIT License (Bottom on mobile, Left on tablet/desktop) */}
+          <p className="whitespace-normal sm:whitespace-nowrap">
+            © {new Date().getFullYear()} Munshi · Open source under{' '}
+            <a
+              href="https://github.com/shreyaass/munshi/blob/main/LICENSE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-text hover:text-accent underline underline-offset-2 transition-colors font-medium whitespace-nowrap"
+            >
+              MIT License
+            </a>.
+          </p>
+
+          {/* Privacy Policy, Terms, Report an issue (Top on mobile, Right on tablet/desktop) */}
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-nowrap shrink-0 whitespace-nowrap">
+            <button
+              type="button"
+              onClick={() => {
+                sound.play('click');
+                navigate('/privacy');
+              }}
+              className="hover:text-text transition-colors"
+            >
+              Privacy Policy
+            </button>
+            <span className="opacity-40 select-none">·</span>
+            <button
+              type="button"
+              onClick={() => {
+                sound.play('click');
+                navigate('/terms');
+              }}
+              className="hover:text-text transition-colors"
+            >
+              Terms
+            </button>
+            <span className="opacity-40 select-none">·</span>
+            <a
+              href="https://github.com/shreyaass/munshi/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-text transition-colors inline-flex items-center gap-1"
+            >
+              <span>Report an issue</span>
+              <span className="text-[10px] opacity-70">↗</span>
+            </a>
+          </div>
+        </div>
       </footer>
+
+      {/* =========================================================================
+          STICKY FLOATING BACK TO TOP ICON BUTTON (Visible only upon scrolling)
+          ========================================================================= */}
+      <button
+        type="button"
+        onClick={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          sound.play('click');
+        }}
+        aria-label="Back to top"
+        title="Back to top"
+        className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-line bg-surface/90 text-text shadow-xl backdrop-blur-md transition-all duration-300 hover:bg-raised hover:border-accent hover:text-accent hover:-translate-y-0.5 active:scale-95 ${
+          showScrollTop
+            ? 'opacity-100 scale-100 pointer-events-auto'
+            : 'opacity-0 scale-75 pointer-events-none'
+        }`}
+      >
+        <Icon name="arrow_upward" size={18} />
+      </button>
     </div>
   );
 }

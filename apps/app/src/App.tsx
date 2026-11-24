@@ -11,6 +11,8 @@ import { Onboarding } from './pages/Onboarding';
 import { Settings } from './pages/Settings';
 import { Tour } from './pages/Tour';
 import { Landing } from './pages/Landing';
+import { Privacy } from './pages/Privacy';
+import { Terms } from './pages/Terms';
 
 // Charts are the only heavy dependency; keep them out of the first paint so
 // "open app, type amount, save" stays fast on a mid-range phone.
@@ -32,6 +34,8 @@ export function App() {
       <SyncProvider>
         <Routes>
           <Route path="/landing" element={<Landing />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/connect" element={<Connect />} />
           <Route path="/welcome" element={<Onboarding />} />
           <Route path="/tour" element={<Tour />} />

@@ -203,13 +203,21 @@ export function Tour() {
           ========================================================================= */}
       <aside className="hidden md:flex w-72 lg:w-80 shrink-0 flex-col justify-between border-r border-line bg-surface/40 p-8 select-none">
         <div>
-          {/* Brand Logo & Name */}
-          <div className="flex items-center gap-3 pb-10 select-none">
-            <Logo className="h-9 w-9 shrink-0" />
-            <span className="font-display text-xl font-semibold tracking-tight text-text">
+          {/* Brand Logo & Name - Clicking returns to Landing */}
+          <button
+            type="button"
+            onClick={() => {
+              sound.play('click');
+              navigate('/landing');
+            }}
+            className="flex items-center gap-3 pb-10 select-none group text-left cursor-pointer transition-transform active:scale-98"
+            title="Return to home"
+          >
+            <Logo className="h-9 w-9 shrink-0 group-hover:scale-105 transition-transform" />
+            <span className="font-display text-xl font-semibold tracking-tight text-text group-hover:text-accent transition-colors">
               Munshi
             </span>
-          </div>
+          </button>
 
           {/* Section Heading */}
           <p className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-accent/80 pb-6">
@@ -278,14 +286,28 @@ export function Tour() {
       <div className="flex flex-1 flex-col justify-between pt-[calc(env(safe-area-inset-top,0px)+1.25rem)] pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pl-[max(1.25rem,calc(env(safe-area-inset-left,0px)+1rem))] pr-[max(1.25rem,calc(env(safe-area-inset-right,0px)+1rem))] md:p-10 lg:p-14">
         {/* Top Header: Step Counter & Skip */}
         <header className="flex items-center justify-between pb-4">
-          {/* Mobile-only Skip button */}
-          <button
-            type="button"
-            onClick={handleSkip}
-            className="text-xs uppercase tracking-[0.14em] font-mono text-muted hover:text-text transition-colors md:hidden"
-          >
-            Skip
-          </button>
+          {/* Mobile-only Logo and Skip button */}
+          <div className="flex items-center gap-3 md:hidden">
+            <button
+              type="button"
+              onClick={() => {
+                sound.play('click');
+                navigate('/landing');
+              }}
+              className="flex items-center gap-1.5 select-none"
+              title="Return to home"
+            >
+              <Logo className="h-6 w-6" />
+              <span className="font-display text-sm font-semibold text-text">Munshi</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="text-xs uppercase tracking-[0.14em] font-mono text-muted hover:text-text transition-colors pl-2 border-l border-line"
+            >
+              Skip
+            </button>
+          </div>
 
           {/* Mobile-only Progress Pills */}
           <div className="flex items-center gap-1.5 md:hidden">
