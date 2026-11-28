@@ -3,66 +3,109 @@
   <head>
     <base target="_top">
     <style>
-      body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 18px; color: #1f2937; background: #ffffff; font-size: 13px; }
-      h2 { font-size: 15px; margin: 0 0 4px; }
-      p.sub { margin: 0 0 14px; color: #6b7280; font-size: 12px; }
+      body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 18px; color: #14171B; background: #EFEDE8; font-size: 13px; }
+      h2 { font-size: 16px; margin: 0 0 4px; font-weight: 600; }
+      p.sub { margin: 0 0 14px; color: #5F6670; font-size: 12px; line-height: 1.45; }
+      .card { background: #FFFFFF; border: 1px solid #DDD9CF; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
       .field { margin-bottom: 12px; }
-      .label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 4px; }
+      .field:last-child { margin-bottom: 0; }
+      .label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #5F6670; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+      .badge { font-size: 10px; padding: 1px 6px; border-radius: 99px; background: #F6F4EF; border: 1px solid #DDD9CF; color: #A95F32; text-transform: none; letter-spacing: 0; }
       .row { display: flex; gap: 6px; }
-      input { flex: 1; font-family: ui-monospace, Consolas, monospace; font-size: 11px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; color: #111827; }
-      button { font-size: 12px; padding: 8px 12px; border: 0; border-radius: 6px; background: #111827; color: #fff; cursor: pointer; }
+      input { flex: 1; font-family: ui-monospace, Consolas, monospace; font-size: 11px; padding: 8px 9px; border: 1px solid #DDD9CF; border-radius: 6px; background: #F6F4EF; color: #14171B; outline: none; }
+      input:focus { border-color: #A95F32; background: #FFFFFF; }
+      button { font-size: 12px; font-weight: 600; padding: 8px 12px; border: 0; border-radius: 6px; background: #14171B; color: #fff; cursor: pointer; white-space: nowrap; }
+      button.primary { background: #A95F32; color: #fff; }
+      button:hover { opacity: 0.92; }
       button:active { transform: translateY(1px); }
-      ol { padding-left: 18px; margin: 10px 0; line-height: 1.65; }
-      code { background: #f3f4f6; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
-      .warn { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 4px; font-size: 12px; }
-      .ok { color: #059669; font-weight: 600; }
+      ol { padding-left: 18px; margin: 8px 0 0; line-height: 1.6; font-size: 12px; color: #374151; }
+      code { background: #F6F4EF; border: 1px solid #DDD9CF; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
+      .warn { background: #FEF3C7; border-left: 3px solid #D97706; padding: 9px 10px; border-radius: 4px; font-size: 11.5px; line-height: 1.45; margin-top: 8px; color: #78350F; }
+      .msg { font-size: 11.5px; margin-top: 6px; min-height: 16px; }
+      .ok { color: #059669 !important; font-weight: 600; }
+      .err { color: #B4482C; font-weight: 600; }
     </style>
   </head>
   <body>
-    <h2>Connect Expense Manager</h2>
-    <p class="sub">Paste these two values into the app, once.</p>
+    <h2>Connect Munshi</h2>
+    <p class="sub">Paste both values into Munshi (Web, PWA, or Android APK). Your script only has access to this single spreadsheet.</p>
 
-    <div class="field">
-      <div class="label">1. Web App URL</div>
-      <div class="row">
-        <input id="url" readonly value="<?= url ?>">
-        <button onclick="copy('url', this)">Copy</button>
+    <div class="card">
+      <div class="field">
+        <div class="label">
+          <span>1. Web App URL</span>
+          <span class="badge">Must end in /exec</span>
+        </div>
+        <div class="row">
+          <input id="url" value="<?= url ?>" placeholder="Paste https://script.google.com/macros/s/.../exec">
+          <button type="button" class="primary" onclick="saveUrl(this)">Save</button>
+          <button type="button" onclick="copy('url', this)">Copy</button>
+        </div>
+        <div id="urlMsg" class="msg"></div>
+
+        <? if (!url) { ?>
+          <div class="warn">
+            <b>Why is this blank?</b> Google Sheets dialogs cannot read your <code>/exec</code> URL automatically (they only see a broken <code>/dev</code> test URL).
+            <br><br>
+            Open <b>Extensions &rarr; Apps Script &rarr; Deploy &rarr; Manage deployments</b> (or <b>New deployment &rarr; Web app</b>), copy the <b>Web app URL</b> ending in <code>/exec</code>, and paste + <b>Save</b> it above.
+          </div>
+        <? } ?>
+      </div>
+
+      <div class="field">
+        <div class="label">
+          <span>2. Access Token</span>
+          <span class="badge">256-bit key</span>
+        </div>
+        <div class="row">
+          <input id="token" readonly value="<?= token ?>">
+          <button type="button" onclick="copy('token', this)">Copy</button>
+        </div>
       </div>
     </div>
 
-    <div class="field">
-      <div class="label">2. Access token</div>
-      <div class="row">
-        <input id="token" readonly value="<?= token ?>">
-        <button onclick="copy('token', this)">Copy</button>
-      </div>
+    <div class="card">
+      <b style="font-size: 12px;">Quick Checklist</b>
+      <ol>
+        <li>Deploy as Web app: <b>Execute as: Me</b> &middot; <b>Who has access: Anyone</b>.</li>
+        <li>Never use a URL ending in <code>/dev</code> &mdash; always use <code>/exec</code>.</li>
+        <li>Keep your token private; use <b>Munshi &rarr; Rotate access token</b> if it ever leaks.</li>
+      </ol>
     </div>
-
-    <? if (!url) { ?>
-      <div class="warn">
-        No deployment found yet. Deploy first: <b>Deploy &rarr; New deployment &rarr; Web app</b>,
-        Execute as <b>Me</b>, Who has access <b>Anyone</b>. Then reopen this dialog.
-      </div>
-    <? } ?>
-
-    <ol>
-      <li>Deploy: <code>Deploy → New deployment → Web app</code></li>
-      <li>Execute as <b>Me</b>, Who has access <b>Anyone</b></li>
-      <li>Copy the URL and the token above into the app.</li>
-    </ol>
-
-    <p class="sub">Keep this token private. Anyone with both values can write to this sheet. Use <b>Rotate access token</b> if it leaks.</p>
 
     <script>
       function copy(id, btn) {
         var el = document.getElementById(id);
+        if (!el.value) return;
         el.select();
         el.setSelectionRange(0, 99999);
         try { document.execCommand('copy'); } catch (e) {}
         var original = btn.textContent;
-        btn.textContent = 'Copied';
-        btn.className = 'ok';
-        setTimeout(function () { btn.textContent = original; btn.className = ''; }, 1200);
+        btn.textContent = 'Copied!';
+        btn.classList.add('ok');
+        setTimeout(function () { btn.textContent = original; btn.classList.remove('ok'); }, 1300);
+      }
+
+      function saveUrl(btn) {
+        var val = document.getElementById('url').value.trim();
+        var msg = document.getElementById('urlMsg');
+        msg.textContent = 'Saving...';
+        msg.className = 'msg';
+        btn.disabled = true;
+
+        google.script.run
+          .withSuccessHandler(function (saved) {
+            document.getElementById('url').value = saved;
+            msg.textContent = 'Saved! You can now copy this /exec URL anytime.';
+            msg.className = 'msg ok';
+            btn.disabled = false;
+          })
+          .withFailureHandler(function (err) {
+            msg.textContent = err && err.message ? err.message : String(err);
+            msg.className = 'msg err';
+            btn.disabled = false;
+          })
+          .saveWebAppUrl(val);
       }
     </script>
   </body>

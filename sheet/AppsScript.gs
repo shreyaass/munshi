@@ -13,7 +13,9 @@
 
 /* ===================== apps/script/Code.gs ===================== */
 /**
- * Expense Manager — Apps Script Web App
+ * @OnlyCurrentDoc
+ *
+ * Munshi (Expense Manager) — Apps Script Web App
  *
  * The whole backend. Deployed by the sheet's owner as:
  *   Deploy > New deployment > Web app
@@ -27,18 +29,32 @@
  * Keep this file's surface frozen. All product logic belongs in the app.
  */
 
-var SCHEMA_VERSION = 2;
+var SCHEMA_VERSION = 3;
 
-var DATA_TABS = ['Expenses', 'Income', 'Transfers', 'Accounts', 'Categories', 'Budgets', 'Recurring'];
+var DATA_TABS = [
+  'Expenses',
+  'Income',
+  'Transfers',
+  'Accounts',
+  'Categories',
+  'Budgets',
+  'Recurring',
+  'Goals',
+  'Contributions',
+  'GoalPeriods'
+];
 
 var HEADERS = {
   Expenses: ['id', 'date', 'amount_paise', 'category_id', 'account_id', 'payee', 'notes', 'tags', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Income: ['id', 'date', 'amount_paise', 'category_id', 'account_id', 'payee', 'notes', 'tags', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Transfers: ['id', 'date', 'amount_paise', 'from_account_id', 'to_account_id', 'notes', 'created_at', 'updated_at', 'device_id', 'deleted'],
-  Accounts: ['id', 'name', 'type', 'opening_balance_paise', 'active', 'updated_at', 'device_id', 'deleted'],
+  Accounts: ['id', 'name', 'type', 'opening_balance_paise', 'active', 'updated_at', 'device_id', 'deleted', 'kind', 'is_savings', 'last4', 'bank_name'],
   Categories: ['id', 'name', 'type', 'parent_id', 'icon', 'color', 'monthly_budget_paise', 'active', 'updated_at', 'device_id', 'deleted', 'pinned', 'sort_order'],
   Budgets: ['id', 'month', 'kind', 'category_id', 'amount_paise', 'updated_at', 'device_id', 'deleted'],
   Recurring: ['id', 'amount_paise', 'type', 'category_id', 'account_id', 'payee', 'rule', 'next_date', 'active', 'updated_at', 'device_id', 'deleted'],
+  Goals: ['id', 'name', 'target_paise', 'recurrence', 'deadline', 'start_date', 'end_date', 'priority', 'linked_account_id', 'icon', 'status', 'created_at', 'updated_at', 'device_id', 'deleted'],
+  Contributions: ['id', 'date', 'amount_paise', 'goal_id', 'from_account_id', 'to_account_id', 'notes', 'created_at', 'updated_at', 'device_id', 'deleted'],
+  GoalPeriods: ['id', 'goal_id', 'period_key', 'target_paise', 'contributed_paise', 'status', 'created_at', 'updated_at', 'device_id', 'deleted'],
   Meta: ['key', 'value']
 };
 
@@ -46,10 +62,13 @@ var NUMERIC_FIELDS = {
   amount_paise: true,
   opening_balance_paise: true,
   monthly_budget_paise: true,
-  sort_order: true
+  sort_order: true,
+  target_paise: true,
+  priority: true,
+  contributed_paise: true
 };
 
-var BOOLEAN_FIELDS = { active: true, deleted: true, pinned: true };
+var BOOLEAN_FIELDS = { active: true, deleted: true, pinned: true, is_savings: true };
 
 /* -------------------------------------------------------------------------- */
 /* Router                                                                      */
@@ -57,12 +76,13 @@ var BOOLEAN_FIELDS = { active: true, deleted: true, pinned: true };
 
 function doPost(e) {
   try {
+    cacheLiveExecUrl_();
     var raw = e && e.postData && e.postData.contents ? e.postData.contents : '{}';
     var body = JSON.parse(raw);
 
     var expected = getToken_();
     if (!expected) {
-      return fail_('Setup has not been run. Open Expense Tracker > Setup in the sheet menu.');
+      return fail_('Setup has not been run. Open Munshi > 1. Setup / repair sheet in the sheet menu.');
     }
     if (!body || body.token !== expected) {
       return fail_('unauthorized: bad token');
@@ -93,9 +113,25 @@ function doPost(e) {
 }
 
 function doGet() {
+  cacheLiveExecUrl_();
   return ContentService
-    .createTextOutput('Expense Manager API is running. POST JSON to this URL.')
+    .createTextOutput('Munshi API is running. POST JSON to this URL.')
     .setMimeType(ContentService.MimeType.TEXT);
+}
+
+/** Caches the real /exec deployment URL when invoked over a live Web App request. */
+function cacheLiveExecUrl_() {
+  try {
+    var u = ScriptApp.getService().getUrl() || '';
+    if (/\/exec$/.test(u)) {
+      var props = PropertiesService.getScriptProperties();
+      if (props.getProperty('WEBAPP_URL') !== u) {
+        props.setProperty('WEBAPP_URL', u);
+      }
+    }
+  } catch (err) {
+    // Non-fatal: manual save in ConnectionInfo still works.
+  }
 }
 
 function ok_(result) {
@@ -497,7 +533,7 @@ function validateRow_(tab, row) {
  * Everything else — tabs, headers, seed categories/budgets, token — happens here.
  */
 
-var MENU_NAME = 'Expense Tracker';
+var MENU_NAME = 'Munshi';
 
 function onOpen() {
   SpreadsheetApp.getUi()
@@ -626,7 +662,11 @@ function appendSeed_(tab, values) {
 }
 
 function sortTabs_(ss) {
-  var order = ['Expenses', 'Income', 'Transfers', 'Accounts', 'Categories', 'Budgets', 'Recurring', 'Meta', 'View', 'Read me'];
+  var order = [
+    'Expenses', 'Income', 'Transfers', 'Accounts', 'Categories',
+    'Budgets', 'Goals', 'Contributions', 'GoalPeriods', 'Recurring',
+    'Meta', 'View', 'Read me'
+  ];
   order.forEach(function (name, i) {
     var sh = ss.getSheetByName(name);
     if (!sh) return;
@@ -646,7 +686,7 @@ function sortTabs_(ss) {
  * Setup rebuilds them, so they can never drift from the schema.
  */
 
-var READ_ME_MARKER = 'Expense Manager — Read me (schema v' + SCHEMA_VERSION + ')';
+var READ_ME_MARKER = 'Munshi — Read me (schema v' + SCHEMA_VERSION + ')';
 
 function getOrCreateSheet_(ss, name) {
   return ss.getSheetByName(name) || ss.insertSheet(name);
@@ -785,9 +825,9 @@ function buildReadMe_(ss) {
     'bud-food | * | category | cat-exp-1 | 800000    → ₹8,000/month on Food',
     '',
     '## Setup and safety',
-    'Run Expense Tracker > Setup / repair sheet after updating the script. It only appends missing tabs/columns; it never moves or deletes your data.',
-    'Run Expense Tracker > Rotate access token if the token leaks. Every device must then paste the new token.',
-    'The app needs the Web App URL and the access token. Treat both as passwords.'
+    'Run Munshi > 1. Setup / repair sheet after updating the script. It only appends missing tabs/columns; it never moves or deletes your data.',
+    'Run Munshi > Rotate access token if the token leaks. Every device must then paste the new token.',
+    'The app needs the /exec Web App URL (from Deploy → Manage deployments) and the access token. Treat both as passwords.'
   ];
 
   sh.getRange(1, 1, lines.length, 1).setValues(
@@ -820,18 +860,35 @@ function showConnectionInfo() {
   tpl.token = getToken_() || '(run Setup first)';
 
   var html = tpl.evaluate()
-    .setWidth(470)
-    .setHeight(460);
-  SpreadsheetApp.getUi().showModalDialog(html, 'Connect Expense Manager');
+    .setWidth(490)
+    .setHeight(540);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Connect Munshi');
 }
 
 function serviceUrl_() {
-  // Works after the first deployment. Returns null while undeployed.
+  // 1. Prefer the verified /exec URL (saved by the user or cached by a live request).
+  var saved = PropertiesService.getScriptProperties().getProperty('WEBAPP_URL') || '';
+  if (/\/exec$/.test(saved)) return saved;
+
+  // 2. Fallback to ScriptApp ONLY if it ends in /exec.
+  // Container-bound scripts often return a /dev test URL from menu dialogs, which fails CORS & auth.
   try {
-    return ScriptApp.getService().getUrl() || '';
-  } catch (err) {
-    return '';
+    var svc = ScriptApp.getService().getUrl() || '';
+    if (/\/exec$/.test(svc)) return svc;
+  } catch (err) {}
+  return '';
+}
+
+function saveWebAppUrl(url) {
+  var clean = String(url || '').trim();
+  if (/\/dev(\?.*)?$/.test(clean)) {
+    throw new Error('That is a /dev test URL, which will not work. Copy the /exec URL from Extensions → Apps Script → Deploy → Manage deployments.');
   }
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(clean)) {
+    throw new Error('URL must look like https://script.google.com/macros/s/XXXX/exec');
+  }
+  PropertiesService.getScriptProperties().setProperty('WEBAPP_URL', clean);
+  return clean;
 }
 
 function validateSheet() {

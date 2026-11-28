@@ -107,27 +107,43 @@ export function resolveGoalIcon(name: string, emoji?: string): { isMaterial: boo
  * - Luminous golden wave crest strokes
  * - Gradient water body filling from the bottom
  */
-export function FluidWaterLayer({ percent, minHeight = 24 }: { percent: number; minHeight?: number }) {
+export function FluidWaterLayer({
+  percent,
+  minHeight = 24,
+  tone = 'accent',
+}: {
+  percent: number;
+  minHeight?: number;
+  tone?: 'accent' | 'income';
+}) {
   const safePercent = Math.max(0, Math.min(100, percent));
   const waterHeight = Math.max(minHeight, safePercent);
+  const isIncome = tone === 'income';
+  const backColorClass = isIncome ? 'text-income/30' : 'text-accent/30';
+  const frontColorClass = isIncome ? 'text-income/55' : 'text-accent/55';
+  const bodyGradientClass = isIncome
+    ? 'from-income/40 via-income/28 to-income/15'
+    : 'from-accent/40 via-accent/28 to-accent/15';
+  const backStroke = isIncome ? 'rgba(111, 179, 143, 0.45)' : 'rgba(200, 164, 92, 0.45)';
+  const frontStroke = isIncome ? 'rgba(111, 179, 143, 0.9)' : 'rgba(200, 164, 92, 0.9)';
 
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 bottom-0 transition-[height] duration-700 ease-out"
+      className="pointer-events-none absolute inset-x-0 bottom-0 transition-[height] duration-1000 ease-out"
       style={{ height: `${waterHeight}%` }}
     >
       {/* Wave Layer 2 (Back wave, reverse motion, deeper trough) */}
       <svg
         aria-hidden="true"
-        className="goal-wave-fast absolute -top-5 left-0 h-8 w-[200%] text-accent/30 pointer-events-none"
+        className={`goal-wave-fast absolute -top-5 left-0 h-8 w-[200%] ${backColorClass} pointer-events-none`}
         viewBox="0 0 1000 60"
         preserveAspectRatio="none"
       >
         <path
           d="M 0 30 Q 125 5, 250 30 T 500 30 T 750 30 T 1000 30 V 60 H 0 Z"
           fill="currentColor"
-          stroke="rgba(200, 164, 92, 0.45)"
+          stroke={backStroke}
           strokeWidth="1.5"
         />
       </svg>
@@ -135,20 +151,20 @@ export function FluidWaterLayer({ percent, minHeight = 24 }: { percent: number; 
       {/* Wave Layer 1 (Front wave, forward motion, glowing crest line) */}
       <svg
         aria-hidden="true"
-        className="goal-wave-slow absolute -top-6 left-0 h-9 w-[200%] text-accent/55 pointer-events-none"
+        className={`goal-wave-slow absolute -top-6 left-0 h-9 w-[200%] ${frontColorClass} pointer-events-none`}
         viewBox="0 0 1000 60"
         preserveAspectRatio="none"
       >
         <path
           d="M 0 25 Q 125 0, 250 25 T 500 25 T 750 25 T 1000 25 V 60 H 0 Z"
           fill="currentColor"
-          stroke="rgba(200, 164, 92, 0.9)"
+          stroke={frontStroke}
           strokeWidth="2"
         />
       </svg>
 
-      {/* Golden water gradient body */}
-      <div className="absolute inset-0 bg-gradient-to-t from-accent/40 via-accent/28 to-accent/15" />
+      {/* Water gradient body */}
+      <div className={`absolute inset-0 bg-gradient-to-t ${bodyGradientClass}`} />
     </div>
   );
 }

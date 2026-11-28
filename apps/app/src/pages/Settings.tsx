@@ -155,7 +155,7 @@ export function Settings() {
     await db.rows.clear();
     await db.meta.clear();
     disconnect();
-    navigate('/connect', { replace: true });
+    navigate('/tour?step=5', { replace: true });
   }
 
   return (

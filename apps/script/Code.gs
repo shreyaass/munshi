@@ -1,5 +1,7 @@
 /**
- * Expense Manager — Apps Script Web App
+ * @OnlyCurrentDoc
+ *
+ * Munshi (Expense Manager) — Apps Script Web App
  *
  * The whole backend. Deployed by the sheet's owner as:
  *   Deploy > New deployment > Web app
@@ -60,12 +62,13 @@ var BOOLEAN_FIELDS = { active: true, deleted: true, pinned: true, is_savings: tr
 
 function doPost(e) {
   try {
+    cacheLiveExecUrl_();
     var raw = e && e.postData && e.postData.contents ? e.postData.contents : '{}';
     var body = JSON.parse(raw);
 
     var expected = getToken_();
     if (!expected) {
-      return fail_('Setup has not been run. Open Expense Tracker > Setup in the sheet menu.');
+      return fail_('Setup has not been run. Open Munshi > 1. Setup / repair sheet in the sheet menu.');
     }
     if (!body || body.token !== expected) {
       return fail_('unauthorized: bad token');
@@ -96,9 +99,25 @@ function doPost(e) {
 }
 
 function doGet() {
+  cacheLiveExecUrl_();
   return ContentService
-    .createTextOutput('Expense Manager API is running. POST JSON to this URL.')
+    .createTextOutput('Munshi API is running. POST JSON to this URL.')
     .setMimeType(ContentService.MimeType.TEXT);
+}
+
+/** Caches the real /exec deployment URL when invoked over a live Web App request. */
+function cacheLiveExecUrl_() {
+  try {
+    var u = ScriptApp.getService().getUrl() || '';
+    if (/\/exec$/.test(u)) {
+      var props = PropertiesService.getScriptProperties();
+      if (props.getProperty('WEBAPP_URL') !== u) {
+        props.setProperty('WEBAPP_URL', u);
+      }
+    }
+  } catch (err) {
+    // Non-fatal: manual save in ConnectionInfo still works.
+  }
 }
 
 function ok_(result) {

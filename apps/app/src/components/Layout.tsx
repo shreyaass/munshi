@@ -189,6 +189,22 @@ export function Layout() {
   if (!conn) return <Navigate to="/landing" replace />;
   if (ready && onboarded !== '1' && noAccounts) return <Navigate to="/welcome" replace />;
 
+  // Prevent flashing the main app / Add screen before the initial sheet sync decides
+  // whether this user should land in #/welcome onboarding or straight in the app.
+  if (!ready && onboarded !== '1') {
+    return (
+      <div className="flex min-h-dvh w-full flex-col items-center justify-center gap-4 bg-bg px-6 text-text">
+        <Logo className="h-12 w-12 animate-pulse" />
+        <div className="text-center space-y-1">
+          <p className="font-display text-lg font-medium text-text">Opening Munshi…</p>
+          <p className="font-mono text-xs uppercase tracking-[0.12em] text-muted">
+            Syncing your Google Sheet
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const onAdd = location.pathname === '/';
   const editing = onAdd && new URLSearchParams(location.search).has('edit');
   const title = editing ? 'Edit entry' : (TITLES[location.pathname] ?? 'Munshi');

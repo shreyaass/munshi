@@ -226,3 +226,56 @@ export const CHART_PALETTE = ['#0B4B34', '#D6A747', '#B65C3A', '#7C8C4A', '#3E6F
 export function chartColor(index: number): string {
   return CHART_PALETTE[index % CHART_PALETTE.length];
 }
+
+/**
+ * Parses `monthly_limit_account_id` meta value:
+ * - `'ALL'` or empty string => `null` (means all active accounts combined)
+ * - comma-separated account ids (or legacy single id) => `string[]`
+ */
+export function parseLimitAccountIds(raw: string): string[] | null {
+  const trimmed = raw.trim();
+  if (!trimmed || trimmed === 'ALL') return null;
+  const ids = trimmed
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return ids.length > 0 ? ids : null;
+}
+
+export function serializeLimitAccountIds(ids: string[] | null): string {
+  return !ids || ids.length === 0 ? 'ALL' : ids.join(',');
+}
+
+/**
+ * Computes combined balance and human-readable label for selected limit accounts.
+ * Falls back cleanly to all active accounts when selection is `'ALL'` or stale.
+ */
+export function resolveLimitAccounts(
+  rawMeta: string,
+  activeAccounts: Row[],
+  balances: Map<string, number>,
+): { selectedIds: string[] | null; balancePaise: number; label: string } {
+  const parsed = parseLimitAccountIds(rawMeta);
+  const activeIds = new Set(activeAccounts.map((a) => asString(a.id)));
+  const validIds = parsed ? parsed.filter((id) => activeIds.has(id)) : null;
+
+  if (!validIds || validIds.length === 0 || validIds.length === activeAccounts.length) {
+    let total = 0;
+    for (const a of activeAccounts) {
+      total += balances.get(asString(a.id)) ?? 0;
+    }
+    return { selectedIds: null, balancePaise: total, label: 'all accounts' };
+  }
+
+  let sum = 0;
+  const names: string[] = [];
+  for (const a of activeAccounts) {
+    const id = asString(a.id);
+    if (validIds.includes(id)) {
+      sum += balances.get(id) ?? 0;
+      names.push(asString(a.name));
+    }
+  }
+  const label = names.length === 1 ? names[0] : `${names.length} selected accounts`;
+  return { selectedIds: validIds, balancePaise: sum, label };
+}

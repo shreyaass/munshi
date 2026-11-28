@@ -5,7 +5,7 @@
  * Everything else — tabs, headers, seed categories/budgets, token — happens here.
  */
 
-var MENU_NAME = 'Expense Tracker';
+var MENU_NAME = 'Munshi';
 
 function onOpen() {
   SpreadsheetApp.getUi()
@@ -134,7 +134,11 @@ function appendSeed_(tab, values) {
 }
 
 function sortTabs_(ss) {
-  var order = ['Expenses', 'Income', 'Transfers', 'Accounts', 'Categories', 'Budgets', 'Recurring', 'Meta', 'View', 'Read me'];
+  var order = [
+    'Expenses', 'Income', 'Transfers', 'Accounts', 'Categories',
+    'Budgets', 'Goals', 'Contributions', 'GoalPeriods', 'Recurring',
+    'Meta', 'View', 'Read me'
+  ];
   order.forEach(function (name, i) {
     var sh = ss.getSheetByName(name);
     if (!sh) return;
@@ -154,7 +158,7 @@ function sortTabs_(ss) {
  * Setup rebuilds them, so they can never drift from the schema.
  */
 
-var READ_ME_MARKER = 'Expense Manager — Read me (schema v' + SCHEMA_VERSION + ')';
+var READ_ME_MARKER = 'Munshi — Read me (schema v' + SCHEMA_VERSION + ')';
 
 function getOrCreateSheet_(ss, name) {
   return ss.getSheetByName(name) || ss.insertSheet(name);
@@ -293,9 +297,9 @@ function buildReadMe_(ss) {
     'bud-food | * | category | cat-exp-1 | 800000    → ₹8,000/month on Food',
     '',
     '## Setup and safety',
-    'Run Expense Tracker > Setup / repair sheet after updating the script. It only appends missing tabs/columns; it never moves or deletes your data.',
-    'Run Expense Tracker > Rotate access token if the token leaks. Every device must then paste the new token.',
-    'The app needs the Web App URL and the access token. Treat both as passwords.'
+    'Run Munshi > 1. Setup / repair sheet after updating the script. It only appends missing tabs/columns; it never moves or deletes your data.',
+    'Run Munshi > Rotate access token if the token leaks. Every device must then paste the new token.',
+    'The app needs the /exec Web App URL (from Deploy → Manage deployments) and the access token. Treat both as passwords.'
   ];
 
   sh.getRange(1, 1, lines.length, 1).setValues(
@@ -328,18 +332,35 @@ function showConnectionInfo() {
   tpl.token = getToken_() || '(run Setup first)';
 
   var html = tpl.evaluate()
-    .setWidth(470)
-    .setHeight(460);
-  SpreadsheetApp.getUi().showModalDialog(html, 'Connect Expense Manager');
+    .setWidth(490)
+    .setHeight(540);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Connect Munshi');
 }
 
 function serviceUrl_() {
-  // Works after the first deployment. Returns null while undeployed.
+  // 1. Prefer the verified /exec URL (saved by the user or cached by a live request).
+  var saved = PropertiesService.getScriptProperties().getProperty('WEBAPP_URL') || '';
+  if (/\/exec$/.test(saved)) return saved;
+
+  // 2. Fallback to ScriptApp ONLY if it ends in /exec.
+  // Container-bound scripts often return a /dev test URL from menu dialogs, which fails CORS & auth.
   try {
-    return ScriptApp.getService().getUrl() || '';
-  } catch (err) {
-    return '';
+    var svc = ScriptApp.getService().getUrl() || '';
+    if (/\/exec$/.test(svc)) return svc;
+  } catch (err) {}
+  return '';
+}
+
+function saveWebAppUrl(url) {
+  var clean = String(url || '').trim();
+  if (/\/dev(\?.*)?$/.test(clean)) {
+    throw new Error('That is a /dev test URL, which will not work. Copy the /exec URL from Extensions → Apps Script → Deploy → Manage deployments.');
   }
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(clean)) {
+    throw new Error('URL must look like https://script.google.com/macros/s/XXXX/exec');
+  }
+  PropertiesService.getScriptProperties().setProperty('WEBAPP_URL', clean);
+  return clean;
 }
 
 function validateSheet() {

@@ -2,9 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatPaise, parseToPaise } from '@em/core';
 import { Icon } from './Icon';
-import { CustomSelect } from './CustomSelect';
 import { setLocalMeta, setSpendingCap, useMetaValue, useTabRows, useTransactions } from '../lib/repo';
-import { accountBalances, asBool, asString } from '../lib/analytics';
+import {
+  accountBalances,
+  asBool,
+  asString,
+  parseLimitAccountIds,
+  resolveLimitAccounts,
+  serializeLimitAccountIds,
+} from '../lib/analytics';
 import { useSync } from '../lib/SyncProvider';
 
 interface EditMonthlyLimitModalProps {
@@ -24,8 +30,8 @@ export function EditMonthlyLimitModal({
   const [amountStr, setAmountStr] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const savedAccountId = useMetaValue('monthly_limit_account_id', 'ALL');
-  const [selectedAccountId, setSelectedAccountId] = useState('ALL');
+  const savedAccountMeta = useMetaValue('monthly_limit_account_id', 'ALL');
+  const [selectedIds, setSelectedIds] = useState<string[] | null>(null);
 
   const accountRows = useTabRows('Accounts');
   const transactions = useTransactions();
@@ -42,9 +48,8 @@ export function EditMonthlyLimitModal({
 
   const totalBalance = useMemo(() => {
     let sum = 0;
-    for (const [id, val] of balances.entries()) {
-      const acc = activeAccounts.find((a) => asString(a.id) === id);
-      if (acc) sum += val;
+    for (const acc of activeAccounts) {
+      sum += balances.get(asString(acc.id)) ?? 0;
     }
     return sum;
   }, [balances, activeAccounts]);
@@ -52,29 +57,40 @@ export function EditMonthlyLimitModal({
   useEffect(() => {
     if (open) {
       setAmountStr(currentLimitPaise > 0 ? String(Math.round(currentLimitPaise / 100)) : '20000');
-      setSelectedAccountId(savedAccountId || 'ALL');
+      setSelectedIds(parseLimitAccountIds(savedAccountMeta));
     }
-  }, [open, currentLimitPaise, savedAccountId]);
+  }, [open, currentLimitPaise, savedAccountMeta]);
 
   const parsedPaise = parseToPaise(amountStr) ?? 0;
   const now = new Date();
   const daysInCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const safeDaily = parsedPaise > 0 ? Math.round(parsedPaise / daysInCurrentMonth) : 0;
 
-  // Selected account balance & name
-  const selectedAccountBalance = useMemo(() => {
-    if (selectedAccountId === 'ALL') return totalBalance;
-    return balances.get(selectedAccountId) ?? 0;
-  }, [selectedAccountId, totalBalance, balances]);
-
-  const selectedAccountName = useMemo(() => {
-    if (selectedAccountId === 'ALL') return 'all accounts combined';
-    const acc = activeAccounts.find((a) => asString(a.id) === selectedAccountId);
-    return acc ? asString(acc.name) : 'this account';
-  }, [selectedAccountId, activeAccounts]);
+  // Selected account balance & readable summary across All or multiple selected accounts
+  const { balancePaise: selectedAccountBalance, label: selectedAccountName, selectedIds: normalizedSelectedIds } =
+    useMemo(
+      () => resolveLimitAccounts(serializeLimitAccountIds(selectedIds), activeAccounts, balances),
+      [selectedIds, activeAccounts, balances],
+    );
 
   const isOverBalance = parsedPaise > selectedAccountBalance;
   const canSave = parsedPaise > 0 && !busy && !isOverBalance;
+
+  function toggleAccount(id: string) {
+    if (normalizedSelectedIds === null) {
+      setSelectedIds([id]);
+      return;
+    }
+    const exists = normalizedSelectedIds.includes(id);
+    const next = exists
+      ? normalizedSelectedIds.filter((item) => item !== id)
+      : [...normalizedSelectedIds, id];
+    if (next.length === 0 || next.length === activeAccounts.length) {
+      setSelectedIds(null);
+    } else {
+      setSelectedIds(next);
+    }
+  }
 
   async function handleSave() {
     if (!canSave) return;
@@ -84,7 +100,7 @@ export function EditMonthlyLimitModal({
         categoryId: 'ALL',
         amountPaise: parsedPaise,
       });
-      await setLocalMeta('monthly_limit_account_id', selectedAccountId);
+      await setLocalMeta('monthly_limit_account_id', serializeLimitAccountIds(normalizedSelectedIds));
       void syncNow();
       onClose();
     } finally {
@@ -126,32 +142,56 @@ export function EditMonthlyLimitModal({
               </button>
             </div>
 
-            {/* Account Selector */}
-            <div>
-              <label className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-                Track against account
-              </label>
-              <CustomSelect
-                value={selectedAccountId}
-                onChange={setSelectedAccountId}
-                className="mt-1.5"
-                options={[
-                  {
-                    value: 'ALL',
-                    label: 'All accounts',
-                    sublabel: `Total: ${formatPaise(totalBalance, 'en-IN', 'INR', { decimals: false })}`,
-                  },
-                  ...activeAccounts.map((a) => {
-                    const id = asString(a.id);
-                    const bal = balances.get(id) ?? 0;
-                    return {
-                      value: id,
-                      label: asString(a.name),
-                      sublabel: `Bal: ${formatPaise(bal, 'en-IN', 'INR', { decimals: false })}`,
-                    };
-                  }),
-                ]}
-              />
+            {/* Multi-select Account Selector */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                  Track against account(s)
+                </span>
+                <span className="font-mono text-[11px] text-muted tabular">
+                  {formatPaise(selectedAccountBalance, 'en-IN', 'INR', { decimals: false })} available
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto py-0.5">
+                <button
+                  type="button"
+                  onClick={() => setSelectedIds(null)}
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                    normalizedSelectedIds === null
+                      ? 'border border-accent bg-accent/15 text-accent'
+                      : 'border border-line bg-raised text-muted hover:text-text'
+                  }`}
+                >
+                  {normalizedSelectedIds === null && <Icon name="check" size={14} />}
+                  <span>All accounts</span>
+                  <span className="font-mono text-[10px] opacity-80">
+                    ({formatPaise(totalBalance, 'en-IN', 'INR', { decimals: false })})
+                  </span>
+                </button>
+                {activeAccounts.map((a) => {
+                  const id = asString(a.id);
+                  const bal = balances.get(id) ?? 0;
+                  const isSelected = normalizedSelectedIds !== null && normalizedSelectedIds.includes(id);
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => toggleAccount(id)}
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                        isSelected
+                          ? 'border border-accent bg-accent/15 text-accent'
+                          : 'border border-line bg-raised text-muted hover:text-text'
+                      }`}
+                    >
+                      {isSelected && <Icon name="check" size={14} />}
+                      <span>{asString(a.name)}</span>
+                      <span className="font-mono text-[10px] opacity-80">
+                        ({formatPaise(bal, 'en-IN', 'INR', { decimals: false })})
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Amount input */}

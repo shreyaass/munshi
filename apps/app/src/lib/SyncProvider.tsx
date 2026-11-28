@@ -32,67 +32,81 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   const [lastResult, setLastResult] = useState<SyncResult | null>(null);
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [pending, setPending] = useState(0);
-  const running = useRef(false);
+  const inFlight = useRef<Promise<SyncResult> | null>(null);
 
   const refreshPending = useCallback(async () => {
     const count = await db.rows.where('dirty').equals(1).count();
     setPending(count);
   }, []);
 
-  const syncNow = useCallback(async (): Promise<SyncResult> => {
-    if (running.current) {
-      return { ok: true, pushed: 0, pulled: 0, conflicts: 0, at: new Date().toISOString() };
+  const syncNow = useCallback((): Promise<SyncResult> => {
+    if (inFlight.current) {
+      return inFlight.current;
     }
 
-    const conn = loadConnection();
-    if (!conn) {
-      setStatus('idle');
-      return {
-        ok: false,
-        pushed: 0,
-        pulled: 0,
-        conflicts: 0,
-        at: new Date().toISOString(),
-        error: 'Not connected',
-      };
-    }
-
-    running.current = true;
-    setStatus(navigator.onLine === false ? 'offline' : 'syncing');
-
-    try {
-      const client = new SheetClient(conn);
-      const result = await syncOnce(store, client, getDeviceId());
-
-      setLastResult(result);
-      if (result.ok) {
-        setStatus('ok');
-        setLastSync(result.at);
-      } else {
-        setStatus('error');
+    const task = (async (): Promise<SyncResult> => {
+      const conn = loadConnection();
+      if (!conn) {
+        setStatus('idle');
+        return {
+          ok: false,
+          pushed: 0,
+          pulled: 0,
+          conflicts: 0,
+          at: new Date().toISOString(),
+          error: 'Not connected',
+        };
       }
 
-      if (result.conflicts > 0) {
-        const prev = Number((await db.meta.get('sync_conflicts'))?.value ?? '0') || 0;
-        await db.meta.put({ key: 'sync_conflicts', value: String(prev + result.conflicts) });
-      }
+      setStatus(navigator.onLine === false ? 'offline' : 'syncing');
 
-      await refreshPending();
-      return result;
-    } finally {
-      running.current = false;
-    }
+      try {
+        const client = new SheetClient(conn);
+        const result = await syncOnce(store, client, getDeviceId());
+
+        setLastResult(result);
+        if (result.ok) {
+          setStatus('ok');
+          setLastSync(result.at);
+        } else {
+          setStatus('error');
+        }
+
+        if (result.conflicts > 0) {
+          const prev = Number((await db.meta.get('sync_conflicts'))?.value ?? '0') || 0;
+          await db.meta.put({ key: 'sync_conflicts', value: String(prev + result.conflicts) });
+        }
+
+        await refreshPending();
+        return result;
+      } finally {
+        inFlight.current = null;
+      }
+    })();
+
+    inFlight.current = task;
+    return task;
   }, [refreshPending]);
 
-  // First sync on launch, then on focus and on a slow timer while open.
+  // First sync on launch, whenever connection changes, on focus, and on a slow timer while open.
   useEffect(() => {
     void syncNow();
 
+    const onConnectionChange = () => {
+      if (loadConnection()) {
+        void syncNow();
+      } else {
+        setLastSync(null);
+        setLastResult(null);
+        setStatus('idle');
+      }
+    };
     const onVisible = () => {
       if (document.visibilityState === 'visible') void syncNow();
     };
     const onOnline = () => void syncNow();
 
+    window.addEventListener('em:connection', onConnectionChange);
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('online', onOnline);
     const timer = window.setInterval(() => {
@@ -100,6 +114,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     }, SYNC_INTERVAL_MS);
 
     return () => {
+      window.removeEventListener('em:connection', onConnectionChange);
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('online', onOnline);
       window.clearInterval(timer);

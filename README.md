@@ -25,8 +25,11 @@
 | **Web App / PWA** | [**Launch Live Web App (shreyaass.github.io/munshi)**](https://shreyaass.github.io/munshi/) | Instant in Chrome, Safari, Edge. Installable as PWA on desktop & iOS. |
 | **Landing Page** | [**View Landing Showcase (`#/landing`)**](https://shreyaass.github.io/munshi/#/landing) | Editorial showcase with phone preview, value cards, and setup triggers. |
 | **Interactive Tour** | [**5-Step Guided Setup Tour (`#/tour`)**](https://shreyaass.github.io/munshi/#/tour) | Walkthrough with direct GitHub template and script links. |
-| **Excel Template** | [**Download `ExpenseManager-template.xlsx`**](https://github.com/shreyaass/munshi/raw/main/sheet/ExpenseManager-template.xlsx) | Ready-to-use spreadsheet template with all schemas and columns pre-built. |
-| **Apps Script Code** | [**View `sheet/AppsScript.gs`**](https://github.com/shreyaass/munshi/blob/main/sheet/AppsScript.gs) | Bundled backend code that runs privately inside your Google Sheet. |
+| **Excel Template** | [**Download `ExpenseManager-template.xlsx`**](https://github.com/shreyaass/munshi/raw/main/sheet/ExpenseManager-template.xlsx) | Optional pre-formatted spreadsheet template (or start blank at `sheets.new`). |
+| **Apps Script Backend** | [**View `sheet/AppsScript.gs`**](https://github.com/shreyaass/munshi/blob/main/sheet/AppsScript.gs) | Paste into `Code.gs` — runs privately inside your Google Sheet (`@OnlyCurrentDoc`). |
+| **Connection Dialog** | [**View `apps/script/ConnectionInfo.html`**](https://github.com/shreyaass/munshi/blob/main/apps/script/ConnectionInfo.html) | Required HTML file (`ConnectionInfo`) that displays your Access Token & `/exec` URL. |
+| **Script Manifest** | [**View `apps/script/appsscript.json`**](https://github.com/shreyaass/munshi/blob/main/apps/script/appsscript.json) | Restricts OAuth scope strictly to the single active spreadsheet (`spreadsheets.currentonly`). |
+| **Detailed Sheet Guide** | [**View `sheet/SETUP.md`**](https://github.com/shreyaass/munshi/blob/main/sheet/SETUP.md) | Step-by-step spreadsheet & troubleshooting reference. |
 | **Cinematic Promo** | [**Watch Interactive Promo Video**](https://shreyaass.github.io/munshi/promo/) | 26-second 3D promotional ad trailer running GSAP 3 and Web Audio engine. |
 | **Releases & Checksums** | [**All GitHub Releases**](https://github.com/shreyaass/munshi/releases/latest) | View changelogs, build artifacts, and release notes. |
 
@@ -36,9 +39,9 @@
 
 Watch Munshi's features in action through our 26-second interactive promotional motion experience built with GSAP 3 and Web Audio API:
 
-[![Watch Interactive Promo](https://img.shields.io/badge/Launch_Interactive_Promo-1080p_60fps-C8A45C?style=for-the-badge)](https://shreyaass.github.io/munshi/)
+[![Watch Interactive Promo](https://img.shields.io/badge/Launch_Interactive_Promo-1080p_60fps-C8A45C?style=for-the-badge)](https://shreyaass.github.io/munshi/promo/)
 
-> **[Open Promo Video Player (shreyaass.github.io/munshi)](https://shreyaass.github.io/munshi/)**  
+> **[Open Promo Video Player (shreyaass.github.io/munshi/promo/)](https://shreyaass.github.io/munshi/promo/)**  
 > *Live in browser · Space to pause / resume · R to restart.*
 
 ### Video Scenes:
@@ -70,22 +73,29 @@ Most expense tracker apps force you to store your private bank details, transact
 
 ## 5-Minute Setup Guide
 
-Connecting your private Google Sheet takes less than two minutes:
+Connecting your private Google Sheet takes just a few minutes (or follow the [5-Step Guided Tour](https://shreyaass.github.io/munshi/#/tour) with 1-click copy buttons):
 
-1. **Copy the Sheet**: Open the [Excel / Google Sheet Template](https://github.com/shreyaass/munshi/raw/main/sheet/ExpenseManager-template.xlsx) and save a copy in your Google Drive.
-2. **Open Extensions**: In your spreadsheet menu, click **Extensions → Apps Script**. (Code is already inside the template, or copy from [AppsScript.gs](https://github.com/shreyaass/munshi/blob/main/sheet/AppsScript.gs)).
-3. **Deploy as Web App**:
-   - Click **Deploy → New deployment → Web app**.
-   - Execute as: **Me**.
-   - Who has access: **Anyone**.
-   - Authorize with your Google account.
-4. **Copy URL & Token**:
-   - Reload your Google Sheet.
-   - Click menu **Munshi → Show Connection Info**.
-   - Copy the **Web App URL** and the **Access Token**.
-5. **Paste and Track**:
-   - Open [Munshi Web App](https://shreyaass.github.io/munshi/) or the [Android APK](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk).
-   - Paste both values into the Connect screen. You're done!
+1. **Get & Convert the Official Sheet Template**:
+   - Download [`ExpenseManager-template.xlsx`](https://github.com/shreyaass/munshi/raw/main/sheet/ExpenseManager-template.xlsx) and upload it to Google Drive.
+   - Open it and on the top bar click **File → Save as Google Sheets** (converting from `.xlsx` to a native Google Spreadsheet unlocks **Extensions → Apps Script** in the new tab).
+2. **Add the 3 Apps Script Files**:
+   In your sheet, open **Extensions → Apps Script** and add these three files:
+   - **`Code.gs`**: Select all existing code and replace it with [`sheet/AppsScript.gs`](https://github.com/shreyaass/munshi/blob/main/sheet/AppsScript.gs).
+   - **`ConnectionInfo.html`**: Click **+** next to *Files* → **HTML** → name it **`ConnectionInfo`** → replace its contents with [`apps/script/ConnectionInfo.html`](https://github.com/shreyaass/munshi/blob/main/apps/script/ConnectionInfo.html).
+   - **`appsscript.json`**: Click **Project Settings** (gear icon) → tick **Show "appsscript.json" manifest file in editor** → go back to *Editor*, open `appsscript.json`, and replace it with [`apps/script/appsscript.json`](https://github.com/shreyaass/munshi/blob/main/apps/script/appsscript.json).
+   - Save with `Ctrl+S` (`⌘S` on Mac).
+3. **Run Setup (Single-Sheet Permission Only)**:
+   - Reload your Google Sheet tab and click **Munshi → 1. Setup / repair sheet** in the top menu.
+   - Authorize when prompted (**Review permissions → Advanced → Go to ... (unsafe) → Allow**).
+   - *Privacy guarantee*: Because of `@OnlyCurrentDoc` and `spreadsheets.currentonly`, the script can **only access this single spreadsheet** — nothing else in your Google Drive or account.
+4. **Deploy as Web App (Copy the `/exec` URL)**:
+   - Back in the Apps Script editor, click **Deploy → New deployment**.
+   - Select type **Web app** · **Execute as: `Me`** · **Who has access: `Anyone`**.
+   - Click **Deploy** and copy the **Web app URL** shown right there — **it must end in `/exec`** (⚠️ never use a `/dev` test URL).
+5. **Copy Token & Connect**:
+   - Back in your Google Sheet, click **Munshi → 2. Show connection info**.
+   - *(Tip)* Paste & **Save** your `/exec` Web App URL inside that dialog so you always have both values together, then copy your **Access Token**.
+   - Open [Munshi Web App](https://shreyaass.github.io/munshi/) or the [Android APK](https://github.com/shreyaass/munshi/releases/latest/download/munshi-app-debug.apk) and paste both values into **Connect**. Done!
 
 ---
 

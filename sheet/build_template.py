@@ -21,7 +21,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 OUT = Path(__file__).resolve().parent / "ExpenseManager-template.xlsx"
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 NOW = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 DEVICE = "seed"
 
@@ -34,12 +34,20 @@ HEADERS = {
                "notes", "tags", "created_at", *BASE],
     "Transfers": ["id", "date", "amount_paise", "from_account_id", "to_account_id",
                   "notes", "created_at", *BASE],
-    "Accounts": ["id", "name", "type", "opening_balance_paise", "active", *BASE],
+    "Accounts": ["id", "name", "type", "opening_balance_paise", "active", *BASE,
+                 "kind", "is_savings", "last4", "bank_name"],
     "Categories": ["id", "name", "type", "parent_id", "icon", "color",
                    "monthly_budget_paise", "active", *BASE, "pinned", "sort_order"],
     "Budgets": ["id", "month", "kind", "category_id", "amount_paise", *BASE],
     "Recurring": ["id", "amount_paise", "type", "category_id", "account_id", "payee",
                   "rule", "next_date", "active", *BASE],
+    "Goals": ["id", "name", "target_paise", "recurrence", "deadline", "start_date",
+              "end_date", "priority", "linked_account_id", "icon", "status",
+              "created_at", *BASE],
+    "Contributions": ["id", "date", "amount_paise", "goal_id", "from_account_id",
+                      "to_account_id", "notes", "created_at", *BASE],
+    "GoalPeriods": ["id", "goal_id", "period_key", "target_paise", "contributed_paise",
+                    "status", "created_at", *BASE],
     "Meta": ["key", "value"],
 }
 
@@ -47,10 +55,13 @@ WIDTHS = {
     "Expenses": [26, 12, 14, 16, 16, 22, 30, 18, 22, 22, 22, 9],
     "Income": [26, 12, 14, 16, 16, 22, 30, 18, 22, 22, 22, 9],
     "Transfers": [26, 12, 14, 16, 16, 30, 22, 22, 22, 9],
-    "Accounts": [14, 18, 12, 20, 9, 22, 12, 9],
+    "Accounts": [14, 18, 12, 20, 9, 22, 12, 9, 12, 11, 8, 18],
     "Categories": [12, 16, 11, 12, 7, 10, 20, 9, 22, 12, 9, 8, 10],
     "Budgets": [14, 12, 10, 16, 14, 22, 12, 9],
     "Recurring": [26, 14, 12, 16, 16, 22, 16, 12, 9, 22, 12, 9],
+    "Goals": [26, 22, 14, 14, 12, 12, 12, 10, 18, 8, 12, 22, 22, 12, 9],
+    "Contributions": [26, 12, 14, 26, 16, 16, 28, 22, 22, 12, 9],
+    "GoalPeriods": [26, 26, 12, 14, 16, 12, 22, 22, 12, 9],
     "Meta": [18, 28],
 }
 
@@ -59,11 +70,12 @@ WIDTHS = {
 TEXT_COLUMNS = {
     "id", "date", "created_at", "updated_at", "device_id", "category_id",
     "account_id", "from_account_id", "to_account_id", "month", "next_date",
-    "tags", "rule", "parent_id", "color",
+    "tags", "rule", "parent_id", "color", "deadline", "start_date", "end_date",
+    "linked_account_id", "goal_id", "period_key", "last4", "bank_name",
 }
-PAISE_COLUMNS = {"amount_paise", "opening_balance_paise", "monthly_budget_paise"}
+PAISE_COLUMNS = {"amount_paise", "opening_balance_paise", "monthly_budget_paise", "target_paise", "contributed_paise"}
 
-BOOL_COLUMNS = {"active", "deleted", "pinned"}
+BOOL_COLUMNS = {"active", "deleted", "pinned", "is_savings"}
 
 HEADER_FILL = PatternFill("solid", fgColor="F1F3F4")
 
@@ -119,7 +131,7 @@ def build_start_here(wb):
     normal = Font(size=11)
 
     lines = [
-        ("Expense Manager — start here", title),
+        ("Munshi — start here", title),
         ("", normal),
         ("This workbook is the database. The app talks to it through a small Apps Script", normal),
         ("Web App; the sheet stays private in your Google Drive. Once the script is", normal),
@@ -130,10 +142,10 @@ def build_start_here(wb):
         ("3. Delete the default Code.gs contents and paste all of sheet/AppsScript.gs.", bold),
         ("4. File → New → HTML file, name it ConnectionInfo, paste apps/script/ConnectionInfo.html.", bold),
         ("5. Project Settings → tick “Show appsscript.json”; replace it with apps/script/appsscript.json.", bold),
-        ("6. Save, reload the sheet, then run Expense Tracker → 1. Setup / repair sheet.", bold),
-        ("7. Deploy → New deployment → Web app. Execute as Me, access Anyone. Authorise when asked.", bold),
-        ("8. Expense Tracker → 2. Show connection info. Copy the URL and the token.", bold),
-        ("9. In the app: Connect, paste both. Done — add an expense and check the Expenses tab.", bold),
+        ("6. Save (Ctrl+S), reload the sheet, then run Munshi → 1. Setup / repair sheet.", bold),
+        ("7. Deploy → New deployment → Web app. Execute as Me, access Anyone. Copy the /exec URL.", bold),
+        ("8. Munshi → 2. Show connection info. Paste & Save the /exec URL and copy the Access Token.", bold),
+        ("9. In Munshi: Connect, paste both. Done — add an expense and check the Expenses tab.", bold),
         ("", normal),
         ("Rules that keep sync safe:", bold),
         ("• Amounts are integer paise: 12500 = ₹125.00. Never type ₹125 or 125.00 into a paise column.", normal),
@@ -208,8 +220,8 @@ def main():
             ws.add_data_validation(dv)
             dv.add("C2:C1000")
 
-    wb.properties.title = "Expense Manager"
-    wb.properties.description = "Private expense tracker — sheet-backed database (schema v2)."
+    wb.properties.title = "Munshi"
+    wb.properties.description = "Private expense tracker — sheet-backed database (schema v3)."
     wb.save(OUT)
     print(f"wrote {OUT}")
     print("tabs:", ", ".join(wb.sheetnames))

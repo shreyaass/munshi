@@ -35,10 +35,10 @@ Edit the sources, not the generated copy.
 ## 3. Set up the sheet
 
 1. Reload the Google Sheet tab.
-2. **Expense Tracker → 1. Setup / repair sheet**.
-3. Approve the Google permission prompt (the script runs as you, on this sheet).
+2. **Munshi → 1. Setup / repair sheet**.
+3. Approve the Google permission prompt (thanks to `@OnlyCurrentDoc` and `spreadsheets.currentonly`, the script can access **only this single spreadsheet** — nothing else in your Google Drive).
 4. Accept the dialog. Setup will:
-   - append any missing columns (it never moves your data),
+   - append any missing tabs & columns (it never moves your data),
    - seed categories and budgets if those tabs are empty,
    - generate the **View** and **Read me** tabs,
    - create the access token.
@@ -51,14 +51,14 @@ Edit the sources, not the generated copy.
 1. Back in Apps Script: **Deploy → New deployment**.
 2. Gear → **Web app**.
 3. **Execute as: Me** · **Who has access: Anyone**.
-   "Anyone" means anyone *with the URL + token*; the sheet stays private.
+   "Anyone" means anyone *with the URL + token*; requests without your token are rejected and the sheet stays private.
 4. **Deploy**, then authorize again if asked.
-5. Copy the **Web app URL** (ends in `/exec`).
+5. Copy the **Web app URL** shown right there — **it must end in `/exec`** (never use a `/dev` test URL).
 
 ## 5. Connect the app
 
-1. In the sheet: **Expense Tracker → 2. Show connection info**.
-2. Copy the URL and the token.
+1. In the sheet: **Munshi → 2. Show connection info**.
+2. Paste & **Save** your `/exec` Web App URL in the dialog (so it stays saved for future devices), and copy the **Access token**.
 3. Run the app (`npm run dev`), open it, paste both on the Connect screen.
 4. Add a test expense of ₹1. Confirm:
    - the app says **Synced**,
@@ -69,9 +69,9 @@ Edit the sources, not the generated copy.
 
 | Symptom | Fix |
 |---|---|
-| Connect says "That is not a Web App URL" | The URL must be `https://script.google.com/macros/s/XXXX/exec`. |
-| "unauthorized: bad token" | Re-run **Show connection info**; if needed, **Rotate access token** and reconnect. |
-| "Setup has not been run" | Run **Expense Tracker → 1. Setup / repair sheet**. |
+| Connect says "That is not a Web App URL" or `/dev` error | The URL must end in `/exec` (`https://script.google.com/macros/s/XXXX/exec`). Copy it from **Extensions → Apps Script → Deploy → Manage deployments**, never `/dev`. |
+| "unauthorized: bad token" | Re-run **Munshi → 2. Show connection info**; if needed, **Rotate access token** and reconnect. |
+| "Setup has not been run" | Run **Munshi → 1. Setup / repair sheet**. |
 | Browser blocks the request (CORS) | Tell me the exact console error. Fallback is a ~30-line Cloudflare Worker proxy; the APK will not need it. |
 | `View` formulas look empty | Check the `Expenses` tab has rows, then run Setup again. |
 | You changed the script later | Deploy → **Manage deployments** → edit → **New version**, else the URL keeps serving old code. |

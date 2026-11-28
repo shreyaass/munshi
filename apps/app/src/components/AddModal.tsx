@@ -15,6 +15,7 @@ import {
 } from '@em/core';
 import { Icon } from './Icon';
 import { CustomDatePicker } from './CustomDatePicker';
+import { AddCategoryModal } from './AddCategoryModal';
 import { addContribution, addTransaction, useTabRows, useTransactions } from '../lib/repo';
 import { asBool, asNumber, asString, categoriesFor } from '../lib/analytics';
 import { useSync } from '../lib/SyncProvider';
@@ -36,6 +37,8 @@ export function AddModal({ open, onClose, defaultDirection = 'expense' }: AddMod
   const [note, setNote] = useState('');
   const [noteOpen, setNoteOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [catModalOpen, setCatModalOpen] = useState(false);
+  const [showAllCats, setShowAllCats] = useState(false);
 
   // Income goal allocation
   const [putTowardsGoal, setPutTowardsGoal] = useState(true);
@@ -110,6 +113,18 @@ export function AddModal({ open, onClose, defaultDirection = 'expense' }: AddMod
     return pickQuickCategories(candidates, usage, QUICK_PICKS[direction]).map((c) => c.row);
   }, [categories, usage, direction]);
 
+  const visibleCategories = useMemo(() => {
+    if (showAllCats || categories.length <= quickCategories.length) return categories;
+    const base = [...quickCategories];
+    if (categoryId) {
+      const selectedRow = categories.find((c) => asString(c.id) === categoryId);
+      if (selectedRow && !base.some((c) => asString(c.id) === categoryId)) {
+        base.push(selectedRow);
+      }
+    }
+    return base;
+  }, [showAllCats, categories, quickCategories, categoryId]);
+
   // Select first category and account by default
   useEffect(() => {
     if (categories.length > 0 && (!categoryId || !categories.some((c) => asString(c.id) === categoryId))) {
@@ -128,6 +143,7 @@ export function AddModal({ open, onClose, defaultDirection = 'expense' }: AddMod
     if (open) {
       setAmount('');
       setNote('');
+      setShowAllCats(false);
       setNoteOpen(false);
       setDate(todayISO());
       setGoalAllocations({});
@@ -300,27 +316,64 @@ export function AddModal({ open, onClose, defaultDirection = 'expense' }: AddMod
 
             {/* Category Section */}
             <div className="space-y-1.5 pb-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">Category</p>
-              <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto py-1">
-                {quickCategories.map((c) => {
-                  const id = asString(c.id);
-                  const isSelected = id === categoryId;
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      onClick={() => setCategoryId(id)}
-                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                        isSelected
-                          ? 'border border-accent/60 bg-accent/15 text-accent'
-                          : 'border border-line bg-raised text-muted hover:text-text'
-                      }`}
-                    >
-                      <span>{asString(c.name)}</span>
-                    </button>
-                  );
-                })}
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">Category</p>
+                {categories.length > quickCategories.length && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllCats((v) => !v)}
+                    className="text-[11px] font-medium text-accent hover:underline"
+                  >
+                    {showAllCats ? 'Show fewer' : `Show all (${categories.length})`}
+                  </button>
+                )}
               </div>
+
+              {categories.length === 0 ? (
+                <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-accent/50 bg-accent/10 px-3 py-2.5 text-xs">
+                  <span className="text-text/90">
+                    Create a {direction} category first to log this entry.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCatModalOpen(true)}
+                    className="shrink-0 rounded-lg bg-accent px-2.5 py-1 text-[11px] font-semibold text-on-accent hover:brightness-105"
+                  >
+                    + Add category
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto py-1">
+                  {visibleCategories.map((c) => {
+                    const id = asString(c.id);
+                    const isSelected = id === categoryId;
+                    const iconEmoji = asString(c.icon);
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => setCategoryId(id)}
+                        className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                          isSelected
+                            ? 'border border-accent/60 bg-accent/15 text-accent'
+                            : 'border border-line bg-raised text-muted hover:text-text'
+                        }`}
+                      >
+                        {iconEmoji && <span>{iconEmoji}</span>}
+                        <span>{asString(c.name)}</span>
+                      </button>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => setCatModalOpen(true)}
+                    className="flex items-center gap-1 rounded-full border border-dashed border-line px-3 py-1.5 text-xs font-medium text-muted hover:border-accent/60 hover:text-accent transition"
+                  >
+                    <Icon name="add" size={14} />
+                    <span>Add category</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Into Account Section */}
@@ -480,6 +533,16 @@ export function AddModal({ open, onClose, defaultDirection = 'expense' }: AddMod
               {busy ? 'Saving…' : `Save ${direction}`}
             </button>
           </motion.div>
+
+          <AddCategoryModal
+            open={catModalOpen}
+            onClose={() => setCatModalOpen(false)}
+            defaultType={direction}
+            onCreated={(id, createdType) => {
+              if (createdType !== direction) setDirection(createdType);
+              setCategoryId(id);
+            }}
+          />
         </div>
       )}
     </AnimatePresence>

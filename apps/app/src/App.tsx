@@ -4,7 +4,6 @@ import { Layout } from './components/Layout';
 import { SyncProvider } from './lib/SyncProvider';
 import { Add } from './pages/Add';
 import { Accounts } from './pages/Accounts';
-import { Connect } from './pages/Connect';
 import { History } from './pages/History';
 import { Goals } from './pages/Goals';
 import { Onboarding } from './pages/Onboarding';
@@ -36,7 +35,7 @@ export function App() {
           <Route path="/landing" element={<Landing />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
-          <Route path="/connect" element={<Connect />} />
+          <Route path="/connect" element={<Navigate to="/tour?step=5" replace />} />
           <Route path="/welcome" element={<Onboarding />} />
           <Route path="/tour" element={<Tour />} />
           <Route element={<Layout />}>

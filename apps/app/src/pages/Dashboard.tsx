@@ -17,12 +17,14 @@ import {
   asNumber,
   asString,
   monthTotals,
+  resolveLimitAccounts,
   rowMonth,
   safeToSpend,
 } from '../lib/analytics';
 import { GoalCard } from '../components/GoalCard';
 import { GoalsCarousel } from '../components/GoalsCarousel';
 import { AddModal } from '../components/AddModal';
+import { AddCategoryModal } from '../components/AddCategoryModal';
 import { NewGoalModal } from '../components/NewGoalModal';
 import { GoalDetailModal } from '../components/GoalDetailModal';
 import { EditMonthlyLimitModal } from '../components/EditMonthlyLimitModal';
@@ -68,6 +70,7 @@ export function Dashboard() {
   const [monthEndOpen, setMonthEndOpen] = useState(false);
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
   const [editLimitOpen, setEditLimitOpen] = useState(false);
+  const [catModalOpen, setCatModalOpen] = useState(false);
 
   const transactions = useTransactions();
   const categories = useTabRows('Categories');
@@ -89,31 +92,30 @@ export function Dashboard() {
     [accounts, transactions, transfers],
   );
 
+  const activeAccounts = useMemo(
+    () => (accounts ?? []).filter((a) => !asBool(a.deleted) && a.active !== false),
+    [accounts],
+  );
+
   // Total balance & spendable balance across active accounts
   const { totalBalance, spendableBalance } = useMemo(() => {
     let tot = 0;
     let spend = 0;
-    for (const [id, val] of balances.entries()) {
-      const acc = (accounts ?? []).find((a) => asString(a.id) === id);
-      if (acc && !asBool(acc.deleted) && acc.active !== false) {
-        tot += val;
-        if (!asBool(acc.is_savings)) {
-          spend += val;
-        }
+    for (const acc of activeAccounts) {
+      const val = balances.get(asString(acc.id)) ?? 0;
+      tot += val;
+      if (!asBool(acc.is_savings)) {
+        spend += val;
       }
     }
     return { totalBalance: tot, spendableBalance: spend };
-  }, [balances, accounts]);
+  }, [balances, activeAccounts]);
 
-  // Account linked to monthly limit
-  const linkedLimitAccount = useMemo(() => {
-    if (limitAccountId === 'ALL') return null;
-    return (accounts ?? []).find((a) => asString(a.id) === limitAccountId && !asBool(a.deleted));
-  }, [accounts, limitAccountId]);
-
-  const linkedAccountBalance = linkedLimitAccount
-    ? (balances.get(asString(linkedLimitAccount.id)) ?? 0)
-    : totalBalance;
+  // Accounts linked to monthly limit (supports All or multi-select)
+  const { balancePaise: linkedAccountBalance, label: linkedAccountLabel } = useMemo(
+    () => resolveLimitAccounts(limitAccountId, activeAccounts, balances),
+    [limitAccountId, activeAccounts, balances],
+  );
 
   // Spending limit (Overall monthly cap)
   const monthlyCap = useMemo(() => {
@@ -121,14 +123,15 @@ export function Dashboard() {
     const overallRow = caps.find(
       (b) => asString(b.category_id) === 'ALL' || asString(b.kind) === 'total',
     );
-    // Default limit 20,000 if not configured yet
-    const limitPaise = overallRow ? asNumber(overallRow.amount_paise) : 2000000;
+    // 0 if user skipped or Setup hasn't set a limit yet; otherwise 20,000 suggested default when row missing
+    const limitPaise = overallRow ? asNumber(overallRow.amount_paise) : 0;
+    const isUnconfigured = limitPaise <= 0;
     const spentPaise = totals.spent;
-    const ratio = limitPaise > 0 ? spentPaise / limitPaise : 0;
+    const ratio = !isUnconfigured ? spentPaise / limitPaise : 0;
     const percent = Math.round(ratio * 100);
     const leftPaise = limitPaise - spentPaise;
-    const isOver = leftPaise < 0;
-    const isClose = ratio >= 0.8 && !isOver;
+    const isOver = !isUnconfigured && leftPaise < 0;
+    const isClose = !isUnconfigured && ratio >= 0.8 && !isOver;
 
     const daysRemaining = daysLeftInMonth(month);
     const now = new Date();
@@ -136,11 +139,12 @@ export function Dashboard() {
     const dayOfMonth = now.getDate();
     const monthPaceRatio = Math.min(1, Math.max(0, dayOfMonth / daysInCurrentMonth));
 
-    const safeDaily = safeToSpend(spentPaise, limitPaise, daysRemaining);
-    const isOverBalance = limitPaise > linkedAccountBalance;
+    const safeDaily = !isUnconfigured ? safeToSpend(spentPaise, limitPaise, daysRemaining) : 0;
+    const isOverBalance = !isUnconfigured && limitPaise > linkedAccountBalance;
 
     return {
       limitPaise,
+      isUnconfigured,
       spentPaise,
       ratio,
       percent,
@@ -254,7 +258,7 @@ export function Dashboard() {
             {monthLabel(month, locale)}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={() => setMonthEndOpen(true)}
@@ -262,6 +266,14 @@ export function Dashboard() {
           >
             <Icon name="event_available" size={17} className="text-accent" />
             <span>Close month</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setCatModalOpen(true)}
+            className="flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm font-semibold text-text shadow-sm transition hover:bg-raised active:scale-[0.99]"
+          >
+            <Icon name="label" size={17} className="text-accent" />
+            <span>Add category</span>
           </button>
           <button
             type="button"
@@ -283,6 +295,37 @@ export function Dashboard() {
             <span>Add entry</span>
           </button>
         </div>
+      </div>
+
+      {/* Mobile quick actions bar */}
+      <div className="grid grid-cols-3 gap-1.5 md:hidden pb-0.5">
+        <button
+          type="button"
+          onClick={() => setCatModalOpen(true)}
+          className="flex items-center justify-center gap-1 rounded-xl border border-line bg-surface px-2 py-2 text-[11px] font-semibold text-text shadow-sm min-w-0"
+        >
+          <Icon name="label" size={14} className="text-accent shrink-0" />
+          <span className="truncate">Add category</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setGoalModalTab('save');
+            setGoalModalOpen(true);
+          }}
+          className="flex items-center justify-center gap-1 rounded-xl border border-line bg-surface px-2 py-2 text-[11px] font-semibold text-text shadow-sm min-w-0"
+        >
+          <Icon name="savings" size={14} className="text-accent shrink-0" />
+          <span className="truncate">New goal</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMonthEndOpen(true)}
+          className="flex items-center justify-center gap-1 rounded-xl border border-line bg-surface px-2 py-2 text-[11px] font-semibold text-text shadow-sm min-w-0"
+        >
+          <Icon name="event_available" size={14} className="text-accent shrink-0" />
+          <span className="truncate">Close month</span>
+        </button>
       </div>
 
       {/* Top 1: Prominent MONTHLY LIMIT Card (Positioned at the TOP as requested) */}
@@ -322,50 +365,61 @@ export function Dashboard() {
               }}
               className="flex items-center gap-1 text-xs font-medium text-accent hover:underline ml-1"
             >
-              <span>Edit</span>
+              <span>{monthlyCap.isUnconfigured ? 'Set limit' : 'Edit'}</span>
               <Icon name="edit" size={13} />
             </button>
           </div>
         </div>
 
-        {/* Big Amount Left / Overshoot */}
-        <div>
-          <p
-            className={`font-mono text-3xl lg:text-4xl font-medium tabular ${
-              monthlyCap.isClose || monthlyCap.isOver ? 'text-expense' : 'text-text'
-            }`}
-          >
-            {monthlyCap.isOver ? '− ' : ''}
-            {formatPaise(monthlyCap.leftPaise, locale, currency, { decimals: false })}
-          </p>
-          <div className="mt-1 flex flex-wrap items-center justify-between gap-1 font-mono text-xs text-muted tabular">
-            <span>
-              {monthlyCap.isOver
-                ? `${formatPaise(monthlyCap.leftPaise, locale, currency, { decimals: false })} over limit · ${monthlyCap.daysRemaining} days to go`
-                : `left of ${formatPaise(monthlyCap.limitPaise, locale, currency, { decimals: false })} · ${monthlyCap.daysRemaining} days to go`}
-            </span>
-            <span className={monthlyCap.isOverBalance ? 'flex items-center gap-1 text-accent font-medium' : 'text-muted/80'}>
-              {monthlyCap.isOverBalance && <Icon name="warning" size={12} className="text-accent" />}
-              <span>{formatPaise(linkedAccountBalance, locale, currency, { decimals: false })} in {linkedLimitAccount ? asString(linkedLimitAccount.name) : 'total'}</span>
-            </span>
+        {monthlyCap.isUnconfigured ? (
+          <div className="space-y-1">
+            <p className="font-display text-2xl font-medium text-text">No monthly limit set</p>
+            <p className="text-xs text-muted">
+              Suggested ₹20,000 · Tap to pick a monthly cap and track daily safe-spend across {linkedAccountLabel}.
+            </p>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Big Amount Left / Overshoot */}
+            <div>
+              <p
+                className={`font-mono text-3xl lg:text-4xl font-medium tabular ${
+                  monthlyCap.isClose || monthlyCap.isOver ? 'text-expense' : 'text-text'
+                }`}
+              >
+                {monthlyCap.isOver ? '− ' : ''}
+                {formatPaise(monthlyCap.leftPaise, locale, currency, { decimals: false })}
+              </p>
+              <div className="mt-1 flex flex-wrap items-center justify-between gap-1 font-mono text-xs text-muted tabular">
+                <span>
+                  {monthlyCap.isOver
+                    ? `${formatPaise(monthlyCap.leftPaise, locale, currency, { decimals: false })} over limit · ${monthlyCap.daysRemaining} days to go`
+                    : `left of ${formatPaise(monthlyCap.limitPaise, locale, currency, { decimals: false })} · ${monthlyCap.daysRemaining} days to go`}
+                </span>
+                <span className={monthlyCap.isOverBalance ? 'flex items-center gap-1 text-accent font-medium' : 'text-muted/80'}>
+                  {monthlyCap.isOverBalance && <Icon name="warning" size={12} className="text-accent" />}
+                  <span>{formatPaise(linkedAccountBalance, locale, currency, { decimals: false })} in {linkedAccountLabel}</span>
+                </span>
+              </div>
+            </div>
 
-        {/* High-Fidelity Segmented Pill Progress Bar */}
-        <div className="space-y-1.5 pt-1">
-          <SegmentedLimitBar
-            percent={monthlyCap.percent}
-            isOver={monthlyCap.isOver}
-            isClose={monthlyCap.isClose}
-          />
+            {/* High-Fidelity Segmented Pill Progress Bar */}
+            <div className="space-y-1.5 pt-1">
+              <SegmentedLimitBar
+                percent={monthlyCap.percent}
+                isOver={monthlyCap.isOver}
+                isClose={monthlyCap.isClose}
+              />
 
-          <div className="flex items-center justify-between text-xs font-mono text-muted tabular pt-0.5">
-            <span>
-              {formatPaise(monthlyCap.safeDaily, locale, currency, { decimals: false })} a day safe to spend
-            </span>
-            <span>{monthlyCap.percent}% used</span>
-          </div>
-        </div>
+              <div className="flex items-center justify-between text-xs font-mono text-muted tabular pt-0.5">
+                <span>
+                  {formatPaise(monthlyCap.safeDaily, locale, currency, { decimals: false })} a day safe to spend
+                </span>
+                <span>{monthlyCap.percent}% used</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Top 2: Metrics Grid (Side-by-side on mobile: Spent & Received in row 1, Total Balance & Saved in row 2) */}
@@ -652,6 +706,7 @@ export function Dashboard() {
 
       {/* Modals */}
       <AddModal open={addOpen} onClose={() => setAddOpen(false)} />
+      <AddCategoryModal open={catModalOpen} onClose={() => setCatModalOpen(false)} />
       <NewGoalModal
         open={goalModalOpen}
         onClose={() => setGoalModalOpen(false)}

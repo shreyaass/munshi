@@ -23,8 +23,9 @@ as the user, with no server and no OAuth app review.
 4. **Deploy → New deployment → Web app**
    - Execute as: **Me**
    - Who has access: **Anyone**
-5. Back in the sheet, reload and use **Expense Tracker → 1. Setup / repair sheet**.
-6. **Expense Tracker → 2. Show connection info** → copy the URL and token.
+5. Back in the sheet, reload and use **Munshi → 1. Setup / repair sheet**.
+6. Deploy as Web app (`Execute as: Me`, `Who has access: Anyone`) and copy the `/exec` URL.
+7. **Munshi → 2. Show connection info** → paste & Save the `/exec` URL and copy the token.
 
 ## With clasp (for development)
 
