@@ -252,7 +252,7 @@ export function GoalCard({
       }`}
     >
       {/* Animated Water Background */}
-      <FluidWaterLayer percent={percent} minHeight={20} />
+      <FluidWaterLayer percent={percent} minHeight={14} />
 
       {/* Top row: Icon & priority on left, target amount on right */}
       <div className="relative z-10 flex items-center justify-between">
@@ -284,7 +284,7 @@ export function GoalCard({
         <p className="font-display truncate text-[18px] font-medium leading-snug text-text">
           {name}
         </p>
-        <p className="font-mono text-[12px] text-muted tabular mt-0.5">
+        <p className="font-mono text-[12px] text-text/80 tabular mt-0.5">
           {formatPaise(safeSpent, locale, currency, { decimals: false })}{' '}
           {recurrence === 'monthly' ? 'this month' : 'saved'}
         </p>

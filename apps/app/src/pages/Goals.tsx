@@ -7,7 +7,7 @@ import { NewGoalModal } from '../components/NewGoalModal';
 import { GoalDetailModal } from '../components/GoalDetailModal';
 import { EditMonthlyLimitModal } from '../components/EditMonthlyLimitModal';
 import { useTabRows, useMetaValue } from '../lib/repo';
-import { asBool, asNumber, asString } from '../lib/analytics';
+import { asBool, asNumber, asString, findOverallBudgetRow } from '../lib/analytics';
 
 export function Goals() {
   const currency = useMetaValue('currency', 'INR');
@@ -89,43 +89,28 @@ export function Goals() {
   const dotStrip = useMemo(() => {
     const monthLetters = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
     if (!monthlyGoal) {
-      return monthLetters.map((letter, idx) => ({
-        month: idx + 1,
-        letter,
-        status: idx === currentMonthIndex ? 'current' : idx < currentMonthIndex ? 'hit' : 'upcoming',
-      }));
+      return [];
     }
 
     const periodsForGoal = (periodRows ?? []).filter(
       (p) => !asBool(p.deleted) && asString(p.goal_id) === monthlyGoal.id,
     );
 
-    let hitsCount = 0;
-    let closedCount = 0;
-
-    const dots = monthLetters.map((letter, idx) => {
+    return monthLetters.map((letter, idx) => {
       const monthNum = idx + 1;
       const periodKey = `${currentYear}-${String(monthNum).padStart(2, '0')}`;
 
       if (idx < currentMonthIndex) {
-        // Past month
-        closedCount++;
         const record = periodsForGoal.find((p) => asString(p.period_key) === periodKey);
         if (record) {
           const status = asString(record.status);
-          if (status === 'hit') {
-            hitsCount++;
-            return { month: monthNum, letter, status: 'hit' };
-          }
-          if (status === 'partial') {
-            return { month: monthNum, letter, status: 'partial' };
-          }
+          if (status === 'hit') return { month: monthNum, letter, status: 'hit' };
+          if (status === 'partial') return { month: monthNum, letter, status: 'partial' };
           return { month: monthNum, letter, status: 'missed' };
         }
         // If no period record exists, infer from contributions
         const contrib = goalSavedAmount(monthlyGoal.id, 'monthly', contributionRows ?? [], periodKey);
         if (contrib >= monthlyGoal.targetPaise && monthlyGoal.targetPaise > 0) {
-          hitsCount++;
           return { month: monthNum, letter, status: 'hit' };
         }
         if (contrib > 0) {
@@ -140,8 +125,6 @@ export function Goals() {
 
       return { month: monthNum, letter, status: 'upcoming' };
     });
-
-    return dots;
   }, [monthlyGoal, periodRows, currentMonthIndex, currentYear, contributionRows]);
 
   const hitsSummary = useMemo(() => {
@@ -191,49 +174,38 @@ export function Goals() {
 
     // Active caps from Budgets tab
     const caps = (budgetRows ?? []).filter((b) => !asBool(b.deleted));
-    const overallCapRow = caps.find(
-      (b) => asString(b.category_id) === 'ALL' || asString(b.kind) === 'total',
-    );
-    const overallLimit = overallCapRow ? asNumber(overallCapRow.amount_paise) : 2000000; // default 20k
+    const overallCapRow = findOverallBudgetRow(caps);
+    const overallLimit = overallCapRow ? asNumber(overallCapRow.amount_paise) : 0;
 
-    // Category caps
+    // Category caps: strictly real `kind === 'category'` rows with non-empty valid category & limit > 0
     const catCaps = caps
-      .filter((b) => asString(b.category_id) !== 'ALL' && asString(b.kind) !== 'total')
+      .filter(
+        (b) =>
+          asString(b.kind) === 'category' &&
+          Boolean(asString(b.category_id)) &&
+          asString(b.category_id) !== 'ALL' &&
+          asNumber(b.amount_paise) > 0,
+      )
       .map((b) => {
         const catId = asString(b.category_id);
         const limitPaise = asNumber(b.amount_paise);
-        const catObj = (categoryRows ?? []).find((c) => asString(c.id) === catId);
-        const catName = catObj ? asString(catObj.name) : catId;
+        const catObj = (categoryRows ?? []).find((c) => !asBool(c.deleted) && asString(c.id) === catId);
+        if (!catObj) return null;
         const catSpent = monthlyExps
           .filter((e) => asString(e.category_id) === catId)
           .reduce((s, e) => s + asNumber(e.amount_paise), 0);
         return {
           id: catId,
-          name: catName,
+          name: asString(catObj.name),
           spentPaise: catSpent,
           limitPaise,
         };
-      });
-
-    // If no specific category caps configured, provide mockups standard categories
-    if (catCaps.length === 0) {
-      // Find food & groceries
-      const foodSpent = monthlyExps
-        .filter((e) => asString(e.category_id).toLowerCase().includes('food') || asString(e.notes).toLowerCase().includes('food'))
-        .reduce((s, e) => s + asNumber(e.amount_paise), 0) || 510000;
-      const grocerySpent = monthlyExps
-        .filter((e) => asString(e.category_id).toLowerCase().includes('groc'))
-        .reduce((s, e) => s + asNumber(e.amount_paise), 0) || 260000;
-
-      catCaps.push(
-        { id: 'cat-food', name: 'Food', spentPaise: foodSpent, limitPaise: 600000 },
-        { id: 'cat-groceries', name: 'Groceries', spentPaise: grocerySpent, limitPaise: 500000 },
-      );
-    }
+      })
+      .filter((c): c is { id: string; name: string; spentPaise: number; limitPaise: number } => c !== null);
 
     return {
       overall: {
-        spentPaise: totalSpent || 1842000,
+        spentPaise: totalSpent,
         limitPaise: overallLimit,
       },
       categories: catCaps,
@@ -339,72 +311,82 @@ export function Goals() {
               <span className="font-mono text-[11px] font-medium tracking-[0.12em] uppercase text-muted">
                 Monthly savings · {currentYear}
               </span>
-              <span className="font-mono text-xs text-muted tabular">
-                Hit {hitsSummary.hits} of {hitsSummary.total}
-              </span>
-            </div>
-
-            {/* 12-month dot strip */}
-            <div className="flex items-center justify-between py-2 px-1">
-              {dotStrip.map((d) => {
-                return (
-                  <div key={d.month} className="flex flex-col items-center gap-2">
-                    <div className="flex h-7 w-7 items-center justify-center">
-                      {d.status === 'hit' && (
-                        <div className="h-5 w-5 rounded-full bg-accent shadow-[0_0_8px_rgba(200,164,92,0.5)]" />
-                      )}
-                      {d.status === 'partial' && (
-                        <div className="relative h-5 w-5 overflow-hidden rounded-full border border-accent bg-transparent">
-                          <div className="absolute inset-y-0 left-0 w-1/2 bg-accent" />
-                        </div>
-                      )}
-                      {d.status === 'missed' && (
-                        <div className="h-5 w-5 rounded-full border-2 border-expense bg-transparent" />
-                      )}
-                      {d.status === 'current' && (
-                        <div className="relative flex h-6 w-6 items-center justify-center rounded-full border-2 border-accent">
-                          <div className="h-2.5 w-2.5 rounded-full bg-accent animate-pulse" />
-                        </div>
-                      )}
-                      {d.status === 'upcoming' && (
-                        <div className="h-5 w-5 rounded-full border border-dashed border-line/60 bg-transparent" />
-                      )}
-                    </div>
-                    <span
-                      className={`font-mono text-[11px] ${
-                        d.status === 'current'
-                          ? 'text-accent font-bold'
-                          : 'text-muted'
-                      }`}
-                    >
-                      {d.letter}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Legend */}
-            <div className="pt-4 border-t border-line/40 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted">
-              <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-accent inline-block" />
-                Hit
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="relative h-2.5 w-2.5 inline-block overflow-hidden rounded-full border border-accent">
-                  <span className="absolute inset-y-0 left-0 w-1/2 bg-accent inline-block" />
+              {monthlyGoal && (
+                <span className="font-mono text-xs text-muted tabular">
+                  Hit {hitsSummary.hits} of {hitsSummary.total}
                 </span>
-                Partial
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full border-2 border-expense inline-block" />
-                Missed
-              </span>
-              <span className="text-muted/70">·</span>
-              <span className="text-text font-medium">
-                {currentMonthTitle} in progress
-              </span>
+              )}
             </div>
+
+            {!monthlyGoal ? (
+              <p className="text-xs text-muted leading-relaxed">
+                No recurring monthly goal yet — create a monthly goal to track your month-by-month streak here.
+              </p>
+            ) : (
+              <>
+                {/* 12-month dot strip */}
+                <div className="flex items-center justify-between py-2 px-1">
+                  {dotStrip.map((d) => {
+                    return (
+                      <div key={d.month} className="flex flex-col items-center gap-2">
+                        <div className="flex h-7 w-7 items-center justify-center">
+                          {d.status === 'hit' && (
+                            <div className="h-5 w-5 rounded-full bg-accent shadow-[0_0_8px_rgba(200,164,92,0.5)]" />
+                          )}
+                          {d.status === 'partial' && (
+                            <div className="relative h-5 w-5 overflow-hidden rounded-full border border-accent bg-transparent">
+                              <div className="absolute inset-y-0 left-0 w-1/2 bg-accent" />
+                            </div>
+                          )}
+                          {d.status === 'missed' && (
+                            <div className="h-5 w-5 rounded-full border-2 border-expense bg-transparent" />
+                          )}
+                          {d.status === 'current' && (
+                            <div className="relative flex h-6 w-6 items-center justify-center rounded-full border-2 border-accent">
+                              <div className="h-2.5 w-2.5 rounded-full bg-accent animate-pulse" />
+                            </div>
+                          )}
+                          {d.status === 'upcoming' && (
+                            <div className="h-5 w-5 rounded-full border border-dashed border-line/60 bg-transparent" />
+                          )}
+                        </div>
+                        <span
+                          className={`font-mono text-[11px] ${
+                            d.status === 'current'
+                              ? 'text-accent font-bold'
+                              : 'text-muted'
+                          }`}
+                        >
+                          {d.letter}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Legend */}
+                <div className="pt-4 border-t border-line/40 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted">
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-accent inline-block" />
+                    Hit
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="relative h-2.5 w-2.5 inline-block overflow-hidden rounded-full border border-accent">
+                      <span className="absolute inset-y-0 left-0 w-1/2 bg-accent inline-block" />
+                    </span>
+                    Partial
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full border-2 border-expense inline-block" />
+                    Missed
+                  </span>
+                  <span className="text-muted/70">·</span>
+                  <span className="text-text font-medium">
+                    {currentMonthTitle} in progress
+                  </span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Section: ONE-TIME GOAL PACE BAR */}
@@ -474,29 +456,41 @@ export function Goals() {
             </div>
 
             {/* Overall Limit */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-text">Overall</span>
-                <span className="font-mono text-xs text-muted tabular">
-                  {formatPaise(spendingCaps.overall.spentPaise, locale, currency, { decimals: false })}{' '}
-                  /{' '}
-                  {formatPaise(spendingCaps.overall.limitPaise, locale, currency, { decimals: false })}
-                </span>
+            {spendingCaps.overall.limitPaise <= 0 ? (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-text">Overall</span>
+                  <span className="font-mono text-xs text-muted">Not set</span>
+                </div>
+                <p className="text-xs text-muted">
+                  Tap Edit to set a monthly spending cap (suggested ₹20,000).
+                </p>
               </div>
-              {(() => {
-                const ratio = spendingCaps.overall.spentPaise / spendingCaps.overall.limitPaise;
-                const percent = Math.min(100, Math.round(ratio * 100));
-                const barColor = ratio >= 0.9 ? 'bg-expense' : ratio >= 0.6 ? 'bg-amber-500' : 'bg-emerald-500';
-                return (
-                  <div className="h-2 w-full rounded-full bg-raised overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-[width] duration-500 ease-out ${barColor}`}
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                );
-              })()}
-            </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-text">Overall</span>
+                  <span className="font-mono text-xs text-muted tabular">
+                    {formatPaise(spendingCaps.overall.spentPaise, locale, currency, { decimals: false })}{' '}
+                    /{' '}
+                    {formatPaise(spendingCaps.overall.limitPaise, locale, currency, { decimals: false })}
+                  </span>
+                </div>
+                {(() => {
+                  const ratio = spendingCaps.overall.spentPaise / spendingCaps.overall.limitPaise;
+                  const percent = Math.min(100, Math.round(ratio * 100));
+                  const barColor = ratio >= 0.9 ? 'bg-expense' : ratio >= 0.6 ? 'bg-amber-500' : 'bg-emerald-500';
+                  return (
+                    <div className="h-2 w-full rounded-full bg-raised overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-[width] duration-500 ease-out ${barColor}`}
+                        style={{ width: `${percent}%` }}
+                      />
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
 
             {/* Category Limits */}
             {spendingCaps.categories.map((cat) => {

@@ -279,3 +279,16 @@ export function resolveLimitAccounts(
   const label = names.length === 1 ? names[0] : `${names.length} selected accounts`;
   return { selectedIds: validIds, balancePaise: sum, label };
 }
+
+/**
+ * Picks the overall monthly budget row, preferring explicit `category_id === 'ALL'`
+ * or non-zero `kind === 'total'` so seeded `bud-total` (amount 0) never shadows a configured cap.
+ */
+export function findOverallBudgetRow(budgets: Row[]): Row | undefined {
+  const active = budgets.filter((b) => !asBool(b.deleted));
+  return (
+    active.find((b) => asString(b.category_id) === 'ALL') ??
+    active.find((b) => asString(b.kind) === 'total' && asNumber(b.amount_paise) > 0) ??
+    active.find((b) => asString(b.kind) === 'total')
+  );
+}

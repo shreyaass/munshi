@@ -657,6 +657,19 @@ export function Tour() {
                       </li>
                     </ol>
 
+                    <div className="rounded-2xl border border-accent/50 bg-accent/10 p-4 space-y-1.5 text-xs leading-relaxed">
+                      <p className="flex items-center gap-1.5 font-semibold text-accent">
+                        <Icon name="warning" size={16} />
+                        <span>Important: Complete Step 4 before pairing in Step 5</span>
+                      </p>
+                      <p className="text-text/90">
+                        Running Setup only creates your <strong>Access Token</strong> (always accessible anytime via{' '}
+                        <code className="font-mono text-text">Munshi → 2. Show connection info</code>). You still need to click{' '}
+                        <strong>Next</strong> and finish <strong>Step 4 (Deploy Web App)</strong> to generate and copy your live{' '}
+                        <code className="font-mono text-text">/exec</code> Web App URL before connecting.
+                      </p>
+                    </div>
+
                     <div className="rounded-2xl border border-income/30 bg-income/5 p-4 space-y-1 text-xs leading-relaxed">
                       <p className="font-semibold text-income flex items-center gap-1.5">
                         <Icon name="lock" size={15} />
@@ -710,20 +723,10 @@ export function Tour() {
                           <code className="font-mono text-xs px-1.5 py-0.5 rounded bg-bg border border-line text-text">
                             Munshi → 2. Show connection info
                           </code>{' '}
-                          to copy your <strong>Access Token</strong> (you can also paste &amp; Save your <code className="font-mono">/exec</code> URL there for later devices).
+                          to copy your <strong>Access Token</strong> (and paste &amp; Save your <code className="font-mono">/exec</code> URL there for later devices), then click <strong>Next</strong>.
                         </span>
                       </li>
                     </ol>
-
-                    <div className="rounded-2xl border border-accent/50 bg-accent/10 p-4 space-y-1.5 text-xs leading-relaxed">
-                      <p className="flex items-center gap-1.5 font-semibold text-accent">
-                        <Icon name="warning" size={16} />
-                        <span>Important: Complete Step 5 immediately while both values are open</span>
-                      </p>
-                      <p className="text-text/90">
-                        You now have both your <code className="font-mono text-text">/exec</code> Web App URL and your <strong>Access Token</strong>. Click <strong>Next</strong> below and finish <strong>Step 5 strictly right now</strong> so Munshi can pair with your sheet before you close those dialogs.
-                      </p>
-                    </div>
 
                     <div className="rounded-2xl border border-line bg-bg/60 p-4 space-y-1 text-xs leading-relaxed">
                       <p className="font-semibold text-accent">Why &quot;Who has access: Anyone&quot;?</p>

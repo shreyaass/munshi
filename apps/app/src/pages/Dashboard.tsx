@@ -16,6 +16,7 @@ import {
   asBool,
   asNumber,
   asString,
+  findOverallBudgetRow,
   monthTotals,
   resolveLimitAccounts,
   rowMonth,
@@ -119,11 +120,8 @@ export function Dashboard() {
 
   // Spending limit (Overall monthly cap)
   const monthlyCap = useMemo(() => {
-    const caps = (budgetRows ?? []).filter((b) => !asBool(b.deleted));
-    const overallRow = caps.find(
-      (b) => asString(b.category_id) === 'ALL' || asString(b.kind) === 'total',
-    );
-    // 0 if user skipped or Setup hasn't set a limit yet; otherwise 20,000 suggested default when row missing
+    const overallRow = findOverallBudgetRow(budgetRows ?? []);
+    // 0 if user skipped or Setup hasn't set a limit yet
     const limitPaise = overallRow ? asNumber(overallRow.amount_paise) : 0;
     const isUnconfigured = limitPaise <= 0;
     const spentPaise = totals.spent;

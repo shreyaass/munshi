@@ -459,7 +459,8 @@ export async function setSpendingCap(input: {
       !r.deleted &&
       String(r.data.kind) === kind &&
       String(r.data.month) === month &&
-      String(r.data.category_id ?? '') === categoryId,
+      (String(r.data.category_id ?? '') === categoryId ||
+        (kind === 'total' && String(r.data.category_id ?? '') === '')),
   );
 
   const ts = nowISO();
